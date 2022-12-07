@@ -1,0 +1,4 @@
+C:/Users/Пользователь/Desktop/OpenXLSX/build/CMakeFiles/OpenXLSX.dir
+C:/Users/Пользователь/Desktop/OpenXLSX/build/CMakeFiles/INSTALL.dir
+C:/Users/Пользователь/Desktop/OpenXLSX/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Пользователь/Desktop/OpenXLSX/build/CMakeFiles/ZERO_CHECK.dir

@@ -1,0 +1,18 @@
+Ctrl + F7 = Compile current source (.cpp) file
+F5 = Build a solution (project). Compiling and Linking happens
+
+#include <library.h>  -  preprocessor statements (happens before the compilation) 
+ namely:
+	#include, #define, #if, #endif #ifdef. (#define INTEGER int) = replaces INTEGER with int 
+						while compiling
+
+int main(){}  -  main function is called entry point of the application.
+		You do not have to return any kind of value from the main function.
+		It is a special case. It returns 0 (zero) under the hood
+
+When building a project... Each .cpp files (translation units) gets compiled into .obj files 
+		(or object files) and then Linker comes into a play here and 
+		converts them into a .exe
+		executable file 
+
+C++ is a files agnostic, meaning c++ does not care about files at all. 

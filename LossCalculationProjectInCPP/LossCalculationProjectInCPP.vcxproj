@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{f0462c0b-7ba5-46a0-a0fb-5bff38bd44bd}</ProjectGuid>
+    <RootNamespace>LossCalculationProjectInCPP</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="OpenXLSX\sources\XLCell.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellIterator.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellRange.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellReference.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLCellValue.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLColor.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLColumn.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLContentTypes.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLDateTime.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLDocument.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLFormula.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLProperties.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRelationships.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRow.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLRowData.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLSharedStrings.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLSheet.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLWorkbook.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLXmlData.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLXmlFile.cpp" />
+    <ClCompile Include="OpenXLSX\sources\XLZipArchive.cpp" />
+    <ClCompile Include="third_main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LossCalculationProjectInCPP.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

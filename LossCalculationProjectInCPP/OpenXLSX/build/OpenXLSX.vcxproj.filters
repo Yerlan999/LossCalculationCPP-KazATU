@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLCell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLCellIterator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLCellRange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLCellReference.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLCellValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLColor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLColumn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLContentTypes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLDateTime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLDocument.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLFormula.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLRelationships.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLRow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLRowData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLSharedStrings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLSheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLWorkbook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLXmlData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLXmlFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Пользователь\Desktop\OpenXLSX\sources\XLZipArchive.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Пользователь\Desktop\OpenXLSX\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{1B8B8A23-A7C4-3D8D-96AA-2FB426C9D30F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
