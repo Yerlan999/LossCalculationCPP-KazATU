@@ -13,7 +13,6 @@ using namespace OpenXLSX;
 using Eigen::MatrixXd;
 
 complex<double> mycomplex(10.0, 2.0);
-int x = 5;
 
 
 float stringToFloat(string s)
@@ -52,42 +51,6 @@ int main() {
 	makeMatrix();
 
 	cout << mycomplex << endl;
-
-	string fname;  // Переменная для хранения названия CSV файла
-	cout << "Enter the file name: ";  // Запрос ввести название файла
-	cin >> fname;  // Запись названия в переменную
-
-	vector<vector<string>> content; // Вектор в векторе 
-	vector<string> row;
-	string line, word;  // Создание переменных 
-
-	fstream file(fname, ios::in); // Чтение CSV файла (в режиме чтения)
-	if (file.is_open())
-	{
-		while (getline(file, line))
-		{
-			row.clear();
-
-			stringstream str(line);
-
-			while (getline(str, word, ','))
-				row.push_back(word);
-			content.push_back(row);
-		}
-	}
-	else
-		cout << "Could not open the file\n";
-
-	for (int i = 0; i < content.size(); i++)
-	{
-		for (int j = 0; j < content[i].size(); j++)
-		{
-			cout << content[i][j] << " ";
-		}
-		cout << "\n";
-	}
-
-
 
     XLDocument doc;
     doc.create("Spreadsheet.xlsx");

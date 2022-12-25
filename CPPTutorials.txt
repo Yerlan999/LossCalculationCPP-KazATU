@@ -1,18 +1,65 @@
 Ctrl + F7 = Compile current source (.cpp) file
 F5 = Build a solution (project). Compiling and Linking happens
 
-#include <library.h>  -  preprocessor statements (happens before the compilation) 
+#include <library.h>  -  preprocessor statements (happens before the compilation)
  namely:
-	#include, #define, #if, #endif #ifdef. (#define INTEGER int) = replaces INTEGER with int 
+	#include, #define, #if, #endif #ifdef. (#define INTEGER int) = replaces INTEGER with int
 						while compiling
 
 int main(){}  -  main function is called entry point of the application.
 		You do not have to return any kind of value from the main function.
 		It is a special case. It returns 0 (zero) under the hood
 
-When building a project... Each .cpp files (translation units) gets compiled into .obj files 
-		(or object files) and then Linker comes into a play here and 
+When building a project... Each .cpp files (translation units) gets compiled into .obj files
+		(or object files) and then Linker comes into a play here and
 		converts them into a .exe
-		executable file 
+		executable file
 
-C++ is a files agnostic, meaning c++ does not care about files at all. 
+C++ is a files agnostic, meaning c++ does not care about files at all.
+
+
+int = 4 bytes [approx. -2bil to 2bil](depends on a compiler you use)
+4 bytes * 8(1 byte) bits = 32 bits. 1 bit for sign and 1 bit for zero at the end
+
+unsigned int [approx. 4 bil]
+
+char, short, int, long, long long
+ 1,     2,    4,    4,      8      bytes of data
+
+
+float = 5.3f or 5.3F
+float, double
+  4,     8,   bytes of data
+
+
+We can only address bytes of data from the memory, not bits.
+That is why bool data type is 1 byte of data, and not 1 bit of data
+
+
+sizeof(variable) = sizeof variabe - returns number of BYTES a varaible takes in a memory
+
+#pragma one - preprocessing flag for .h (header) file
+meaning that this header file will be included only ONCE!
+
+#include <> - files are stored in a include directory file paths parameter of a VS (ex.)
+#incude "" - files are relative to the current file
+
+DEBUG mode (tool)
+-> (yellow arrow) - this line of code is about to be run, but not yet
+0xcccccccc - means that variable is not initailized yet. How debugger works in VS
+cc cc cc cc cc cc cc cc - or in a memory
+every two digits here are one byte
+08 00 00 00 cc cc cc cc - (since int type is 4 bytes)
+
+
+in the main() function you may use "retrun" statement without any value
+it terminates the execution of this fucntion, thus whole program.
+
+int value = 5;
+int* pointer = nullptr; or int* pointer = &value;
+pointer = &value;
+
+*pointer = 8 // dereference and then change the value
+
+
+
