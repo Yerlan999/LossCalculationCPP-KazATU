@@ -10,11 +10,11 @@
 using namespace std;
 using namespace OpenXLSX;
 
-using Eigen::MatrixXd;
+using Eigen::MatrixXcf;
 
 complex<double> mycomplex(10.0, 2.0);
 
-
+// Моя функция для конвертации текста в цифру с плав. точкой
 float stringToFloat(string s)
 {
 	float toFloat;
@@ -23,7 +23,7 @@ float stringToFloat(string s)
 	return toFloat;
 }
 
-
+// Моя функция для конвертации текста в цифру
 int stringToInt(string s)
 {
 	int toInt;
@@ -33,32 +33,29 @@ int stringToInt(string s)
 }
 
 
-int makeMatrix()
+MatrixXcf makeMatrix()
 {
-	MatrixXd m(2, 2);
-	m(0, 0) = 3;
+	MatrixXcf m(2, 2);
+	m(0, 0) = mycomplex;
 	m(1, 0) = 2.5;
 	m(0, 1) = -1;
 	m(1, 1) = m(1, 0) + m(0, 1);
-	cout << m << endl;
-	return 0;
+	return m;
 }
 
-
+string sheetNames[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
 
 int main() {
 
-	makeMatrix();
+	MatrixXcf my_matrix = makeMatrix();
 
-	cout << mycomplex << endl;
+	cout << my_matrix << endl;
 
-    XLDocument doc;
-    doc.create("Spreadsheet.xlsx");
-    auto wks = doc.workbook().worksheet("Sheet1");
+	XLDocument doc;
+	doc.open("./Promzona.xlsx");
+	auto wks = doc.workbook().worksheet(sheetNames[5]);
+	double cell_value = wks.cell("A2").value();
+	cout << cell_value << endl;
 
-    wks.cell("A1").value() = "Go and DO IT!";
-
-    doc.save();
-
-    return 0;
+	return 0;
 }
