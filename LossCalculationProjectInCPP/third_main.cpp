@@ -42,8 +42,9 @@ MatrixXcf makeMatrix()
 	m(1, 1) = m(1, 0) + m(0, 1);
 	return m;
 }
-
+//                         CT        DB        CT        DB        CT        DB 
 string sheetNames[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
+int counter = 0;
 
 int main() {
 
@@ -53,9 +54,24 @@ int main() {
 
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
-	auto wks = doc.workbook().worksheet(sheetNames[5]);
-	double cell_value = wks.cell("A2").value();
-	cout << cell_value << endl;
+	auto wks = doc.workbook().worksheet(sheetNames[0]);
+	auto rng = wks.range(XLCellReference("A2"), XLCellReference("CT3500"));
+
+	cout << "Maxx rows count: " << OpenXLSX::MAX_ROWS << endl;
+	cout << "Maxx columns count: " << OpenXLSX::MAX_COLS << endl;
+	cout << "Cell count: " << std::distance(rng.begin(), rng.end()) << endl;
+
+	//for (auto& row : wks.rows()) {
+	//	for (auto& value : std::deque<xlcellvalue>(row.values())) {
+	//		cout << value << endl;
+	//	}
+	//	if (counter == 5) break;
+	//	cout << endl;
+	//	counter++;
+	//}
+
+	//double cell_value = wks.cell("a2").value();
+	//cout << cell_value << endl;
 
 	return 0;
 }
