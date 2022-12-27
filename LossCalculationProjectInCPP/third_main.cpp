@@ -44,43 +44,61 @@ MatrixXcf makeMatrix()
 	return m;
 }
 //                         CT        DB        CT        DB        CT        DB 
-string sheetNames[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
-int rows_counter = 5;
+string worksheet_names[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
+int rows_counter = 1;
 int values_counter = 5;
 
 int main() {
 
 	MatrixXcf my_matrix = makeMatrix();
 
-	cout << my_matrix << endl;
+	//cout << my_matrix << endl;
 
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
-	auto wks = doc.workbook().worksheet(sheetNames[0]);
-	
-	//auto rng = wks.range(XLCellReference("A2"), XLCellReference("CT3500"));
-	//cout << "Cell count: " << std::distance(rng.begin(), rng.end()) << endl;
+	auto workbook = doc.workbook();
+	auto worksheet = doc.workbook().worksheet(worksheet_names[0]);
 
-	for (auto& row : wks.rows()) {
+	int worksheets_count = doc.workbook().worksheetCount();
+	int columns_count = worksheet.columnCount();
+	int rows_count = worksheet.rowCount();
+
+
+	cout << ' ' << endl;
+	cout << "WorkSheets count: " << worksheets_count << endl;
+	cout << ' ' << endl;
+
+	for (auto& worksheetName : workbook.worksheetNames()) {
+		cout << "WorkSheet name: " << worksheetName << endl;
+	}
+
+	cout << ' ' << endl;
+	
+	cout << "Columns count: " << columns_count << endl;
+	cout << "Rows count: " << rows_count << endl;
+	
+	cout << ' ' << endl;
+
+	for (auto& row : worksheet.rows(2)) {
 		// for every ROW in SHEET...
 		for (auto& value : std::deque<XLCellValue>(row.values())) {
 			// for every VALUE in ROW...
 			
 			cout << value.typeAsString() << " | " << value << endl;
 			
-			if (!values_counter) 
-			{
-				values_counter = 5;
-				break;
-			}
-			values_counter--;
+			//if (!values_counter) 
+			//{
+			//	values_counter = 5;
+			//	break;
+			//}
+			//values_counter--;
 		}
-		if (!rows_counter)
-		{ 
-			break;
-		}
-		rows_counter--;
-		cout << endl;
+		//if (!rows_counter)
+		//{ 
+		//	break;
+		//}
+		//rows_counter--;
+		//cout << endl;
 	}
 
 	//double cell_value = wks.cell("a2").value();
