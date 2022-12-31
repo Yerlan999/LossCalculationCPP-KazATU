@@ -186,24 +186,24 @@ for (auto& worksheet_name : workbook.worksheetNames())
     {
         if (sheets_counter % 2 == 0) // EVEN SHEETS
         {
-            // for every ROW in EVEN SHEET... [ amplityde1, phase1 || amplitude2, phase2 || amplitude3, phase3 ... OTHER 8 PARAMS]
+            // for every ROW in EVEN SHEET... [ amplitude1, phase1 || amplitude2, phase2 || amplitude3, phase3 ... OTHER 8 PARAMS]
             for (auto& value : std::deque<XLCellValue>(row.values()))
             {
                 // for every 106 VALUES in ROW...
 
             }
         }
-        else                      // ODD SHEETS
+        else  // ODD SHEETS
         {
-            // for every ROW in ODD SHEET... [ amplityde1, phase1 || amplitude2, phase2 || amplitude3, phase3 ...]
+            // for every ROW in ODD SHEET... [ amplitude1, phase1 || amplitude2, phase2 || amplitude3, phase3 ...]
             for (auto& value : std::deque<XLCellValue>(row.values()))
             {
                 // for every 98 VALUES in ROW...
 
             }
         }
-    sheets_counter++;
     }
+    sheets_counter++;
 }
 
 

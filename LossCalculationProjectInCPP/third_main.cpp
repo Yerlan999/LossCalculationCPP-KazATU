@@ -2,12 +2,14 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
 #include <sstream>
 #include <typeinfo>
 #include <complex>
 #include <Eigen/Dense>
 #include <OpenXLSX.hpp>
 
+using namespace std::chrono;
 using namespace std;
 using namespace OpenXLSX;
 
@@ -49,6 +51,8 @@ int rows_counter = 1;
 int values_counter = 5;
 
 int main() {
+	
+	auto start = high_resolution_clock::now();
 
 	MatrixXcf my_matrix = makeMatrix();
 
@@ -64,27 +68,34 @@ int main() {
 	int rows_count = worksheet.rowCount();
 
 
-	cout << ' ' << endl;
-	cout << "WorkSheets count: " << worksheets_count << endl;
-	cout << ' ' << endl;
+	std::cout << ' ' << endl;
+	std::cout << "WorkSheets count: " << worksheets_count << endl;
+	std::cout << ' ' << endl;
 
 	for (auto& worksheetName : workbook.worksheetNames()) {
-		cout << "WorkSheet name: " << worksheetName << endl;
+		std::cout << "WorkSheet name: " << worksheetName << endl;
 	}
 
-	cout << ' ' << endl;
+	std::cout << ' ' << endl;
 	
-	cout << "Columns count: " << columns_count << endl;
-	cout << "Rows count: " << rows_count << endl;
+	std::cout << "Columns count: " << columns_count << endl;
+	std::cout << "Rows count: " << rows_count << endl;
 	
-	cout << ' ' << endl;
+	std::cout << ' ' << endl;
 
-	for (auto& row : worksheet.rows(2)) {
+	for (auto& row : worksheet.rows()) {
 		// for every ROW in SHEET...
-		for (auto& value : std::deque<XLCellValue>(row.values())) {
+		
+		auto cell_range = row.cells(1, 1); // Read across the second COLUMN 
+		for (auto& cell_value: cell_range) 
+		{
+			std::cout << cell_value.value().typeAsString() << " || " << cell_value.value() << endl;
+		}
+		
+		//for (auto& value : std::deque<XLCellValue>(row.values())) {
 			// for every VALUE in ROW...
 			
-			cout << value.typeAsString() << " | " << value << endl;
+			//std::cout << value.typeAsString() << " | " << value << endl;
 			
 			//if (!values_counter) 
 			//{
@@ -92,7 +103,7 @@ int main() {
 			//	break;
 			//}
 			//values_counter--;
-		}
+		//}
 		//if (!rows_counter)
 		//{ 
 		//	break;
@@ -103,6 +114,8 @@ int main() {
 
 	//double cell_value = wks.cell("a2").value();
 	//cout << cell_value << endl;
-
+	auto stop = high_resolution_clock::now();
+	auto duration = duration_cast<seconds>(stop - start);
+	std::cout << "Seconds take to execute: "  << duration.count() << endl;
 	return 0;
 }
