@@ -1,0 +1,278 @@
+*** Общие сведения о конфигурации программы на С++***
+
+1) Открывыет только .xlsx формат с назанием в латинице.
+    Пример: "Promzona.xlsx". Необходимо будет переформатировать
+    (сохранить как версия 2007-2019) и переименовать.
+2) Необходимо переименовать (назвать) листы в файле
+    с ["3.1. Фаза А", "3.1. Фаза А (продолжение)", и.т.д.]
+    на ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
+    соответственно.
+3) Раместить Excel документ рядом с программой.
+
+
+
+*** Структура Excel файлов с данными о Напряжении и Токе ***
+
+Один файл содержит:
+1) 6 листов.
+2) Первые два листа содержат данные о Напряжении и Токе первой Фазы соответственно.
+   Далее по аналогии. Итого 3 Фазы.
+2) Нечетные листы содержат 98 столбцов. Амплитуда и Фаза по Напряжению на каждую гармонику.
+   [UM, FUM]. Итого 49 Гармоник.
+3) Четные листы содержат 106 столбцов. 98 столбцов из них это Амплитуда и Фаза по Току на каждую гармонику.
+   [AIM, FIM]. Остальные 8 столбцов = [knsu, knsi, rmsu, rmsi, funu, funi, fu, fi] соответсвенно.
+4) Количество строк у каждой подстанции разное. Примерно ~500. Это количество измерении прибором.
+
+
+* "Help" > "Search" > "Query" - для справок по синтаксису в среде разработки
+
+
+*** ПреКод ***
+
+Юнит 1 - 1. Длина и период
+Юнит 2 - 2.4 Вводимые общие данные
+Юнит 4 - 1. Подстанция и ее присоединения
+Юнит 5 - Введенные общие данные
+Юнит 6 - Введенные параметры режима
+Юнит 8 - Результаты расчета
+Юнит 10 - EPURAU
+Юнит 11 - EPURAI
+Юнит 12 - R11
+Юнит 30 - PPP
+Юнит 31 - PPP1
+Юнит 32 - PPP2
+Юнит 33 - PPP3
+Юнит 34 - PPP4
+Юнит 35 - PPP5
+Юнит 36 - PPP6
+Юнит 37 - PPP7
+Юнит 38 - PPP8
+
+Юнит 101 - 3.1. Фаза А
+Юнит 111 - 3.1. Фаза А (продолжение)
+Юнит 102 - 3.2. Фаза В
+Юнит 122 - 3.2. Фаза В (продолжение)
+Юнит 103 - 3.3. Фаза С
+Юнит 133 - 3.3. Фаза С (продолжение)
+
+*** Форматы ***
+
+    Дескрипторы:
+        I - целочисленное
+        A - символ
+        F - цисло с плавующей точкой
+        E - экспоненциальное число
+        Х - пропуск (пробел)
+
+    r[Дескриптор]w
+    где:
+        r - повторение чтения
+        w - ширина чтения
+
+
+    2   FORMAT(6F20.15)
+    2   FORMAT(6F20.15)
+    3   FORMAT(80X)
+    3   FORMAT(80X)
+    6   FORMAT(20F15.10)
+    6   FORMAT(20F15.10)
+    7   FORMAT(8I6)
+    7   FORMAT(8I6)
+    8   FORMAT(24F20.15)
+    8   FORMAT(24F20.15)
+    9   FORMAT(20x,24F20.15)
+    9   FORMAT(20x,24F20.15)
+
+   70   FORMAT(I4,2I10,F12.1,5I8)
+   77   FORMAT('******************************************************')
+   77   FORMAT('******************************************************')
+   78   FORMAT('FFU2')
+   78   FORMAT('FFU2')
+   79   FORMAT('FFI2')
+   79   FORMAT('FFI2')
+   99   format(24f25.14)
+   99   format(24f25.10)
+
+  191   FORMAT(32I2)
+  195   FORMAT(16F10.5)
+  196   FORMAT(60E25.10)
+  196   FORMAT(120E25.10)
+  197   FORMAT(16E25.10)
+  197   FORMAT(16E25.10)
+  198   FORMAT(16F25.10)
+  198   FORMAT(16F25.10)
+  199   format(16f25.10)
+  199   format(8f25.10)
+
+  215   FORMAT(8F35.10)
+  296   FORMAT(16F25.23)
+  296   FORMAT(16F25.23)
+  298   FORMAT(16F25.10)
+  299   FORMAT(64E25.10)
+
+  333   FORMAT(5I3)
+  334   FORMAT(15A1)
+  335   FORMAT(13A1)
+  336   FORMAT(204E9.2)
+  337   FORMAT(204(E8.2,1X))
+
+  991   FORMAT('BLOCK 1 RUNS')
+  991   FORMAT('BLOCK 1 RUNS')
+  992   FORMAT('BLOCK 2 RUNS')
+  992   FORMAT('BLOCK 2 RUNS')
+  993   FORMAT(I3,I3,I3)
+  993   FORMAT(I3,I3,I3)
+  995   FORMAT('CALL RASCHET')
+  995   FORMAT('CALL RASCHET')
+  998   FORMAT(5X, 5I10)
+  998   FORMAT(5X, 5I10)
+  999   FORMAT(5X, F16.8)
+  999   FORMAT(5X, F16.8)
+
+
+*** Пояснение по синтаксису Фортрана 77?***
+
+INTEGER name(10) - integer 4-и байтный (по умолчанию) с 10-ю элементами (массив!?)
+INTEGER*8(2,4) name - integer 8-и байтный.
+
+DIMENSION name(length) - массив name с длинной в length
+
+COMPLEX name(array_length)*size_in_bytes - массив
+COMPLEX name*size_in_bytes - переменная
+
+Цикловой отчет на Фортране начинается с 1 (единцы)!!!
+
+
+*** My Snippets for C++ ***
+
+Chekc Type of Variable = typeid(var).name()
+                        OR call_value.typeAsString()
+
+How OpenXLSX library reads sheets of excel file
+1) ---->
+2) ---->
+3) and so on. Every row-wise and cell-wise of every row.
+The variable-arrays UM, FUM, AIM, FIM are of shape (700, 50, 3) = (records, harmonics, phase)
+
+
+Hint: int marr[10][10] = {}; 2-dim array filled with zeros
+
+
+WorkSheet.rows(first, last);
+WorkSheet.rows(last);
+WorkSheet.rows();
+
+cout << value.typeAsString() << " | " << value << endl;
+
+
+int num_pris = 6;
+int pris_num = 1; // 1 - only first, 2 - only second, 3 - only third, ... 0 - all of them
+int num_phases = 3; num_phases--;
+int num_harms = 49; num_harms--;
+int num_recs = 560; num_recs--; // number of recors (indexes) for one prisoed
+int str_label_met_count = 0;
+
+int sheets_counter = 1;
+
+
+for (auto& worksheet_name : workbook.worksheetNames())
+{
+    // for every SHEET... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
+    auto worksheet = workbook.worksheet(worksheet_name);
+
+
+
+    for (auto& row : worksheet.rows())
+    {
+        if (sheets_counter % 2 == 0) // EVEN SHEETS
+        {
+            // for every ROW in EVEN SHEET... [ amplityde1, phase1 || amplitude2, phase2 || amplitude3, phase3 ... OTHER 8 PARAMS]
+            for (auto& value : std::deque<XLCellValue>(row.values()))
+            {
+                // for every 106 VALUES in ROW...
+
+            }
+        }
+        else                      // ODD SHEETS
+        {
+            // for every ROW in ODD SHEET... [ amplityde1, phase1 || amplitude2, phase2 || amplitude3, phase3 ...]
+            for (auto& value : std::deque<XLCellValue>(row.values()))
+            {
+                // for every 98 VALUES in ROW...
+
+            }
+        }
+    sheets_counter++;
+    }
+}
+
+
+
+
+in Sheets 1, 3, 5:
+    UM, FUM [49 times]
+in Sheets 2, 4, 6:
+    AIM, FIM [49 times] ... knsu, knsi, rmsu, rmsi, funu, funi, fu, fi
+
+
+*** Объяснение (пояснение) самого Кода на Фортране 77? ***
+
+1) Подключение библиотеки(модуля) MSIMSL
+2) Создание массивов AAH(15) BBH(13).
+   ААН хранит в себе текст из 15 символов. Название подствнции "Промзона       "
+   ВВН хранит в себе текст из 13 символов. Название присоединения "ПЗ-Пог1      "
+3)
+
+
+*** Трейсер переменных на Фортране ***
+
+NN1 = 1
+N1 = 560 // количество измерении в Excel файле
+N3 = N1
+AAH = "Промзона       "
+BBH = "ПЗ-Пог1      "
+N2 = 1
+K1 = 50
+K2 = 1
+K3 = 50
+pi=3.14159265358979
+AL = complex(-0.5, 0.866025)
+FF=50
+
+MM = 5 // дина линии (км)
+MPR = 3 // количество проводов
+MTR = 1 // количество тросов
+DT = 2.5 // интервал измерении (мин)
+MT = 5 // количество заземлении троса
+
+*** Global variables (should be passed by refence) ***
+COMMON MM,M,M1,MT,M10,M20,PR,K1,K2,K3,N1,N2,N3,MPR,MTR,MMT
+COMMON MM,M,M1,MT,M10,M20,PR,K1,K2,K3,N1,N2,N3,MPR,MTR,MMT
+
+UM = Амплитуда Напряжения
+FUM = Фаза Напряжения
+AIM = Амплитуда Тока
+FIM = Фаза Тока
+knsu = THD Напряжения
+knsi = THD Тока
+rmsu = RMS Напряжения
+rmsi = RMS Тока
+funu = Амплитуда Основной Гармоники Напряжения
+funi = Амплитуда Основной Гармоники Тока
+fu = Фаза Основной Гармоники Напряжения
+fi = Фаза Основной Гармоники Тока
+
+
+*** Здесь происходит разбор отдельных частей кода на Фортран ***
+
+*** [Фортран]
+    DO 111 I=1,N1
+    READ(101,337) (UM(I,K,1),FUM(I,K,1),K=2,50)
+    WRITE(6,337)(UM(I,K,1),FUM(I,K,1),K=2,50)
+111 CONTINUE
+
+*** [C++]
+    for ()
+    {
+
+    }

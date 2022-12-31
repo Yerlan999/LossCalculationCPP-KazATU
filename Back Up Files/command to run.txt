@@ -1,0 +1,9 @@
+g++ -I .\eigen\ -I .\OpenXLSX --verbose -o run .\main.cpp
+g++ -I .\eigen\ --verbose -o run .\main.cpp
+g++ -o run .\second_main.cpp
+g++ -I .\OpenXLSX --verbose -o run .\third_main.cpp
+
+g++ -I "C:\Program Files (x86)\OpenXLSX.Library\include\OpenXLSX" --verbose -o run .\third_main.cpp
+g++ -I "C:\Program Files (x86)\OpenXLSX.Library\lib" --verbose -o run .\third_main.cpp
+
+g++ -I "C:\Program Files (x86)\OpenXLSX.Library\include\OpenXLSX" -I "C:\Program Files (x86)\OpenXLSX.Library\lib" --verbose -o run .\third_main.cpp
