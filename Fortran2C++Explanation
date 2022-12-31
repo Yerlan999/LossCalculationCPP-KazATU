@@ -265,14 +265,17 @@ fi = Фаза Основной Гармоники Тока
 
 *** Здесь происходит разбор отдельных частей кода на Фортран ***
 
-*** [Фортран]
-    DO 111 I=1,N1
-    READ(101,337) (UM(I,K,1),FUM(I,K,1),K=2,50)
-    WRITE(6,337)(UM(I,K,1),FUM(I,K,1),K=2,50)
-111 CONTINUE
 
-*** [C++]
-    for ()
-    {
 
-    }
+//for (auto& value : std::deque<XLCellValue>(row.values())) {
+    // for every VALUE in ROW...
+    //std::cout << value.typeAsString() << " | " << value << endl;
+}
+
+//double cell_value = wks.cell("a2").value();
+//cout << cell_value << endl;
+
+
+MatrixXcf my_matrix;
+my_matrix = MatrixXcf::Zero(3, 3);
+my_matrix(1, 2) = mycomplex;
