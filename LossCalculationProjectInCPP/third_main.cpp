@@ -85,13 +85,13 @@ int main() {
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
 	auto workbook = doc.workbook();
-	auto worksheet = doc.workbook().worksheet(worksheet_names[0]);
+	auto check_worksheet = doc.workbook().worksheet(worksheet_names[0]);
 	
 	int worksheets_count = doc.workbook().worksheetCount();
-	int columns_count = worksheet.columnCount();
-	int rows_count = worksheet.rowCount();
+	int columns_count = check_worksheet.columnCount();
+	int rows_count = check_worksheet.rowCount();
 	
-	auto check_worksheet = worksheet;
+	
 
 	insert_start_separator();
 
@@ -123,6 +123,10 @@ int main() {
 
 	insert_gap();
 	
+	/*for (int title_index: titles_indexes) 
+	{
+		cout << title_index << endl;
+	}*/
 
 	// Testing
 	for (auto& worksheet_name : workbook.worksheetNames())
