@@ -136,13 +136,26 @@ int main() {
 		//                         !custom range! Prisoed 
 		for (auto& row : worksheet.rows(2, 2))
 		{
-			auto cell_range = row.cells();
-			for (auto& cell_value : cell_range)
+			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
+				auto cell_range = row.cells();
+				for (auto& cell_value : cell_range)
+				{
+					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
+				}
+			}
+			else                                                // ODD SHEETS
+			{
+				/*auto cell_range = row.cells();
+				for (auto& cell_value : cell_range)
+				{
+					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
+				}*/
 			}
 		}
+		sheets_counter++;
 	}
+	sheets_counter = 1;
 
 	insert_end_separator();
 
