@@ -89,7 +89,6 @@ int main() {
 	
 	auto start = high_resolution_clock::now();
 
-	
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
 	auto workbook = doc.workbook();
@@ -100,16 +99,12 @@ int main() {
 	int rows_count = check_worksheet.rowCount();
 
 	insert_start_separator();
-
 	std::cout << "Workbook's WorkSheets count: " << worksheets_count << endl;
 	
 	insert_gap();
-	
 	std::cout << "First Worksheet's Columns count: " << columns_count << endl;
 	std::cout << "First Worksheet's Rows count: " << rows_count << endl;
-	
 	insert_gap();
-
 
 	// ќпределение начал данных измерении дл€ каждого присоединени€
 	for (auto& row : check_worksheet.rows())
@@ -124,13 +119,8 @@ int main() {
 		}
 	}
 	titles_counter = 0;
-	
-	/*for (int title_index: titles_indexes) 
-	{
-		cout << title_index << endl;
-	}*/
 
-	// Testing
+	// —тади€ тестировани€
 	for (auto& worksheet_name : workbook.worksheetNames())
 	{
 		// for every SHEET... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
@@ -146,6 +136,7 @@ int main() {
 		//                         !custom range! Prisoed 
 		for (auto& row : worksheet.rows(2, 2))
 		{
+			row.values();
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
 				for (auto& cell_value : row.cells(1, 1))
