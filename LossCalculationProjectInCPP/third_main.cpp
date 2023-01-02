@@ -101,12 +101,12 @@ int main() {
 
 	insert_start_separator();
 
-	std::cout << "WorkSheets count: " << worksheets_count << endl;
+	std::cout << "Workbook's WorkSheets count: " << worksheets_count << endl;
 	
 	insert_gap();
 	
-	std::cout << "Columns count: " << columns_count << endl;
-	std::cout << "Rows count: " << rows_count << endl;
+	std::cout << "First Worksheet's Columns count: " << columns_count << endl;
+	std::cout << "First Worksheet's Rows count: " << rows_count << endl;
 	
 	insert_gap();
 
@@ -114,11 +114,9 @@ int main() {
 	// Определение начал данных измерении для каждого присоединения
 	for (auto& row : check_worksheet.rows())
 	{
-		auto cell_range = row.cells(1);
-		for (auto& cell_value : cell_range)
+		for (auto& cell_value : row.cells(1))
 		{
-			bool is_title = cell_value.value().typeAsString() == "string";
-			if (is_title)
+			if (cell_value.value().typeAsString() == "string")
 			{
 				titles_indexes[titles_counter] = cell_value.cellReference().row();
 				titles_counter++;
@@ -126,8 +124,6 @@ int main() {
 		}
 	}
 	titles_counter = 0;
-
-	insert_gap();
 	
 	/*for (int title_index: titles_indexes) 
 	{
@@ -139,6 +135,14 @@ int main() {
 	{
 		// for every SHEET... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
 		auto worksheet = workbook.worksheet(worksheet_name);
+		int w_columns_count = worksheet.columnCount();
+		int w_rows_count = worksheet.rowCount();
+		
+		insert_gap();
+		std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
+		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
+		insert_gap();
+
 		//                         !custom range! Prisoed 
 		for (auto& row : worksheet.rows(2, 2))
 		{
