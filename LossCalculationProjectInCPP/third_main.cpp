@@ -87,6 +87,29 @@ float rmsu[3][700]; float fu[3][700];
 float rmsi[3][700]; float fi[3][700];
 
 
+class CustomRangePairs
+{
+public:
+	int difference = -1;
+
+	tuple<int, int> get_range_pairs(int i)
+	{
+		tuple <int, int> two_pairs;
+		
+		int first_part = i + difference;
+		int second_part = first_part++;
+
+		two_pairs = make_tuple(second_part, first_part);
+		difference++;
+		return two_pairs;
+	}
+	void reset() 
+	{
+		difference = -1;
+	}
+};
+
+
 int main() {
 	
 	auto start = high_resolution_clock::now();
@@ -122,6 +145,7 @@ int main() {
 	}
 	titles_counter = 0;
 
+
 	// Стадия тестирования
 	for (auto& worksheet_name : workbook.worksheetNames())
 	{
@@ -148,15 +172,16 @@ int main() {
 			}
 			else                                                // ODD SHEETS
 			{
-				int diff = -1;
+				CustomRangePairs ranger;
 				for (int i = 1; i < (w_columns_count/2)+1; i++)
 				{
-					int first_part = i + diff;
-					int second_part = first_part++;
-					UM[0][i][rows_counter] = cell.at(second_part);
-					FUM[0][i][rows_counter] = cell.at(first_part);
-					diff++;
+					const auto [amp, pha] = ranger.get_range_pairs(i);
+					cout << i << " || " << amp << " , " << pha << " ||" << endl;
+					/*UM[0][i][rows_counter] = cell.at(amp);
+					FUM[0][i][rows_counter] = cell.at(pha);*/
+				
 				}
+				ranger.reset();
 
 			}
 			rows_counter++;

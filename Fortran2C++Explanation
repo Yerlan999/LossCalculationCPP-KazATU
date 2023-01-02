@@ -378,4 +378,10 @@ for worksheet in worksheets: for every sheet
 
 sheets_counter = 1
 
-cout << i << " || " << second_part << " , " << first_part << " ||" << endl;
+cout << index << " || " << amp << " , " << pha << " ||" << endl;
+
+
+
+
+sheets_counter = [1, 2, 3, 4, 5, 6]
+                 |  0 | | 1 | | 2 |
