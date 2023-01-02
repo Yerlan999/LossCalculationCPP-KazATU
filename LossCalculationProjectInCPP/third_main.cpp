@@ -92,14 +92,14 @@ class CustomRangePairs
 public:
 	int difference = -1;
 
-	tuple<int, int> get_range_pairs(int i)
+	tuple<int, int> get_range_pairs(int harm)
 	{
 		tuple <int, int> two_pairs;
 		
-		int first_part = i + difference;
-		int second_part = first_part++;
+		int phase = harm + difference;
+		int amplitude = phase++;
 
-		two_pairs = make_tuple(second_part, first_part);
+		two_pairs = make_tuple(amplitude, phase);
 		difference++;
 		return two_pairs;
 	}
@@ -161,7 +161,7 @@ int main() {
 
 
 		//                      !custom range! Based on the Prisoed you want to calculate.
-		for (auto& row : worksheet.rows(2, 2))
+		for (auto& row : worksheet.rows(5))
 		{
 			std::vector<XLCellValue> cell(row.values());
 
@@ -173,14 +173,16 @@ int main() {
 			else                                                // ODD SHEETS
 			{
 				CustomRangePairs ranger;
-				for (int i = 1; i < (w_columns_count/2)+1; i++)
+				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
-					const auto [amp, pha] = ranger.get_range_pairs(i);
-					cout << i << " || " << amp << " , " << pha << " ||" << endl;
-					/*UM[0][i][rows_counter] = cell.at(amp);
-					FUM[0][i][rows_counter] = cell.at(pha);*/
+					const auto [amp, pha] = ranger.get_range_pairs(h);
+					//cout << "Row number: " << rows_counter << " || Harmonics number: " << h << endl;
+					cout << h << " || " << amp << " , " << pha << " ||" << endl;
+					/*UM[0][h][rows_counter] = cell.at(amp);
+					FUM[0][h][rows_counter] = cell.at(pha);*/
 				
 				}
+				insert_gap();
 				ranger.reset();
 
 			}
