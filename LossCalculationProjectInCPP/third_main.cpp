@@ -10,7 +10,6 @@ using namespace std;
 using namespace std::chrono;
 using namespace OpenXLSX;
 
-//using Eigen::MatrixXcf;
 using namespace Eigen;
 
 
@@ -55,12 +54,14 @@ int stringToInt(string s)
 // Класс для составления диапазона для определенного присоединения
 class ProsoedRowRange 
 {
+	// Raw for now. In progress
 public:
 	tuple<int, int> get_range(int which)
 	{
 		tuple <int, int> pris_range;
 
 		pris_range = make_tuple(10, 15);
+		return pris_range;
 	}
 };
 
@@ -133,15 +134,19 @@ int main() {
 		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
 		insert_gap();
 
-		//                         !custom range! Prisoed 
+		//                      !custom range! Prisoed 
 		for (auto& row : worksheet.rows(2, 2))
 		{
-			row.values();
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				for (auto& cell_value : row.cells(1, 1))
+				std::vector<XLCellValue> name(row.values());
+				cout << name.at(1) << endl;
+				cout << row.rowNumber() << endl;
+
+				for (auto& cell_value : name)
 				{
-					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
+					//cout << cell_value << endl;
+					//std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
 				}
 			}
 			else                                                // ODD SHEETS
