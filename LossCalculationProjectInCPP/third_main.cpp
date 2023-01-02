@@ -76,6 +76,14 @@ int titles_indexes[num_pris];
 int sheets_counter = 1;
 int titles_counter = 0;
 
+float UM[3][50][700];  float AIM[3][50][700];
+float FUM[3][50][700]; float FIM[3][50][700];
+
+float knsu[3][700]; float funu[3][700];
+float knsi[3][700]; float funi[3][700];
+float rmsu[3][700]; float fu[3][700];
+float rmsi[3][700]; float fi[3][700];
+
 
 int main() {
 	
@@ -90,8 +98,6 @@ int main() {
 	int worksheets_count = doc.workbook().worksheetCount();
 	int columns_count = check_worksheet.columnCount();
 	int rows_count = check_worksheet.rowCount();
-	
-	
 
 	insert_start_separator();
 
@@ -138,16 +144,15 @@ int main() {
 		{
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				auto cell_range = row.cells();
-				for (auto& cell_value : cell_range)
+				for (auto& cell_value : row.cells(1, 1))
 				{
 					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
 				}
 			}
 			else                                                // ODD SHEETS
 			{
-				/*auto cell_range = row.cells();
-				for (auto& cell_value : cell_range)
+				/*
+				for (auto& cell_value : row.cells())
 				{
 					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
 				}*/
