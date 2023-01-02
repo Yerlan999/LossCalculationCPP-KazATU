@@ -8,8 +8,8 @@
 
 using namespace std;
 using namespace std::chrono;
-using namespace OpenXLSX;
 
+using namespace OpenXLSX;
 using namespace Eigen;
 
 
@@ -76,6 +76,7 @@ int num_recs = 560; // number of recors (indexes) for one prisoed
 int titles_indexes[num_pris];
 int sheets_counter = 1;
 int titles_counter = 0;
+int rows_counter = 0;
 
 float UM[3][50][700];  float AIM[3][50][700];
 float FUM[3][50][700]; float FIM[3][50][700];
@@ -96,15 +97,15 @@ int main() {
 	auto check_worksheet = doc.workbook().worksheet(worksheet_names[0]);
 	
 	int worksheets_count = doc.workbook().worksheetCount();
-	int columns_count = check_worksheet.columnCount();
-	int rows_count = check_worksheet.rowCount();
+	int f_columns_count = check_worksheet.columnCount();
+	int f_rows_count = check_worksheet.rowCount();
 
 	insert_start_separator();
 	std::cout << "Workbook's WorkSheets count: " << worksheets_count << endl;
 	
 	insert_gap();
-	std::cout << "First Worksheet's Columns count: " << columns_count << endl;
-	std::cout << "First Worksheet's Rows count: " << rows_count << endl;
+	std::cout << "First Worksheet's Columns count: " << f_columns_count << endl;
+	std::cout << "First Worksheet's Rows count: " << f_rows_count << endl;
 	insert_gap();
 
 	// Определение начал данных измерении для каждого присоединения
@@ -134,30 +135,33 @@ int main() {
 		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
 		insert_gap();
 
-		//                      !custom range! Prisoed 
+
+		//                      !custom range! Based on the Prisoed you want to calculate.
 		for (auto& row : worksheet.rows(2, 2))
 		{
+			std::vector<XLCellValue> cell(row.values());
+
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				std::vector<XLCellValue> name(row.values());
-				cout << name.at(1) << endl;
-				cout << row.rowNumber() << endl;
-
-				for (auto& cell_value : name)
-				{
-					//cout << cell_value << endl;
-					//std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
-				}
+				/*AIM[0][0][rows_counter] = cell.at(1);
+				FIM[0][0][rows_counter] = cell.at(1);*/
 			}
 			else                                                // ODD SHEETS
 			{
-				/*
-				for (auto& cell_value : row.cells())
+				int diff = -1;
+				for (int i = 1; i < (w_columns_count/2)+1; i++)
 				{
-					std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
-				}*/
+					int first_part = i + diff;
+					int second_part = first_part++;
+					UM[0][i][rows_counter] = cell.at(second_part);
+					FUM[0][i][rows_counter] = cell.at(first_part);
+					diff++;
+				}
+
 			}
+			rows_counter++;
 		}
+		rows_counter = 0;
 		sheets_counter++;
 	}
 	sheets_counter = 1;

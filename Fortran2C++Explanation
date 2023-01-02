@@ -316,6 +316,13 @@ my_matrix.setZero();
 my_matrix(1, 2) = mycomplex;
 
 
+for (auto& cell_value : row.cells())
+{
+    //cout << cell_value << endl;
+    //std::cout << "Worksheet: " << worksheet_name << " || Row: " << cell_value.cellReference().row() << " || Column: " << cell_value.cellReference().column() << " || Value: " << cell_value.value() << endl;
+}
+
+//int row_number = row.rowNumber();
 
 
 [0] = 1
@@ -371,4 +378,4 @@ for worksheet in worksheets: for every sheet
 
 sheets_counter = 1
 
-
+cout << i << " || " << second_part << " , " << first_part << " ||" << endl;
