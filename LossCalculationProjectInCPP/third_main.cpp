@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <chrono>
 #include <tuple>
@@ -12,25 +13,26 @@ using namespace std::chrono;
 using namespace OpenXLSX;
 using namespace Eigen;
 
+std::ofstream debug_file;
 
 // Прочие функции для оформления вывода на консоль
 void insert_gap()
 {
-	std::cout << ' ' << endl;
+	debug_file << ' ' << endl;
 }
 
 void insert_start_separator()
 {
-	std::cout << ' ' << endl;
-	std::cout << "======================== *START* ========================" << endl;
-	std::cout << ' ' << endl;
+	debug_file << " " << endl;
+	debug_file << "======================== *START* ========================" << endl;
+	debug_file << " " << endl;
 }
 
 void insert_end_separator()
 {
-	std::cout << ' ' << endl;
-	std::cout << "========================= *END* =========================" << endl;
-	std::cout << ' ' << endl;
+	debug_file << " " << endl;
+	debug_file << "========================= *END* =========================" << endl;
+	debug_file << " " << endl;
 }
 
 
@@ -141,7 +143,9 @@ float rmsi[3][700]; float fi[3][700];
 int main() {
 	
 	auto start = high_resolution_clock::now();
-
+	
+	debug_file.open("debug.txt", std::ios_base::app);
+	
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
 	auto workbook = doc.workbook();
@@ -152,11 +156,11 @@ int main() {
 	int f_rows_count = check_worksheet.rowCount();
 
 	insert_start_separator();
-	std::cout << "Workbook's WorkSheets count: " << worksheets_count << endl;
+	debug_file << "Workbook's WorkSheets count: " << worksheets_count << endl;
 	
 	insert_gap();
-	std::cout << "First Worksheet's Columns count: " << f_columns_count << endl;
-	std::cout << "First Worksheet's Rows count: " << f_rows_count << endl;
+	debug_file << "First Worksheet's Columns count: " << f_columns_count << endl;
+	debug_file << "First Worksheet's Rows count: " << f_rows_count << endl;
 	insert_gap();
 
 	// Определение начал данных измерении для каждого присоединения
@@ -200,21 +204,26 @@ int main() {
 			
 			if (sheets_counter % 2 == 0)                        // Четные листы [Sheet2, Sheet4, Sheet6]
 			{
+
 				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2)))/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					AIM[phase_number][h][rows_counter] = float(cell.at(amp));
-					FIM[phase_number][h][rows_counter] = float(cell.at(pha));	
+/*					AIM[phase_number][h][rows_counter] = float(cell.at(amp));
+					FIM[phase_number][h][rows_counter] = float(cell.at(pha));*/
 				}
 				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
-				knsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 8));
-				knsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 7));
-				rmsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 6));
-				rmsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 5));
-				funu[phase_number][rows_counter] = float(cell.at(w_columns_count - 4));
-				funi[phase_number][rows_counter] = float(cell.at(w_columns_count - 3));
-				fu[phase_number][rows_counter] = float(cell.at(w_columns_count - 2));
-				fi[phase_number][rows_counter] = float(cell.at(w_columns_count - 1));
+				//knsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 8));
+				//knsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 7));
+				//rmsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 6));
+				//rmsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 5));
+				//funu[phase_number][rows_counter] = float(cell.at(w_columns_count - 4));
+				//funi[phase_number][rows_counter] = float(cell.at(w_columns_count - 3));
+				//fu[phase_number][rows_counter] = float(cell.at(w_columns_count - 2));
+				//fi[phase_number][rows_counter] = float(cell.at(w_columns_count - 1));
+				
+				debug_file << "Phase number: " << phase_number << " Rows counter: " << rows_counter << " Last column index: " << w_columns_count - 1 << endl;
+				
+				debug_file << " " << endl;
 
 				ranger.reset();
 			}
@@ -224,9 +233,8 @@ int main() {
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					UM[phase_number][h][rows_counter] = float(cell.at(amp));
-					FUM[phase_number][h][rows_counter] = float(cell.at(pha));
-					
+					//UM[phase_number][h][rows_counter] = float(cell.at(amp));
+					//FUM[phase_number][h][rows_counter] = float(cell.at(pha));
 				}
 				ranger.reset();
 			}
@@ -242,6 +250,7 @@ int main() {
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
-	std::cout << "Took to execute: "  << duration.count() << " seconds." << endl;
+	debug_file << "Took to execute: "  << duration.count() << " seconds." << endl;
+	cout << "Execution has just finished!" << endl;
 	return 0;
 }
