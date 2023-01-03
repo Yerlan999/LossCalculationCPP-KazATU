@@ -103,11 +103,34 @@ public:
 		difference++;
 		return two_pairs;
 	}
+
 	void reset() 
 	{
 		difference = -1;
 	}
 };
+
+
+class PhaseSheetsHandler
+{
+public:
+	int odd_difference = -1;
+
+	int get_phase_number(int sheet_number)
+	{
+		cout << "Value got: " << sheet_number << " Current diff: " << odd_difference << endl;
+		int phase_number = sheet_number + odd_difference;
+		cout << "Value give: " << phase_number << endl;
+		odd_difference--;
+		return phase_number;	
+	}
+
+	void reset()
+	{
+		odd_difference = -1;
+	}
+};
+
 
 
 int main() {
@@ -145,6 +168,7 @@ int main() {
 	}
 	titles_counter = 0;
 
+	PhaseSheetsHandler phaser;
 
 	// Стадия тестирования
 	for (auto& worksheet_name : workbook.worksheetNames())
@@ -154,16 +178,19 @@ int main() {
 		int w_columns_count = worksheet.columnCount();
 		int w_rows_count = worksheet.rowCount();
 		
+
 		insert_gap();
+		std::cout << "******************** " << worksheet_name << " ********************" << endl;
 		std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
 		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
 		insert_gap();
 
+		if (!(sheets_counter % 2 == 0)) { int phase_number = phaser.get_phase_number(sheets_counter); }
 
-		//                      !custom range! Based on the Prisoed you want to calculate.
-		for (auto& row : worksheet.rows(5))
+		//                    !custom range! Based on the Prisoed you want to calculate.
+		for (auto& row : worksheet.rows(2)) // FOR EVERY ROW IN A SHEET
 		{
-			std::vector<XLCellValue> cell(row.values());
+			std::vector<XLCellValue> cell(row.values()); // select all cells on that row.
 
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
@@ -177,20 +204,20 @@ int main() {
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
 					//cout << "Row number: " << rows_counter << " || Harmonics number: " << h << endl;
-					cout << h << " || " << amp << " , " << pha << " ||" << endl;
+					//cout << h << " || " << amp << " , " << pha << " ||" << endl;
+					//cout << sheets_counter << " || " << phase_number << endl;
 					/*UM[0][h][rows_counter] = cell.at(amp);
 					FUM[0][h][rows_counter] = cell.at(pha);*/
-				
 				}
 				insert_gap();
 				ranger.reset();
-
 			}
 			rows_counter++;
 		}
 		rows_counter = 0;
 		sheets_counter++;
 	}
+	phaser.reset();
 	sheets_counter = 1;
 
 	insert_end_separator();
