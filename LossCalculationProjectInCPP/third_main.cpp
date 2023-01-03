@@ -13,6 +13,7 @@ using namespace OpenXLSX;
 using namespace Eigen;
 
 
+// Прочие функции для оформления вывода на консоль
 void insert_gap()
 {
 	std::cout << ' ' << endl;
@@ -33,7 +34,7 @@ void insert_end_separator()
 }
 
 
-// Моя функция для конвертации текста в цифру с плав. точкой
+// Функция для конвертации текста в цифру с плав. точкой
 float stringToFloat(string s)
 {
 	float toFloat;
@@ -42,7 +43,7 @@ float stringToFloat(string s)
 	return toFloat;
 }
 
-// Моя функция для конвертации текста в цифру
+// Функция для конвертации текста в цифру
 int stringToInt(string s)
 {
 	int toInt;
@@ -52,6 +53,7 @@ int stringToInt(string s)
 }
 
 
+// Класс помощник для получения данных по Амплитуде и Фазе гармоник
 class CustomRangePairs
 {
 public:
@@ -75,7 +77,7 @@ public:
 	}
 };
 
-
+// Класс помощник для получения данных по Фазам цепи
 class PhaseSheetsHandler
 {
 public:
@@ -95,14 +97,13 @@ public:
 };
 
 
-// Класс для составления диапазона для определенного присоединения
+// Класс помощник для составления диапазона для определенного присоединения
 class ProsoedRowRange 
 {
-	// Raw for now. In progress
 public:
 	tuple<int, int> get_range(int which, int titles_indexes[], int num_pris)
 	{
-		// which = [1-6] if 6 prisoeds in system. 6 is included
+		// which = [1-6] Если 6 присоединении в системе.
 		tuple <int, int> pris_range;
 		int r_start = titles_indexes[which - 1] + 1;
 		int r_end = titles_indexes[which] - 1;
@@ -114,20 +115,20 @@ public:
 	}
 };
 
-//                         CT        DB        CT        DB        CT        DB 
-string worksheet_names[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
 
-const int num_pris = 6; // total number of prisoeds in system
-const int pris_num = 1; // 1 - only first, 2 - only second, 3 - only third, .. to calculate
+const int num_pris = 6; // Общее количество присоединении в системе подстанции 
+const int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
 int num_phases = 3; 
 int num_harms = 49; 
-int num_recs = 560; // number of recors (indexes) for one prisoed
+int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
 int titles_indexes[(num_pris+1)];
 int sheets_counter = 1;
 int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
 
+
+// Матрицы данных. Параметры режима
 float UM[3][50][700];  float AIM[3][50][700];
 float FUM[3][50][700]; float FIM[3][50][700];
 
@@ -144,7 +145,7 @@ int main() {
 	XLDocument doc;
 	doc.open("./Promzona.xlsx");
 	auto workbook = doc.workbook();
-	auto check_worksheet = doc.workbook().worksheet(worksheet_names[0]);
+	auto check_worksheet = workbook.worksheet(workbook.worksheetNames()[0]);
 	
 	int worksheets_count = doc.workbook().worksheetCount();
 	int f_columns_count = check_worksheet.columnCount();
@@ -178,67 +179,55 @@ int main() {
 	ProsoedRowRange prisoeder;
 	
 	const auto [first, second] = prisoeder.get_range(pris_num, titles_indexes, num_pris);
-	cout << "Prisoed #" << pris_num << " || Range (" << first << ", " << second << ")" << endl;
 	
 
 	// Стадия тестирования
 	for (auto& worksheet_name : workbook.worksheetNames())
 	{
-		// for every SHEET... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
+		// Для каждго листа в документе ... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
 		auto worksheet = workbook.worksheet(worksheet_name);
 		int w_columns_count = worksheet.columnCount();
 		int w_rows_count = worksheet.rowCount();
 		
 
-		//insert_gap();
-		//std::cout << "******************** " << worksheet_name << " ********************" << endl;
-		//std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
-		//std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
-		//insert_gap();
-
 		if (!(sheets_counter % 2 == 0)) { phase_number = phaser.get_phase_number(sheets_counter); }
 		else { phase_number = (sheets_counter - 2) / 2; };
 
-		//                    !custom range! Based on the Prisoed you want to calculate.
-		for (auto& row : worksheet.rows(2, 2)) // FOR EVERY ROW IN A SHEET
+		// В зависимости от рассчитываемого присоединения...
+		for (auto& row : worksheet.rows(first, second)) // для каждой строки данного присоединения
 		{
-			std::vector<XLCellValue> cell(row.values()); // select all cells on that row.
-			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
+			std::vector<XLCellValue> cell(row.values()); // выбор всех ячеек в данной строке
+			
+			if (sheets_counter % 2 == 0)                        // Четные листы [Sheet2, Sheet4, Sheet6]
 			{
 				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2)))/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					/*AIM[phase_number][h][rows_counter] = cell.at(amp);
-					FIM[phase_number][h][rows_counter] = cell.at(pha);*/
-					//insert_gap();
+					AIM[phase_number][h][rows_counter] = float(cell.at(amp));
+					FIM[phase_number][h][rows_counter] = float(cell.at(pha));	
 				}
-				// Remaining (last) 8 columns. For Main Harmonic
-				/*knsu[phase_number][rows_counter] = cell.at(w_columns_count-8);
-				knsi[phase_number][rows_counter] = cell.at(w_columns_count-7);
-				rmsu[phase_number][rows_counter] = cell.at(w_columns_count-6);
-				rmsi[phase_number][rows_counter] = cell.at(w_columns_count-5);
-				funu[phase_number][rows_counter] = cell.at(w_columns_count-4);
-				funi[phase_number][rows_counter] = cell.at(w_columns_count-3);
-				fu[phase_number][rows_counter] = cell.at(w_columns_count-2);
-				fi[phase_number][rows_counter] = cell.at(w_columns_count-1);*/
+				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
+				knsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 8));
+				knsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 7));
+				rmsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 6));
+				rmsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 5));
+				funu[phase_number][rows_counter] = float(cell.at(w_columns_count - 4));
+				funi[phase_number][rows_counter] = float(cell.at(w_columns_count - 3));
+				fu[phase_number][rows_counter] = float(cell.at(w_columns_count - 2));
+				fi[phase_number][rows_counter] = float(cell.at(w_columns_count - 1));
 
-				//insert_gap();
 				ranger.reset();
 			}
-			else                                                // ODD SHEETS
+			else                                                // Нечетные листы [Sheet1, Sheet3, Sheet5]
 			{
 				
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					/*cout << "Row number: " << rows_counter << endl;
-					cout << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
-					cout << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;*/
-					/*UM[phase_number][h][rows_counter] = cell.at(amp);
-					FUM[phase_number][h][rows_counter] = cell.at(pha);*/
-					//insert_gap();
+					UM[phase_number][h][rows_counter] = float(cell.at(amp));
+					FUM[phase_number][h][rows_counter] = float(cell.at(pha));
+					
 				}
-				//insert_gap();
 				ranger.reset();
 			}
 			rows_counter++;

@@ -380,7 +380,16 @@ sheets_counter = 1
 
 cout << index << " || " << amp << " , " << pha << " ||" << endl;
 
+//insert_gap();
+//std::cout << "******************** " << worksheet_name << " ********************" << endl;
+//std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
+//std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
+//insert_gap();
 
+
+/*cout << "Row number: " << rows_counter << endl;
+cout << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
+cout << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;*/
 
 
 sheets_counter = [1, 2, 3, 4, 5, 6]
@@ -392,3 +401,14 @@ sheets = 2, 4, 6
 
 when even = (sheets_counter-2)/2
 when odd = sheet-1, sheet-2, sheet-3, ...
+
+
+
+knsu[phase_number][rows_counter] = float(cell.at(w_columns_count-8));
+knsi[phase_number][rows_counter] = float(cell.at(w_columns_count-7));
+rmsu[phase_number][rows_counter] = float(cell.at(w_columns_count-6));
+rmsi[phase_number][rows_counter] = float(cell.at(w_columns_count-5));
+funu[phase_number][rows_counter] = float(cell.at(w_columns_count-4));
+funi[phase_number][rows_counter] = float(cell.at(w_columns_count-3));
+fu[phase_number][rows_counter] = float(cell.at(w_columns_count-2));
+fi[phase_number][rows_counter] = float(cell.at(w_columns_count-1));
