@@ -77,6 +77,7 @@ int titles_indexes[num_pris];
 int sheets_counter = 1;
 int titles_counter = 0;
 int rows_counter = 0;
+int phase_number;
 
 float UM[3][50][700];  float AIM[3][50][700];
 float FUM[3][50][700]; float FIM[3][50][700];
@@ -118,9 +119,7 @@ public:
 
 	int get_phase_number(int sheet_number)
 	{
-		cout << "Value got: " << sheet_number << " Current diff: " << odd_difference << endl;
 		int phase_number = sheet_number + odd_difference;
-		cout << "Value give: " << phase_number << endl;
 		odd_difference--;
 		return phase_number;	
 	}
@@ -169,6 +168,7 @@ int main() {
 	titles_counter = 0;
 
 	PhaseSheetsHandler phaser;
+	CustomRangePairs ranger;
 
 	// Стадия тестирования
 	for (auto& worksheet_name : workbook.worksheetNames())
@@ -185,29 +185,37 @@ int main() {
 		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
 		insert_gap();
 
-		if (!(sheets_counter % 2 == 0)) { int phase_number = phaser.get_phase_number(sheets_counter); }
+		if (!(sheets_counter % 2 == 0)) { phase_number = phaser.get_phase_number(sheets_counter); }
+		else { phase_number = (sheets_counter - 2) / 2; };
 
 		//                    !custom range! Based on the Prisoed you want to calculate.
-		for (auto& row : worksheet.rows(2)) // FOR EVERY ROW IN A SHEET
+		for (auto& row : worksheet.rows(2, 2)) // FOR EVERY ROW IN A SHEET
 		{
 			std::vector<XLCellValue> cell(row.values()); // select all cells on that row.
 
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				/*AIM[0][0][rows_counter] = cell.at(1);
-				FIM[0][0][rows_counter] = cell.at(1);*/
+				for (int h = 1; h < (w_columns_count / 2) + 1; h++) // h = [1-49]
+				{
+					/*AIM[phase_number][h][rows_counter] = cell.at(amp);
+					FIM[phase_number][h][rows_counter] = cell.at(pha);*/
+					insert_gap();
+				}
+				insert_gap();
+				ranger.reset();
 			}
 			else                                                // ODD SHEETS
 			{
-				CustomRangePairs ranger;
+				
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					//cout << "Row number: " << rows_counter << " || Harmonics number: " << h << endl;
-					//cout << h << " || " << amp << " , " << pha << " ||" << endl;
-					//cout << sheets_counter << " || " << phase_number << endl;
-					/*UM[0][h][rows_counter] = cell.at(amp);
-					FUM[0][h][rows_counter] = cell.at(pha);*/
+					cout << "Row number: " << rows_counter << endl;
+					cout << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
+					cout << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;
+					/*UM[phase_number][h][rows_counter] = cell.at(amp);
+					FUM[phase_number][h][rows_counter] = cell.at(pha);*/
+					insert_gap();
 				}
 				insert_gap();
 				ranger.reset();
