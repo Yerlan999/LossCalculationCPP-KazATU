@@ -51,42 +51,6 @@ int stringToInt(string s)
 	return toInt;
 }
 
-//  ласс дл€ составлени€ диапазона дл€ определенного присоединени€
-class ProsoedRowRange 
-{
-	// Raw for now. In progress
-public:
-	tuple<int, int> get_range(int which)
-	{
-		tuple <int, int> pris_range;
-
-		pris_range = make_tuple(10, 15);
-		return pris_range;
-	}
-};
-
-//                         CT        DB        CT        DB        CT        DB 
-string worksheet_names[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
-
-const int num_pris = 6;
-const int pris_num = 1; // 1 - only first, 2 - only second, 3 - only third, ... 0 - all of them
-int num_phases = 3; 
-int num_harms = 49; 
-int num_recs = 560; // number of recors (indexes) for one prisoed
-int titles_indexes[num_pris];
-int sheets_counter = 1;
-int titles_counter = 0;
-int rows_counter = 0;
-int phase_number;
-
-float UM[3][50][700];  float AIM[3][50][700];
-float FUM[3][50][700]; float FIM[3][50][700];
-
-float knsu[3][700]; float funu[3][700];
-float knsi[3][700]; float funi[3][700];
-float rmsu[3][700]; float fu[3][700];
-float rmsi[3][700]; float fi[3][700];
-
 
 class CustomRangePairs
 {
@@ -96,7 +60,7 @@ public:
 	tuple<int, int> get_range_pairs(int harm)
 	{
 		tuple <int, int> two_pairs;
-		
+
 		int phase = harm + difference;
 		int amplitude = phase++;
 
@@ -105,7 +69,7 @@ public:
 		return two_pairs;
 	}
 
-	void reset() 
+	void reset()
 	{
 		difference = -1;
 	}
@@ -121,7 +85,7 @@ public:
 	{
 		int phase_number = sheet_number + odd_difference;
 		odd_difference--;
-		return phase_number;	
+		return phase_number;
 	}
 
 	void reset()
@@ -130,6 +94,47 @@ public:
 	}
 };
 
+
+//  ласс дл€ составлени€ диапазона дл€ определенного присоединени€
+class ProsoedRowRange 
+{
+	// Raw for now. In progress
+public:
+	tuple<int, int> get_range(int which, int titles_indexes[], int num_pris)
+	{
+		// which = [1-6] if 6 prisoeds in system. 6 is included
+		tuple <int, int> pris_range;
+		int r_start = titles_indexes[which - 1] + 1;
+		int r_end = titles_indexes[which] - 1;
+		
+		if (which == num_pris) r_end++;
+		pris_range = make_tuple(r_start, r_end);
+		
+		return pris_range;
+	}
+};
+
+//                         CT        DB        CT        DB        CT        DB 
+string worksheet_names[6] = {"Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"};
+
+const int num_pris = 6; // total number of prisoeds in system
+const int pris_num = 1; // 1 - only first, 2 - only second, 3 - only third, .. to calculate
+int num_phases = 3; 
+int num_harms = 49; 
+int num_recs = 560; // number of recors (indexes) for one prisoed
+int titles_indexes[(num_pris+1)];
+int sheets_counter = 1;
+int titles_counter = 0;
+int rows_counter = 0;
+int phase_number;
+
+float UM[3][50][700];  float AIM[3][50][700];
+float FUM[3][50][700]; float FIM[3][50][700];
+
+float knsu[3][700]; float funu[3][700];
+float knsi[3][700]; float funi[3][700];
+float rmsu[3][700]; float fu[3][700];
+float rmsi[3][700]; float fi[3][700];
 
 
 int main() {
@@ -166,9 +171,15 @@ int main() {
 		}
 	}
 	titles_counter = 0;
+	titles_indexes[num_pris] = f_rows_count;
 
 	PhaseSheetsHandler phaser;
 	CustomRangePairs ranger;
+	ProsoedRowRange prisoeder;
+	
+	const auto [first, second] = prisoeder.get_range(pris_num, titles_indexes, num_pris);
+	cout << "Prisoed #" << pris_num << " || Range (" << first << ", " << second << ")" << endl;
+	
 
 	// —тади€ тестировани€
 	for (auto& worksheet_name : workbook.worksheetNames())
@@ -179,11 +190,11 @@ int main() {
 		int w_rows_count = worksheet.rowCount();
 		
 
-		insert_gap();
-		std::cout << "******************** " << worksheet_name << " ********************" << endl;
-		std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
-		std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
-		insert_gap();
+		//insert_gap();
+		//std::cout << "******************** " << worksheet_name << " ********************" << endl;
+		//std::cout << worksheet_name << "'s Columns count: " << w_columns_count << endl;
+		//std::cout << worksheet_name << "'s Rows count: " << w_rows_count << endl;
+		//insert_gap();
 
 		if (!(sheets_counter % 2 == 0)) { phase_number = phaser.get_phase_number(sheets_counter); }
 		else { phase_number = (sheets_counter - 2) / 2; };
@@ -192,16 +203,26 @@ int main() {
 		for (auto& row : worksheet.rows(2, 2)) // FOR EVERY ROW IN A SHEET
 		{
 			std::vector<XLCellValue> cell(row.values()); // select all cells on that row.
-
 			if (sheets_counter % 2 == 0)                        // EVEN SHEETS
 			{
-				for (int h = 1; h < (w_columns_count / 2) + 1; h++) // h = [1-49]
+				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2)))/2)+1; h++) // h = [1-49]
 				{
+					const auto [amp, pha] = ranger.get_range_pairs(h);
 					/*AIM[phase_number][h][rows_counter] = cell.at(amp);
 					FIM[phase_number][h][rows_counter] = cell.at(pha);*/
-					insert_gap();
+					//insert_gap();
 				}
-				insert_gap();
+				// Remaining (last) 8 columns. For Main Harmonic
+				/*knsu[phase_number][rows_counter] = cell.at(w_columns_count-8);
+				knsi[phase_number][rows_counter] = cell.at(w_columns_count-7);
+				rmsu[phase_number][rows_counter] = cell.at(w_columns_count-6);
+				rmsi[phase_number][rows_counter] = cell.at(w_columns_count-5);
+				funu[phase_number][rows_counter] = cell.at(w_columns_count-4);
+				funi[phase_number][rows_counter] = cell.at(w_columns_count-3);
+				fu[phase_number][rows_counter] = cell.at(w_columns_count-2);
+				fi[phase_number][rows_counter] = cell.at(w_columns_count-1);*/
+
+				//insert_gap();
 				ranger.reset();
 			}
 			else                                                // ODD SHEETS
@@ -210,14 +231,14 @@ int main() {
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					cout << "Row number: " << rows_counter << endl;
+					/*cout << "Row number: " << rows_counter << endl;
 					cout << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
-					cout << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;
+					cout << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;*/
 					/*UM[phase_number][h][rows_counter] = cell.at(amp);
 					FUM[phase_number][h][rows_counter] = cell.at(pha);*/
-					insert_gap();
+					//insert_gap();
 				}
-				insert_gap();
+				//insert_gap();
 				ranger.reset();
 			}
 			rows_counter++;
