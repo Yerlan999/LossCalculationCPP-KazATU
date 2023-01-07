@@ -131,13 +131,13 @@ int phase_number;
 
 
 // ћатрицы данных. ѕараметры режима
-float UM[3][50][700];  float AIM[3][50][700];
-float FUM[3][50][700]; float FIM[3][50][700];
+float UM[3][50][700] = {};  float AIM[3][50][700] = {};
+float FUM[3][50][700] = {}; float FIM[3][50][700] = {};
 
-float knsu[3][700]; float funu[3][700];
-float knsi[3][700]; float funi[3][700];
-float rmsu[3][700]; float fu[3][700];
-float rmsi[3][700]; float fi[3][700];
+float knsu[3][700] = {}; float funu[3][700] = {};
+float knsi[3][700] = {}; float funi[3][700] = {};
+float rmsu[3][700] = {}; float fu[3][700] = {};
+float rmsi[3][700] = {}; float fi[3][700] = {};
 
 
 int main() {
@@ -184,7 +184,6 @@ int main() {
 	
 	const auto [first, second] = prisoeder.get_range(pris_num, titles_indexes, num_pris);
 	
-
 	// —тади€ тестировани€
 	for (auto& worksheet_name : workbook.worksheetNames())
 	{
@@ -193,14 +192,14 @@ int main() {
 		int w_columns_count = worksheet.columnCount();
 		int w_rows_count = worksheet.rowCount();
 		
-
 		if (!(sheets_counter % 2 == 0)) { phase_number = phaser.get_phase_number(sheets_counter); }
 		else { phase_number = (sheets_counter - 2) / 2; };
 
 		// ¬ зависимости от рассчитываемого присоединени€...
 		for (auto& row : worksheet.rows(first, second)) // дл€ каждой строки данного присоединени€
 		{
-			std::vector<XLCellValue> cell(row.values()); // выбор всех €чеек в данной строке
+
+			std::deque<XLCellValue> cell(row.values()); // выбор всех €чеек в данной строке
 			
 			if (sheets_counter % 2 == 0)                        // „етные листы [Sheet2, Sheet4, Sheet6]
 			{
@@ -221,9 +220,8 @@ int main() {
 				//fu[phase_number][rows_counter] = float(cell.at(w_columns_count - 2));
 				//fi[phase_number][rows_counter] = float(cell.at(w_columns_count - 1));
 				
-				debug_file << "Phase number: " << phase_number << " Rows counter: " << rows_counter << " Last column index: " << w_columns_count - 1 << endl;
-				
-				debug_file << " " << endl;
+				/*debug_file << "Even sheet's last column values: " << cell.at(w_columns_count - 1) << endl;
+				debug_file << " " << endl;*/
 
 				ranger.reset();
 			}
@@ -233,8 +231,31 @@ int main() {
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					//UM[phase_number][h][rows_counter] = float(cell.at(amp));
-					//FUM[phase_number][h][rows_counter] = float(cell.at(pha));
+					
+					debug_file << "Row number: " << rows_counter << endl;
+					debug_file << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
+					debug_file << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;
+					debug_file << " " << endl;
+
+					debug_file << " *********** Before conversion *********** " << endl;
+					debug_file << "Amp cell value: " << cell.at(amp) << " || Type of: " << cell.at(amp).typeAsString() << endl;
+					debug_file << "Pha cell value: " << cell.at(pha) << " || Type of: " << cell.at(pha).typeAsString() << endl;
+					debug_file << " " << endl;
+					
+					// TESTING WITH POINTERS
+					debug_file << " *********** Memory seeking-out *********** " << endl;
+					debug_file << "Amp cell value address: " << &cell.at(amp) << " || Type of value address: " << typeid(&cell.at(amp)).name() << endl;
+					debug_file << "Pha cell value address: " << &cell.at(pha) << " || Type of value address: " << typeid(&cell.at(pha)).name() << endl;
+					debug_file << " " << endl;
+					// TESTING WITH POINTERS
+
+					debug_file << " *********** After conversion *********** " << endl;
+					debug_file << "Amp cell value: " << cell.at(amp).get<float>() << " || Type of: " << typeid(cell.at(amp).get<float>()).name() << endl;
+					debug_file << "Pha cell value: " << cell.at(pha).get<float>() << " || Type of: " << typeid(cell.at(pha).get<float>()).name() << endl;
+					debug_file << " " << endl;
+
+					//UM[phase_number][h][rows_counter] = (float)cell.at(amp).get<float>();
+					//FUM[phase_number][h][rows_counter] = (float)cell.at(pha).get<float>();
 				}
 				ranger.reset();
 			}
@@ -250,7 +271,7 @@ int main() {
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
-	debug_file << "Took to execute: "  << duration.count() << " seconds." << endl;
-	cout << "Execution has just finished!" << endl;
+	debug_file << "Took to execute: "  << duration.count() << " seconds." << std::endl;
+	std::cout << "Execution has just finished!" << std::endl;
 	return 0;
 }
