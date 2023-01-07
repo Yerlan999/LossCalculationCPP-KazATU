@@ -253,7 +253,13 @@ int main() {
 	}
 	phaser.reset();
 	sheets_counter = 1;
-
+	
+	// TESTING CREATED MATRICES
+	for (int i = 0; i < 560; i++)
+	{
+		debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+	}
+	
 	insert_end_separator();
 
 	auto stop = high_resolution_clock::now();
