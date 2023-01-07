@@ -307,6 +307,16 @@ fi = Фаза Основной Гармоники Тока
 
 //using Eigen::MatrixXcf;
 
+//debug_file << "Row number: " << rows_counter << endl;
+//debug_file << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
+//debug_file << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;
+//debug_file << " " << endl;
+
+//debug_file << " *********** Before conversion *********** " << endl;
+//debug_file << "Amp cell value: " << cell.at(amp) << " || Type of: " << cell.at(amp).typeAsString() << endl;
+//debug_file << "Pha cell value: " << cell.at(pha) << " || Type of: " << cell.at(pha).typeAsString() << endl;
+//debug_file << " " << endl;
+
 MatrixXcf my_matrix;
 my_matrix = MatrixXcf::Zero(3, 3);
 my_matrix(1, 2) = mycomplex;

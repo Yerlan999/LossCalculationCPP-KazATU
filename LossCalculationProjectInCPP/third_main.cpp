@@ -207,21 +207,29 @@ int main() {
 				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2)))/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-/*					AIM[phase_number][h][rows_counter] = float(cell.at(amp));
-					FIM[phase_number][h][rows_counter] = float(cell.at(pha));*/
+					try { AIM[phase_number][h][rows_counter] = cell.at(amp).get<float>(); }
+					catch (XLValueTypeError) { AIM[phase_number][h][rows_counter] = (float)cell.at(amp).get<int>(); }
+					try { FIM[phase_number][h][rows_counter] = cell.at(pha).get<float>(); }
+					catch (XLValueTypeError) { FIM[phase_number][h][rows_counter] = (float)cell.at(pha).get<int>(); }
 				}
-				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
-				//knsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 8));
-				//knsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 7));
-				//rmsu[phase_number][rows_counter] = float(cell.at(w_columns_count - 6));
-				//rmsi[phase_number][rows_counter] = float(cell.at(w_columns_count - 5));
-				//funu[phase_number][rows_counter] = float(cell.at(w_columns_count - 4));
-				//funi[phase_number][rows_counter] = float(cell.at(w_columns_count - 3));
-				//fu[phase_number][rows_counter] = float(cell.at(w_columns_count - 2));
-				//fi[phase_number][rows_counter] = float(cell.at(w_columns_count - 1));
 				
-				/*debug_file << "Even sheet's last column values: " << cell.at(w_columns_count - 1) << endl;
-				debug_file << " " << endl;*/
+				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
+				try { knsu[phase_number][rows_counter] = cell.at(w_columns_count - 8).get<float>(); }
+				catch (XLValueTypeError) { knsu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 8).get<int>(); }
+				try { knsi[phase_number][rows_counter] = cell.at(w_columns_count - 7).get<float>(); }
+				catch (XLValueTypeError) { knsi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 7).get<int>(); }
+				try { rmsu[phase_number][rows_counter] = cell.at(w_columns_count - 6).get<float>(); }
+				catch (XLValueTypeError) { rmsu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 6).get<int>(); }
+				try { rmsi[phase_number][rows_counter] = cell.at(w_columns_count - 5).get<float>(); }
+				catch (XLValueTypeError) { rmsi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 5).get<int>(); }
+				try { funu[phase_number][rows_counter] = cell.at(w_columns_count - 4).get<float>(); }
+				catch (XLValueTypeError) { funu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 4).get<int>(); }
+				try { funi[phase_number][rows_counter] = cell.at(w_columns_count - 3).get<float>(); }
+				catch (XLValueTypeError) { funi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 3).get<int>(); }
+				try { fu[phase_number][rows_counter] = cell.at(w_columns_count - 2).get<float>(); }
+				catch (XLValueTypeError) { fu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 2).get<int>(); }
+				try { fi[phase_number][rows_counter] = cell.at(w_columns_count - 1).get<float>(); }
+				catch (XLValueTypeError) { fi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 1).get<int>(); }
 
 				ranger.reset();
 			}
@@ -231,31 +239,10 @@ int main() {
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					
-					debug_file << "Row number: " << rows_counter << endl;
-					debug_file << "Harmonic number: " << h << " || Amp index: " << amp << " , Pha index: " << pha << " ||" << endl;
-					debug_file << "Sheet number: " << sheets_counter << " || Phase number: " << phase_number << endl;
-					debug_file << " " << endl;
-
-					debug_file << " *********** Before conversion *********** " << endl;
-					debug_file << "Amp cell value: " << cell.at(amp) << " || Type of: " << cell.at(amp).typeAsString() << endl;
-					debug_file << "Pha cell value: " << cell.at(pha) << " || Type of: " << cell.at(pha).typeAsString() << endl;
-					debug_file << " " << endl;
-					
-					// TESTING WITH POINTERS
-					debug_file << " *********** Memory seeking-out *********** " << endl;
-					debug_file << "Amp cell value address: " << &cell.at(amp) << " || Type of value address: " << typeid(&cell.at(amp)).name() << endl;
-					debug_file << "Pha cell value address: " << &cell.at(pha) << " || Type of value address: " << typeid(&cell.at(pha)).name() << endl;
-					debug_file << " " << endl;
-					// TESTING WITH POINTERS
-
-					debug_file << " *********** After conversion *********** " << endl;
-					debug_file << "Amp cell value: " << cell.at(amp).get<float>() << " || Type of: " << typeid(cell.at(amp).get<float>()).name() << endl;
-					debug_file << "Pha cell value: " << cell.at(pha).get<float>() << " || Type of: " << typeid(cell.at(pha).get<float>()).name() << endl;
-					debug_file << " " << endl;
-
-					//UM[phase_number][h][rows_counter] = (float)cell.at(amp).get<float>();
-					//FUM[phase_number][h][rows_counter] = (float)cell.at(pha).get<float>();
+					try{UM[phase_number][h][rows_counter] = cell.at(amp).get<float>();}
+					catch (XLValueTypeError){UM[phase_number][h][rows_counter] = (float)cell.at(amp).get<int>();}
+					try { FUM[phase_number][h][rows_counter] = cell.at(pha).get<float>(); }
+					catch (XLValueTypeError) { FUM[phase_number][h][rows_counter] = (float)cell.at(pha).get<int>(); }
 				}
 				ranger.reset();
 			}
