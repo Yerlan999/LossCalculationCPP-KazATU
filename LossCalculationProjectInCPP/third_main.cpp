@@ -129,16 +129,18 @@ int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
 
+enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e};
 
 // Матрицы данных. Параметры режима
 float UM[3][50][700] = {};  float AIM[3][50][700] = {};
 float FUM[3][50][700] = {}; float FIM[3][50][700] = {};
 
-float knsu[3][700] = {}; float funu[3][700] = {};
-float knsi[3][700] = {}; float funi[3][700] = {};
-float rmsu[3][700] = {}; float fu[3][700] = {};
-float rmsi[3][700] = {}; float fi[3][700] = {};
+//float knsu[3][700] = {}; float funu[3][700] = {};
+//float knsi[3][700] = {}; float funi[3][700] = {};
+//float rmsu[3][700] = {}; float fu[3][700] = {};
+//float rmsi[3][700] = {}; float fi[3][700] = {};
 
+float main_harm[8][3][700] = {};
 
 int main() {
 	
@@ -184,7 +186,7 @@ int main() {
 	
 	const auto [first, second] = prisoeder.get_range(pris_num, titles_indexes, num_pris);
 	
-	// Стадия тестирования
+	// Чтение EXCEL файла и запись полученных данных
 	for (auto& worksheet_name : workbook.worksheetNames())
 	{
 		// Для каждго листа в документе ... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
@@ -203,7 +205,7 @@ int main() {
 			
 			if (sheets_counter % 2 == 0)                        // Четные листы [Sheet2, Sheet4, Sheet6]
 			{
-
+				// Амплитуды и фазы для Тока
 				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2)))/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
@@ -214,28 +216,17 @@ int main() {
 				}
 				
 				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
-				try { knsu[phase_number][rows_counter] = cell.at(w_columns_count - 8).get<float>(); }
-				catch (XLValueTypeError) { knsu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 8).get<int>(); }
-				try { knsi[phase_number][rows_counter] = cell.at(w_columns_count - 7).get<float>(); }
-				catch (XLValueTypeError) { knsi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 7).get<int>(); }
-				try { rmsu[phase_number][rows_counter] = cell.at(w_columns_count - 6).get<float>(); }
-				catch (XLValueTypeError) { rmsu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 6).get<int>(); }
-				try { rmsi[phase_number][rows_counter] = cell.at(w_columns_count - 5).get<float>(); }
-				catch (XLValueTypeError) { rmsi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 5).get<int>(); }
-				try { funu[phase_number][rows_counter] = cell.at(w_columns_count - 4).get<float>(); }
-				catch (XLValueTypeError) { funu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 4).get<int>(); }
-				try { funi[phase_number][rows_counter] = cell.at(w_columns_count - 3).get<float>(); }
-				catch (XLValueTypeError) { funi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 3).get<int>(); }
-				try { fu[phase_number][rows_counter] = cell.at(w_columns_count - 2).get<float>(); }
-				catch (XLValueTypeError) { fu[phase_number][rows_counter] = (float)cell.at(w_columns_count - 2).get<int>(); }
-				try { fi[phase_number][rows_counter] = cell.at(w_columns_count - 1).get<float>(); }
-				catch (XLValueTypeError) { fi[phase_number][rows_counter] = (float)cell.at(w_columns_count - 1).get<int>(); }
+				for (int i = 0; i < w_columns_count - (num_harms * 2); i++)
+				{
+					try { main_harm[i][phase_number][rows_counter] = cell.at(num_harms * 2 + i).get<float>(); }
+					catch (XLValueTypeError) { main_harm[i][phase_number][rows_counter] = (float)cell.at(num_harms * 2 + i).get<int>(); }
+				}
 
 				ranger.reset();
 			}
 			else                                                // Нечетные листы [Sheet1, Sheet3, Sheet5]
 			{
-				
+				// Амплитуды и фазы для Напряжения 
 				for (int h = 1; h < (w_columns_count/2)+1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
@@ -255,11 +246,32 @@ int main() {
 	sheets_counter = 1;
 	
 	// TESTING CREATED MATRICES
+	int phase = 0;
+	main_harm_enum knsu, knsi, rmsu, rmsi, funu, funi, fu, fi;
+	knsu = knsu_e; 
+	knsi = knsi_e; 
+	rmsu = rmsu_e; 
+	rmsi = rmsi_e; 
+	funu = funu_e; 
+	funi = funi_e;
+	fu = fu_e;
+	fi = fi_e;
+
 	for (int i = 0; i < 560; i++)
 	{
-		debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+		//debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+		debug_file << main_harm[knsu][phase][i] << " || " 
+				   << main_harm[knsi][phase][i] << " || " 
+		       	   << main_harm[rmsu][phase][i] << " || " 
+			       << main_harm[rmsi][phase][i] << " || " 
+			       << main_harm[funu][phase][i] << " || " 
+			       << main_harm[funi][phase][i] << " || " 
+			       << main_harm[fu][phase][i] << " || " 
+			       << main_harm[fi][phase][i] << " || " << endl;
+
 	}
-	
+	// TESTING CREATED MATRICES
+
 	insert_end_separator();
 
 	auto stop = high_resolution_clock::now();

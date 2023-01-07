@@ -143,108 +143,6 @@ COMPLEX name*size_in_bytes - переменная
 Цикловой отчет на Фортране начинается с 1 (единцы)!!!
 
 
-*** My Snippets for C++ ***
-
-Chekc Type of Variable = typeid(var).name()
-                        OR call_value.typeAsString()
-
-How OpenXLSX library reads sheets of excel file
-1) ---->
-2) ---->
-3) and so on. Every row-wise and cell-wise of every row.
-The variable-arrays UM, FUM, AIM, FIM are of shape (700, 50, 3) = (records, harmonics, phase)
-
-
-Hint: int marr[10][10] = {}; 2-dim array filled with zeros
-
-
-complex<float> matrix[3][50][560] = {};
-               matrix[фазы][гармоники][кол.измерен] !!! Наоборот
-
-
-WorkSheet.rows(first, last);
-WorkSheet.rows(last);
-WorkSheet.rows();
-
-debug_file << value.typeAsString() << " | " << value << endl;
-
-
-int num_pris = 6;
-int pris_num = 1; // 1 - only first, 2 - only second, 3 - only third, ... 0 - all of them
-int num_phases = 3; num_phases--;
-int num_harms = 49; num_harms--;
-int num_recs = 560; num_recs--; // number of recors (indexes) for one prisoed
-int titles_indexes[num_pris];
-int sheets_counter = 1;
-int titles_counter = 0;
-
-XLDocument doc;
-doc.open("./Promzona.xlsx");
-auto workbook = doc.workbook();
-auto check_worksheet = workbook.worksheet(workbook.worksheetNames()[0]);
-
-int worksheets_count = doc.workbook().worksheetCount();
-int columns_count = check_worksheet.columnCount();
-int rows_count = check_worksheet.rowCount();
-
-// Checking the gaps over the test_(first)_sheet
-for (auto& row : check_worksheet.rows()) {
-
-    auto cell_range = row.cells(1, 1);
-    for (auto& cell_value: cell_range)
-    {
-        bool is_title = cell_value.value().typeAsString() == "string";
-        std::debug_file << is_title << endl;
-        if (is_title)
-        {
-            titles_indexes[titles_counter] = cell_value.cellReference().row();
-        }
-        titles_counter++;
-    }
-
-}
-titles_counter = 0;
-
-
-for (auto& worksheet_name : workbook.worksheetNames())
-{
-    // for every SHEET... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
-    auto worksheet = workbook.worksheet(worksheet_name);
-
-    for (auto& row : worksheet.rows(!!! based on prisoed option !!!))
-    {
-        if (sheets_counter % 2 == 0) // EVEN SHEETS
-        {
-            // for every ROW in EVEN SHEET... [ amplitude1, phase1 || amplitude2, phase2 || amplitude3, phase3 ... OTHER 8 PARAMS]
-            for (auto& value : std::deque<XLCellValue>(row.values()))
-            {
-                // for every 106 VALUES in ROW...
-
-            }
-        }
-        else  // ODD SHEETS
-        {
-            // for every ROW in ODD SHEET... [ amplitude1, phase1 || amplitude2, phase2 || amplitude3, phase3 ...]
-            for (auto& value : std::deque<XLCellValue>(row.values()))
-            {
-                // for every 98 VALUES in ROW...
-
-            }
-        }
-    }
-    sheets_counter++;
-}
-sheets_counter = 1;
-
-
-
-
-in Sheets 1, 3, 5:
-    UM, FUM [49 times]
-in Sheets 2, 4, 6:
-    AIM, FIM [49 times] ... knsu, knsi, rmsu, rmsi, funu, funi, fu, fi
-
-
 *** Объяснение (пояснение) самого Кода на Фортране 77? ***
 
 1) Подключение библиотеки(модуля) MSIMSL
@@ -294,6 +192,30 @@ fi = Фаза Основной Гармоники Тока
 
 
 *** Здесь происходит разбор отдельных частей кода на Фортран ***
+
+Chekc Type of Variable = typeid(var).name()
+                        OR call_value.typeAsString()
+
+
+Hint: int marr[10][10] = {}; 2-dim array filled with zeros
+
+
+complex<float> matrix[3][50][560] = {};
+               matrix[фазы][гармоники][кол.измерен] !!! Наоборот
+
+
+WorkSheet.rows(first, last);
+WorkSheet.rows(last);
+WorkSheet.rows();
+
+debug_file << value.typeAsString() << " | " << value << endl;
+
+
+
+in Sheets 1, 3, 5:
+    UM, FUM [49 times]
+in Sheets 2, 4, 6:
+    AIM, FIM [49 times] ... knsu, knsi, rmsu, rmsi, funu, funi, fu, fi
 
 
 
@@ -361,35 +283,6 @@ for (auto& cell_value : row.cells())
 6 [5] 2809 +1
   [ ] rows_count <- append(last_row_number)
 
-
-
-
-
-
-
-
-****************************************************** # PseudoCode # ******************************************************
-sheets_counter = 1
-rows_counter = 0
-cols_counter = 1
-
-for worksheet in worksheets: for every sheet
-    column_count = worksheet.columndebug_file()
-    row_count = worksheet.rowCount()
-    for row in worksheet.rows(): for every row
-
-        if (sheets_counter % 2 == 0): for even sheets = [2,4,6]
-            for cell_value in row.cells(all):
-
-        else:                         for odd sheets = [1,3,5]
-            for cell_value in row.cells(all):
-
-    sheets_counter++
-
-sheets_counter = 1
-
-
-
 debug_file << index << " || " << amp << " , " << pha << " ||" << endl;
 
 insert_gap();
@@ -430,3 +323,52 @@ funu[phase_number][rows_counter] = float(cell.at(w_columns_count-4));
 funi[phase_number][rows_counter] = float(cell.at(w_columns_count-3));
 fu[phase_number][rows_counter] = float(cell.at(w_columns_count-2));
 fi[phase_number][rows_counter] = float(cell.at(w_columns_count-1));
+
+int phase = 0;
+debug_file << knsu[phase][i] << " | " << knsi[phase][i] << " | " << rmsu[phase][i] << " | " << rmsi[phase][i] << " | " << funu[phase][i] << " | " << funi[phase][i] << " | " << fu[phase][i] << " | " << fi[phase][i] << endl;
+//debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+
+
+// TESTING CREATED MATRICES
+int phase = 0;
+for (int i = 0; i < 560; i++)
+{
+    //debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+    debug_file << knsu[phase][i] << " | " << knsi[phase][i] << " | " << rmsu[phase][i] << " | " << rmsi[phase][i] << " | " << funu[phase][i] << " | " << funi[phase][i] << " | " << fu[phase][i] << " | " << fi[phase][i] << endl;
+
+}
+
+
+for (int i = 0; i < w_columns_count-(num_harms * 2); i++)
+{
+    try { main_harm[i][phase_number][rows_counter] = cell.at(num_harms*2 + i).get<float>(); }
+    catch (XLValueTypeError) { main_harm[i][phase_number][rows_counter] = (float)cell.at(num_harms*2 + i).get<int>(); }
+}
+
+
+// TESTING CREATED MATRICES
+int phase = 0;
+main_harm_enum knsu, knsi, rmsu, rmsi, funu, funi, fu, fi;
+knsu = knsu_e;
+knsi = knsi_e;
+rmsu = rmsu_e;
+rmsi = rmsi_e;
+funu = funu_e;
+funi = funi_e;
+fu = fu_e;
+fi = fi_e;
+
+for (int i = 0; i < 560; i++)
+{
+    //debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
+    debug_file << main_harm[knsu][phase][i] << " || "
+               << main_harm[knsi][phase][i] << " || "
+               << main_harm[rmsu][phase][i] << " || "
+               << main_harm[rmsi][phase][i] << " || "
+               << main_harm[funu][phase][i] << " || "
+               << main_harm[funi][phase][i] << " || "
+               << main_harm[fu][phase][i] << " || "
+               << main_harm[fi][phase][i] << " || " << endl;
+
+}
+// TESTING CREATED MATRICES
