@@ -154,15 +154,15 @@ COMPLEX name*size_in_bytes - переменная
 
 *** Трейсер переменных на Фортране ***
 
-NN1 = 1
-N1 = 560 // количество измерении в Excel файле
+NN1 = 1 = pris_num
+N1 = 560 = num_recs // количество измерении в Excel файле
 N3 = N1
 AAH = "Промзона       "
 BBH = "ПЗ-Пог1      "
 N2 = 1
-K1 = 50
+K1 = 50 = num_harms
 K2 = 1
-K3 = 50
+K3 = 50 = num_harms
 pi=3.14159265358979
 AL = complex(-0.5, 0.866025)
 FF=50
@@ -368,7 +368,17 @@ for (int i = 0; i < 560; i++)
                << main_harm[funu][phase][i] << " || "
                << main_harm[funi][phase][i] << " || "
                << main_harm[fu][phase][i] << " || "
-               << main_harm[fi][phase][i] << " || " << endl;
+               << main_harm[fi][phase][i] << endl;
 
 }
 // TESTING CREATED MATRICES
+
+int MM = 5; int MPR = 3; int MTR = 1; float DT = 2.5; int MT = 5;
+
+
+
+
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+C   PRINT *,AIXM(I)
+C   WRITE(777,*)AIX(I)
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
