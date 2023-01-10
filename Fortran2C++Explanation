@@ -346,39 +346,56 @@ for (int i = 0; i < w_columns_count-(num_harms * 2); i++)
 }
 
 
+
+
+// ****************************************************** # DEBUGGING # ******************************************************
+
 // TESTING CREATED MATRICES
 int phase = 0;
-main_harm_enum knsu, knsi, rmsu, rmsi, funu, funi, fu, fi;
-knsu = knsu_e;
-knsi = knsi_e;
-rmsu = rmsu_e;
-rmsi = rmsi_e;
-funu = funu_e;
-funi = funi_e;
-fu = fu_e;
-fi = fi_e;
-
 for (int i = 0; i < 560; i++)
 {
     //debug_file << "Value of row (" << i+2 << "): " << UM[0][1][i] << endl;
-    debug_file << main_harm[knsu][phase][i] << " || "
-               << main_harm[knsi][phase][i] << " || "
-               << main_harm[rmsu][phase][i] << " || "
-               << main_harm[rmsi][phase][i] << " || "
-               << main_harm[funu][phase][i] << " || "
-               << main_harm[funi][phase][i] << " || "
-               << main_harm[fu][phase][i] << " || "
-               << main_harm[fi][phase][i] << endl;
+    debug_file << main_harm[0][phase][i] << " || "
+        << main_harm[1][phase][i] << " || "
+        << main_harm[2][phase][i] << " || "
+        << main_harm[3][phase][i] << " || "
+        << main_harm[4][phase][i] << " || "
+        << main_harm[5][phase][i] << " || "
+        << main_harm[6][phase][i] << " || "
+        << main_harm[7][phase][i] << endl;
 
 }
+
+insert_end_separator();
+
+auto degub_stop = high_resolution_clock::now();
+auto debug_duration = duration_cast<seconds>(degub_stop - start);
+debug_file << "Took to execute: " << debug_duration.count() << " seconds." << std::endl;
+std::cout << "Execution has just finished!" << std::endl;
+
+return 0;
 // TESTING CREATED MATRICES
+
+// ****************************************************** # DEBUGGING # ******************************************************
+
+
+
 
 int MM = 5; int MPR = 3; int MTR = 1; float DT = 2.5; int MT = 5;
 
 
-
+std::complex<float> test = std::complex<float>(10.0, 2.0);
+cout << test << endl;
+return 0;
 
 C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 C   PRINT *,AIXM(I)
 C   WRITE(777,*)AIX(I)
 C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+Keep in mind: K = [1-50], N = [1-560] in FORTRAN
+
+            Matrix[700][50][3] in FORTRAN
+            Matrix[3][50][700] in C++
+

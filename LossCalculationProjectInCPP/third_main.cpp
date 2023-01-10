@@ -6,14 +6,14 @@
 #include <tuple>
 #include <cmath>
 #include <complex>
-#include <Eigen/Dense>
+//#include <Eigen/Dense>
 #include <OpenXLSX.hpp>
 
 using namespace std;
 using namespace std::chrono;
 
 using namespace OpenXLSX;
-using namespace Eigen;
+//using namespace Eigen;
 
 std::ofstream debug_file;
 
@@ -132,46 +132,50 @@ int rows_counter = 0;
 int phase_number;
 
 // Матрицы данных. Параметры режима
-float UM[3][50][700] = {};  float AIM[3][50][700] = {};
-float FUM[3][50][700] = {}; float FIM[3][50][700] = {};
+double UM[3][50][700] = {};  double AIM[3][50][700] = {};
+double FUM[3][50][700] = {}; double FIM[3][50][700] = {};
 
-float UM1[3][50][700] = {}; float UM2[3][50][700] = {};
-float AIM1[3][50][700] = {}; float AIM2[3][50][700] = {};
+double UM1[3][50][700] = {}; double UM2[3][50][700] = {};
+double AIM1[3][50][700] = {}; double AIM2[3][50][700] = {};
 
-float PPR1[700] = {}; float PPR2[700] = {};
+double PPR1[700] = {}; double PPR2[700] = {};
 
-float PD[3][700] = {}; float PPP[50][1000] = {};
-float PPP1[50][1000] = {}; float PPP5[50][1000] = {};
-float PPP2[50][1000] = {}; float PPP6[50][1000] = {};
-float PPP3[50][1000] = {}; float PPP7[50][1000] = {};
-float PPP4[50][1000] = {}; float PPP8[50][1000] = {};
+double PD[3][700] = {}; double PPP[50][1000] = {};
+double PPP1[50][1000] = {}; double PPP5[50][1000] = {};
+double PPP2[50][1000] = {}; double PPP6[50][1000] = {};
+double PPP3[50][1000] = {}; double PPP7[50][1000] = {};
+double PPP4[50][1000] = {}; double PPP8[50][1000] = {};
 
-float WD[2][50] = {}; float II[10] = {};
+double WD[2][50] = {}; double II[10] = {};
 
 enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e };
-float main_harm[8][3][700] = {};
+double main_harm[8][3][700] = {};
 
 
 // Данные о зазмемлении линии
 int ground_config[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-std::complex<float> UK1[8] = {}; std::complex<float> AIK1[8] = {};
+std::complex<double> UK1[8] = {}; std::complex<double> AIK1[8] = {};
 
-std::complex<float> UK10(0, 0); std::complex<float> AIK10(0, 0);
-std::complex<float> UK11(0, 0); std::complex<float> AIK11(0, 0);
-std::complex<float> UK12(0, 0); std::complex<float> AIK12(0, 0);
-std::complex<float> AL(-0.5, 0.866025);
+std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
+std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
+std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
+std::complex<double> AL(-0.5, 0.866025);
 
-float PI = 3.14159265358979f;
+double PI = 3.14159265358979f;
 
-float RZ = 35.3;
-float FF, SS2, SS0, PP1, PP2, RPR, PRP, WD0;
+double RZ = 35.3;
+double FF, SS2, SS0, PP1, PP2, RPR, PRP, WD0;
 
 // Общие переменной для расчетной функции! [MM, M, M1, MT, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR, MTR, MMT]
 // Данные о конфигурации опор
-int MM = 5, M, M1, MT = 5, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR = 3, MTR = 1, MMT;
-float DT = 2.5;
+int M, M1,  M10, M20, PR, K1, K2, K3, N1, N2, N3, MMT;
 
+int MM = 5;
+int MPR = 3;
+int MTR = 1; 
+float DT = 2.5;
+int MT = 5;
 
 // Расчетная функция программы!
 void raschet()
@@ -181,7 +185,7 @@ void raschet()
 
 // Главная функция запуска программы!
 int main() {
-
+	
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
@@ -248,17 +252,17 @@ int main() {
 				for (int h = 1; h < ((w_columns_count - (w_columns_count - (num_harms * 2))) / 2) + 1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					try { AIM[phase_number][h][rows_counter] = cell.at(amp).get<float>(); }
-					catch (XLValueTypeError) { AIM[phase_number][h][rows_counter] = (float)cell.at(amp).get<int>(); }
-					try { FIM[phase_number][h][rows_counter] = cell.at(pha).get<float>(); }
-					catch (XLValueTypeError) { FIM[phase_number][h][rows_counter] = (float)cell.at(pha).get<int>(); }
+					try { AIM[phase_number][h][rows_counter] = cell.at(amp).get<double>(); }
+					catch (XLValueTypeError) { AIM[phase_number][h][rows_counter] = (double)cell.at(amp).get<int>(); }
+					try { FIM[phase_number][h][rows_counter] = cell.at(pha).get<double>(); }
+					catch (XLValueTypeError) { FIM[phase_number][h][rows_counter] = (double)cell.at(pha).get<int>(); }
 				}
 
 				// Оставшиеся (последние) 8 столбцов. Данные Основной Гармоники
 				for (int i = 0; i < w_columns_count - (num_harms * 2); i++)
 				{
-					try { main_harm[i][phase_number][rows_counter] = cell.at(num_harms * 2 + i).get<float>(); }
-					catch (XLValueTypeError) { main_harm[i][phase_number][rows_counter] = (float)cell.at(num_harms * 2 + i).get<int>(); }
+					try { main_harm[i][phase_number][rows_counter] = cell.at(num_harms * 2 + i).get<double>(); }
+					catch (XLValueTypeError) { main_harm[i][phase_number][rows_counter] = (double)cell.at(num_harms * 2 + i).get<int>(); }
 				}
 
 				ranger.reset();
@@ -269,10 +273,10 @@ int main() {
 				for (int h = 1; h < (w_columns_count / 2) + 1; h++) // h = [1-49]
 				{
 					const auto [amp, pha] = ranger.get_range_pairs(h);
-					try { UM[phase_number][h][rows_counter] = cell.at(amp).get<float>(); }
-					catch (XLValueTypeError) { UM[phase_number][h][rows_counter] = (float)cell.at(amp).get<int>(); }
-					try { FUM[phase_number][h][rows_counter] = cell.at(pha).get<float>(); }
-					catch (XLValueTypeError) { FUM[phase_number][h][rows_counter] = (float)cell.at(pha).get<int>(); }
+					try { UM[phase_number][h][rows_counter] = cell.at(amp).get<double>(); }
+					catch (XLValueTypeError) { UM[phase_number][h][rows_counter] = (double)cell.at(amp).get<int>(); }
+					try { FUM[phase_number][h][rows_counter] = cell.at(pha).get<double>(); }
+					catch (XLValueTypeError) { FUM[phase_number][h][rows_counter] = (double)cell.at(pha).get<int>(); }
 				}
 				ranger.reset();
 			}
@@ -283,7 +287,6 @@ int main() {
 	}
 	phaser.reset();
 	sheets_counter = 1;
-
 
 	// Листы EXCEL файла прочитаны. Предварительные матрицы составлены.
 	// Проведение расчетов!
@@ -344,6 +347,57 @@ int main() {
 			}
 		}
 	}
+	
+	M = MPR + MTR;
+	MMT = MM / MT;
+	
+	if (M <= 6) M1 = M;
+	if (M > 6) M1 = 6;
+
+	M10 = 2 * M;
+	M20 = 4 * M;
+
+	// Цикл 1500. Главный!
+	for (int n = 0; n < num_recs; n++) 
+	{
+		for (int k = 0; k < num_harms; k++)
+		{
+			PR = 0;
+		label_1700:
+			PR = PR + 1;
+			// to be continued...
+			UK1[0] = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
+			UK1[1] = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
+			UK1[2] = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
+			UK1[3] = std::complex<double>(0.0, 0.0);
+			AIK1[0] = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
+			AIK1[1] = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
+			AIK1[2] = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
+			AIK1[3] = std::complex<double>(0.0, 0.0);
+
+			if (k > 1) goto label_1111;
+			if (k == 1 && PR == 2) goto label_1111;
+			UK10 = (UK1[0] + UK1[1] + UK1[2]) / (double)3;
+			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2)) / (double)3;
+			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2) + UK1[2] * AL) / (double)3;
+			//double SKU2 = sqrt(std::pow(real(UK12), 2) + std::pow(imag(UK12), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			//double SKU0 = sqrt(std::pow(real(UK10), 2) + std::pow(imag(UK10), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			UK1[0] = UK11;
+			UK1[1] = UK11 * std::pow(AL, 2);
+			UK1[2] = UK11 * AL;
+			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / (double)3;
+			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2)) / (double)3;
+			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2) + AIK1[2] * AL) / (double)3;
+			//double SKI2 = sqrt(std::pow(real(AIK12), 2) + std::pow(imag(AIK12), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			//double SKI0 = sqrt(std::pow(real(AIK10), 2) + std::pow(imag(AIK10), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			AIK1[0] = AIK11;
+			AIK1[1] = AIK11 * std::pow(AL, 2);
+			AIK1[2] = AIK11 * AL;
+		label_1111:
+			raschet();
+		}
+	}
+
 
 
 	insert_end_separator();

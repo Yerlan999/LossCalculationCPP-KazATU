@@ -46,7 +46,7 @@ C**************************************************************
 	OPEN(unit=103,file='3.3.ÔÀÇÀ Ñ')
 	OPEN(unit=133,file='3.3.ÔÀÇÀ Ñ (ïðîäîëæåíèå)')
 
-	OPEN(unit=777,file='debug.txt')
+	OPEN(unit=777,file='debug_output')
 
 	READ(4,333) NN1
 	READ(4,335)
@@ -168,10 +168,6 @@ C	PRINT *,2**2/(4*4)
    11	FORMAT(80x)
 
 
-
-
-
-
 	DO 13 I=1,N1
 	DO 13 L=1,3
 	UM(I,1,L)=FUNU(I,L)*SQRT(2.)
@@ -201,6 +197,13 @@ C	PRINT *,2**2/(4*4)
 	FIM(I,K,L)=FIM(I,K,L)*PI/180.
 	AIM1(I,K,L)=AIM(I,K,L)*COS(FIM(I,K,L))
 	AIM2(I,K,L)=AIM(I,K,L)*SIN(FIM(I,K,L))
+
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+C   PRINT *,AIXM(I)
+	DO 789 B=1,560
+	WRITE(777,*) AIM(B,1,1)
+789   CONTINUE
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
   117	CONTINUE
@@ -495,7 +498,7 @@ C=================================================================
   740 CONTINUE
 	DO 743 I=1,M
 	DO 743 J=1,M
-	HC1(I,J)=41.4*10.**6*DLOG10(HC(I,J)/D(I,J))
+		HC1(I,J)=41.4*10.**6*DLOG10(HC(I,J)/D(I,J))
   743	CONTINUE
 	CALL DLINRG(M,HC1,M,HC3,M)
 	CALL DMRRRR(M,M,HC1,M,M,M,HC3,M,M,M,F10,M)
