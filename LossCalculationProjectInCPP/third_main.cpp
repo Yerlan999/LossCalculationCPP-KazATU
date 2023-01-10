@@ -162,10 +162,12 @@ std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
+double SKU0, SKU2, SKI0, SKI2;
+
 double PI = 3.14159265358979f;
 
 double RZ = 35.3;
-double FF, SS2, SS0, PP1, PP2, RPR, PRP, WD0;
+double FF, SS2, SS0, SS1, PP1, PP2, RPR, PRP, WD0, WD1, WD4, WD10;
 
 // Общие переменной для расчетной функции! [MM, M, M1, MT, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR, MTR, MMT]
 // Данные о конфигурации опор
@@ -362,14 +364,16 @@ int main() {
 	{
 		for (int k = 0; k < num_harms; k++)
 		{
+		//label_1500:
 			PR = 0;
 		label_1700:
 			PR = PR + 1;
-			// to be continued...
+			
 			UK1[0] = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
 			UK1[1] = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
 			UK1[2] = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
 			UK1[3] = std::complex<double>(0.0, 0.0);
+			
 			AIK1[0] = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
 			AIK1[1] = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
 			AIK1[2] = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
@@ -377,27 +381,112 @@ int main() {
 
 			if (k > 1) goto label_1111;
 			if (k == 1 && PR == 2) goto label_1111;
+			
 			UK10 = (UK1[0] + UK1[1] + UK1[2]) / (double)3;
 			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2)) / (double)3;
 			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2) + UK1[2] * AL) / (double)3;
-			//double SKU2 = sqrt(std::pow(real(UK12), 2) + std::pow(imag(UK12), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
-			//double SKU0 = sqrt(std::pow(real(UK10), 2) + std::pow(imag(UK10), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			
+			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+			SKU2 = sqrt(std::pow(real(UK12), 2) + std::pow(imag(UK12), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			SKU0 = sqrt(std::pow(real(UK10), 2) + std::pow(imag(UK10), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			
 			UK1[0] = UK11;
 			UK1[1] = UK11 * std::pow(AL, 2);
 			UK1[2] = UK11 * AL;
+			
 			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / (double)3;
 			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2)) / (double)3;
 			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2) + AIK1[2] * AL) / (double)3;
-			//double SKI2 = sqrt(std::pow(real(AIK12), 2) + std::pow(imag(AIK12), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
-			//double SKI0 = sqrt(std::pow(real(AIK10), 2) + std::pow(imag(AIK10), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			
+			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+			SKI2 = sqrt(std::pow(real(AIK12), 2) + std::pow(imag(AIK12), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			SKI0 = sqrt(std::pow(real(AIK10), 2) + std::pow(imag(AIK10), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			
 			AIK1[0] = AIK11;
 			AIK1[1] = AIK11 * std::pow(AL, 2);
 			AIK1[2] = AIK11 * AL;
+		
 		label_1111:
+			
+			// Вызов расчетной функции!
 			raschet();
+			
+			if (k == 1 && PR == 1) PPR1[n] = PP1;
+			if (k == 1 && PR == 2) PPR2[n] = PP2;
+			if (k == 1 && PR == 1) goto label_1700;
+			if (PR == 2) continue; //goto label_1500;
 		}
 	}
 
+
+	// Цикл 1501.
+	for (int r = 0; r < num_recs; r++) {
+		PRP = 0;
+		// Цикл 1060.
+		for (int h = 0; h < num_harms; h++) {
+			PRP = PRP + PPP[h][r];
+		}
+		RPR = 0;
+		// Цикл 1061.
+		for (int h = 0; h < num_harms; h++) {
+			RPR = RPR + PPP[h][r];
+		}
+		SS1 = (PPP[0][r] / PPR1[r] - 1) * 100;
+		SS2 = (RPR / PPR1[r]) * 100;
+		SS0 = PPP[0][r] - PPR1[r];
+		
+		// Запись данных из переменных PPP, PPP1, PPP2 .... PPP8
+		// в соответствующие файлы. (Пропущенно намеренно!)
+	}
+
+
+	WD0 = 0;
+	// Цикл 1052.
+	for (int h = 0; h < num_harms; h++) {
+		WD[0][h] = 0;
+		for (int r = 0; r < num_recs; r++) {
+			WD0 = WD0 + PPP[h][r] * DT / 60000;
+			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000;
+		}
+	}
+
+	WD1 = WD0 - WD[0][0];
+	// Цикл 1053.
+	for (int h = 0; h < num_harms; h++) {
+		WD[1][h] = WD[0][h] / WD0 * 100;
+	}
+
+	WD4 = 0;
+	// Цикл 1056.
+	for (int h = 13; h < num_harms; h++) {
+		WD4 = WD4 + WD[1][h];
+	}
+
+	WD10 = 0;
+	// Цикл 1057.
+	for (int r = 0; r < num_recs; r++) {
+		WD10 = WD10 + PPR1[r] * DT / 60000;
+	}
+
+	// Цикл 1054.
+	for (int r = 0; r < num_recs; r++) {
+		PD[0][r] = 0;
+		PD[1][r] = 0;
+		// Цикл 1058.
+		for (int h = 0; h < num_harms; h++) {
+			PD[0][r] = PD[0][r] + PPP[h][r];
+		}
+		PD[1][r] = PD[0][r] - PPP[0][r];
+		PD[2][r] = PD[1][r] / PD[0][r] * 100;
+	}
+
+	// Вывод предварительных значении результатов расчета!
+	// Запись результатов в файл "Результаты расчета" (Пропущенно намеренно!)
+	
+	//                                            ПОТЕРИ:	
+	
+	//           Всего        Основная гармоника       Методика    На высших гармониках  Прочие потери 
+	debug_file << WD0 << " || " << WD[0][0] << " || " << WD10 << " || " << WD1 << " || " << WD4 << endl;
 
 
 	insert_end_separator();
