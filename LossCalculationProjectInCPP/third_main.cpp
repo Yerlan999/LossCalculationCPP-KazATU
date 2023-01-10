@@ -122,9 +122,10 @@ public:
 // Объявление основных переменных системы
 const int num_pris = 6; // Общее количество присоединении в системе подстанции 
 const int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
-int num_phases = 3; 
-int num_harms = 49; 
-int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
+const int num_phases = 3;
+const int num_tross = 1;
+const int num_harms = 49;
+const int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
 int titles_indexes[(num_pris+1)];
 int sheets_counter = 1;
 int titles_counter = 0;
@@ -164,7 +165,7 @@ std::complex<double> AL(-0.5, 0.866025);
 
 double SKU0, SKU2, SKI0, SKI2;
 
-double PI = 3.14159265358979f;
+const  double PI = 3.14159265358979f;
 
 double RZ = 35.3;
 double FF, SS2, SS0, SS1, PP1, PP2, RPR, PRP, WD0, WD1, WD4, WD10;
@@ -179,10 +180,18 @@ int MTR = 1;
 float DT = 2.5;
 int MT = 5;
 
+// Массивы параметров фаз и тросса линии 
+float XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
+float YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
+float OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
+float GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
+float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
+
+
 // Расчетная функция программы!
 void raschet()
 {
-
+	// declare the variables first...
 }
 
 // Главная функция запуска программы!
@@ -359,7 +368,7 @@ int main() {
 	M10 = 2 * M;
 	M20 = 4 * M;
 
-	// Цикл 1500. Главный!
+	// Цикл #1500. Главный!
 	for (int n = 0; n < num_recs; n++) 
 	{
 		for (int k = 0; k < num_harms; k++)
@@ -419,15 +428,15 @@ int main() {
 	}
 
 
-	// Цикл 1501.
+	// Цикл #1501.
 	for (int r = 0; r < num_recs; r++) {
 		PRP = 0;
-		// Цикл 1060.
+		// Цикл #1060.
 		for (int h = 0; h < num_harms; h++) {
 			PRP = PRP + PPP[h][r];
 		}
 		RPR = 0;
-		// Цикл 1061.
+		// Цикл #1061.
 		for (int h = 0; h < num_harms; h++) {
 			RPR = RPR + PPP[h][r];
 		}
@@ -441,7 +450,7 @@ int main() {
 
 
 	WD0 = 0;
-	// Цикл 1052.
+	// Цикл #1052.
 	for (int h = 0; h < num_harms; h++) {
 		WD[0][h] = 0;
 		for (int r = 0; r < num_recs; r++) {
@@ -451,28 +460,28 @@ int main() {
 	}
 
 	WD1 = WD0 - WD[0][0];
-	// Цикл 1053.
+	// Цикл #1053.
 	for (int h = 0; h < num_harms; h++) {
 		WD[1][h] = WD[0][h] / WD0 * 100;
 	}
 
 	WD4 = 0;
-	// Цикл 1056.
+	// Цикл #1056.
 	for (int h = 13; h < num_harms; h++) {
 		WD4 = WD4 + WD[1][h];
 	}
 
 	WD10 = 0;
-	// Цикл 1057.
+	// Цикл #1057.
 	for (int r = 0; r < num_recs; r++) {
 		WD10 = WD10 + PPR1[r] * DT / 60000;
 	}
 
-	// Цикл 1054.
+	// Цикл #1054.
 	for (int r = 0; r < num_recs; r++) {
 		PD[0][r] = 0;
 		PD[1][r] = 0;
-		// Цикл 1058.
+		// Цикл #1058.
 		for (int h = 0; h < num_harms; h++) {
 			PD[0][r] = PD[0][r] + PPP[h][r];
 		}
