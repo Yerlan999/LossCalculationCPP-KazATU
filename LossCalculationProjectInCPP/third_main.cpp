@@ -133,59 +133,59 @@ int rows_counter = 0;
 int phase_number;
 
 // Матрицы данных. Параметры режима
-double UM[3][50][700] = {};  double AIM[3][50][700] = {};
-double FUM[3][50][700] = {}; double FIM[3][50][700] = {};
+double UM[3][50][700] = {0};  double AIM[3][50][700] = {0};
+double FUM[3][50][700] = {0}; double FIM[3][50][700] = {0};
 
-double UM1[3][50][700] = {}; double UM2[3][50][700] = {};
-double AIM1[3][50][700] = {}; double AIM2[3][50][700] = {};
+double UM1[3][50][700] = {0}; double UM2[3][50][700] = {0};
+double AIM1[3][50][700] = {0}; double AIM2[3][50][700] = {0};
 
-double PPR1[700] = {}; double PPR2[700] = {};
+double PPR1[700] = {0}; double PPR2[700] = {0};
 
-double PD[3][700] = {}; double PPP[50][1000] = {};
-double PPP1[50][1000] = {}; double PPP5[50][1000] = {};
-double PPP2[50][1000] = {}; double PPP6[50][1000] = {};
-double PPP3[50][1000] = {}; double PPP7[50][1000] = {};
-double PPP4[50][1000] = {}; double PPP8[50][1000] = {};
+double PD[3][700] = {0}; double PPP[50][1000] = {0};
+double PPP1[50][1000] = {0}; double PPP5[50][1000] = {0};
+double PPP2[50][1000] = {0}; double PPP6[50][1000] = {0};
+double PPP3[50][1000] = {0}; double PPP7[50][1000] = {0};
+double PPP4[50][1000] = {0}; double PPP8[50][1000] = {0};
 
-double WD[2][50] = {}; double II[10] = {};
+double WD[2][50] = {0}; double II[10] = {0};
 
 enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e };
-double main_harm[8][3][700] = {};
+double main_harm[8][3][700] = {0};
 
 
 // Данные о зазмемлении линии
-int ground_config[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+const int ground_config[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-std::complex<double> UK1[8] = {}; std::complex<double> AIK1[8] = {};
+std::complex<double> UK1[8] = {0}; std::complex<double> AIK1[8] = {0};
 
 std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
 std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
-double SKU0, SKU2, SKI0, SKI2;
+float SKU0 = 0, SKU2 = 0, SKI0 = 0, SKI2 = 0;
 
-const  double PI = 3.14159265358979f;
+const double PI = 3.14159265358979f;
 
-double RZ = 35.3;
-double FF, SS2, SS0, SS1, PP1, PP2, RPR, PRP, WD0, WD1, WD4, WD10;
+float RZ = 35.3;
+float FF = 0, SS2 = 0, SS0 = 0, SS1 = 0, PP1 = 0, PP2 = 0, RPR = 0, PRP = 0, WD0 = 0, WD1 = 0, WD4 = 0, WD10 = 0;
 
 // Общие переменной для расчетной функции! [MM, M, M1, MT, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR, MTR, MMT]
 // Данные о конфигурации опор
-int M, M1,  M10, M20, PR, K1, K2, K3, N1, N2, N3, MMT;
+int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, K2 = 0, K3 = 0, N1 = 0, N2 = 0, N3 = 0, MMT = 0;
 
-int MM = 5;
-int MPR = 3;
-int MTR = 1; 
-float DT = 2.5;
-int MT = 5;
+const int MM = 5;
+const int MPR = 3;
+const int MTR = 1;
+const float DT = 2.5;
+const int MT = 5;
 
 // Массивы параметров фаз и тросса линии 
-float XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
-float YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
-float OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
-float GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
-float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
+const float XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
+const float YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
+const float OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
+const float GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
+const float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 
 
 // Расчетная функция программы!

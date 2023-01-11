@@ -154,15 +154,16 @@ COMPLEX name*size_in_bytes - переменная
 
 *** Трейсер переменных на Фортране ***
 
-NN1 = 1 = pris_num
-N1 = 560 = num_recs // количество измерении в Excel файле
-N3 = N1
 AAH = "Промзона       "
 BBH = "ПЗ-Пог1      "
+
+NN1 = 1 = pris_num
+N1 = N3 = 560 = num_recs // количество измерении в Excel файле
 N2 = 1
-K1 = 50 = num_harms
+
+K1 = K3 = 50 = num_harms
 K2 = 1
-K3 = 50 = num_harms
+
 pi=3.14159265358979
 AL = complex(-0.5, 0.866025)
 FF=50
@@ -263,6 +264,7 @@ for (auto& cell_value : row.cells())
 [3] = 1685
 [4] = 2246
 [5] = 2809
+[6] = last row number
 
 
 1 [0] 1    +1
