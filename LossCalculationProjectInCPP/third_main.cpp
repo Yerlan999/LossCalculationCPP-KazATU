@@ -154,7 +154,7 @@ double main_harm[8][3][700] = {0};
 
 
 // Данные о зазмемлении линии
-const int ground_config[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
+const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
 std::complex<double> UK1[8] = {0}; std::complex<double> AIK1[8] = {0};
 
@@ -189,9 +189,63 @@ const float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 
 
 // Расчетная функция программы!
-void raschet()
+void raschet(int& k, int& n)
 {
-	// declare the variables first...
+	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]
+	
+	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
+	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
+	const int M = ::MPR + ::MTR;
+	const int MMT = ::MM / ::MT;
+	const int M10 = 2 * M;
+	const int M20 = 4 * M;
+	
+	if (M <= 6) const int M1 = M;
+	if (M > 6) const int M1 = 6;
+
+	// Объявление основных (локальных) переменных внутри функции расчета.
+	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET2[M] = { 0 }, DET4[M] = { 0 },
+		   EVU[M] = { 0 }, EVI[M] = { 0 }, BB[M] = { 0 }, AIXM[M] = { 0 }, AA[M] = { 0 };
+	std::complex<double> B[M] = { 0 }, UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET1[M] = { 0 }, DET3[M] = { 0 };
+
+	double B4[M20] = { 0 };
+	std::complex<double> B1[M20] = { 0 }, B5[M20] = { 0 };
+
+	double B6[M10] = { 0 }, B7[M10] = { 0 };
+	std::complex<double> B10[M10] = { 0 };
+
+	double DET10[]={0}, DET20[] = { 0 }, SS[] = { 0 }, SS1[] = { 0 }, EX1[] = { 0 };
+
+	double HC1[M][M]={0}, HC2[M][M] = { 0 }, HC3[M][M] = { 0 }, HC4[M][M] = { 0 }, F10[M][M] = { 0 },
+		   XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
+
+	double AU[M][M] = { 0 }, AAI[M][M] = { 0 };
+	std::complex<double> Z[M][M] = { 0 }, Y[M][M] = { 0 }, E[M][M] = { 0 }, F[M][M] = { 0 }, F1[M][M] = { 0 };
+
+	double F2[M][M] = { 0 }, D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
+	std::complex<double> LU[M][M] = { 0 }, LI[M][M] = { 0 };
+
+	std::complex<double> LU1[M][M] = { 0 }, LI1[M][M] = { 0 }, LU2[M][M] = { 0 }, LU3[M][M] = { 0 }, LI2[M][M] = { 0 }, LI3[M][M] = { 0 };
+
+	double F3[M][M] = { 0 }, F4[M][M] = { 0 }, F5[M][M] = { 0 }, F6[M][M] = { 0 }, F7[M][M] = { 0 };
+
+	double HH[M10][M10] = { 0 };
+	std::complex<double> HH13[M][M] = { 0 }, HH14[M][M] = { 0 }, HH21[M][M] = { 0 }, HH22[M][M] = { 0 }, HH23[M][M] = { 0 }, HH31[M][M] = { 0 }, 
+		HH32[M][M] = { 0 }, HH33[M][M] = { 0 }, HH34[M][M] = { 0 }, HH24[M][M] = { 0 }, HH41[M][M] = { 0 }, HH42[M][M] = { 0 }, HH43[M][M] = { 0 }, 
+		HH44[M][M] = { 0 };
+	
+	double CC[M][M] = { 0 }, DD[M][M] = { 0 };
+	std::complex<double> HH11[M][M] = { 0 }, HH12[M][M] = { 0 };
+
+	std::complex<double>  GG[M20][M20] = { 0 }, GG1[M20][M20] = { 0 }, GG2[M20][M20] = { 0 }, GG3[M10][M20] = { 0 }, GG4[M10][M10] = { 0 }, GG5[M10][M10] = { 0 };
+
+
+	// Проблемы ...
+	double IPVT1[M1] = { 0 };
+	std::complex<double> A1[M1][M1] = { 0 }, A2[M1][M1] = { 0 };
+	// Data type of "type" in Python?
+	std::complex<double> AG[M1][M][M] = { 0 };
+
 }
 
 // Главная функция запуска программы!
@@ -359,19 +413,11 @@ int main() {
 		}
 	}
 	
-	M = MPR + MTR;
-	MMT = MM / MT;
-	
-	if (M <= 6) M1 = M;
-	if (M > 6) M1 = 6;
-
-	M10 = 2 * M;
-	M20 = 4 * M;
 
 	// Цикл #1500. Главный!
-	for (int n = 0; n < num_recs; n++) 
+	for (int n = 0; n < num_recs; n++) // 560 циклов
 	{
-		for (int k = 0; k < num_harms; k++)
+		for (int k = 0; k < num_harms; k++) // 50 циклов
 		{
 		//label_1500:
 			PR = 0;
@@ -418,7 +464,7 @@ int main() {
 		label_1111:
 			
 			// Вызов расчетной функции!
-			raschet();
+			raschet(k, n);
 			
 			if (k == 1 && PR == 1) PPR1[n] = PP1;
 			if (k == 1 && PR == 2) PPR2[n] = PP2;
