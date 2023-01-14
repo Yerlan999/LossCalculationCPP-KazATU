@@ -574,3 +574,7 @@ MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
         MatrixXd ag; ag = MatrixXd::Zero(M, M);
         AG.push_back(ag);
     }
+
+
+
+

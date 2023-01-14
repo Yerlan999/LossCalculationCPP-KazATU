@@ -161,12 +161,14 @@ std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
-float SKU0 = 0, SKU2 = 0, SKI0 = 0, SKI2 = 0;
+double SKU0 = 0, SKU2 = 0, SKI0 = 0, SKI2 = 0;
 
 const double PI = 3.14159265358979;
 
-float RZ = 35.3;
-float FF = 0, SS2 = 0, SS0 = 0, SS1 = 0, PP1 = 0, PP2 = 0, RPR = 0, PRP = 0, WD0 = 0, WD1 = 0, WD4 = 0, WD10 = 0;
+double RZ = 35.3;
+double FF = 0, SS2 = 0, SS0 = 0, PP1 = 0, PP2 = 0, RPR = 0, PRP = 0, WD0 = 0, WD1 = 0, WD4 = 0, WD10 = 0;
+
+std::complex<double> SS(0., 0.), SS1(0., 0.);
 
 // Общие переменной для расчетной функции! [MM, M, M1, MT, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR, MTR, MMT]
 // Данные о конфигурации опор
@@ -175,15 +177,15 @@ int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, K2 = 0, K3 = 0, N1 = 0, N2
 const int MM = 5;
 const int MPR = 3;
 const int MTR = 1;
-const float DT = 2.5;
+const double DT = 2.5;
 const int MT = 5;
 
 // Массивы параметров фаз и тросса линии 
-const float XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
-const float YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
-const float OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
-const float GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
-const float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
+const double XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
+const double YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
+const double OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
+const double GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
+const double S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 
 
 // Расчетная функция программы!
@@ -214,7 +216,7 @@ void raschet(int& k, int& n)
 	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
 
-	VectorXd DET10; VectorXd DET20; VectorXd SS; VectorXd SS1;
+	VectorXd DET10; VectorXd DET20; // VectorXd SS; VectorXd SS1;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
 	VectorXd DET2; DET2 = VectorXd::Zero(M);
 
@@ -321,7 +323,7 @@ void raschet(int& k, int& n)
 		R0[i] = 1000. / (GM[i] * S[i]);
 		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4./3.));
 		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3. / (64. * HI[i]));
-		if (i == M);
+		if (i == M) ;
 	}
 
 	// Цикл #12. На самом деле лишний!
@@ -356,8 +358,10 @@ void raschet(int& k, int& n)
 		}
 	}
 
-	// Inverse of HC1 matrix
-
+	HC3 = HC1.inverse();
+	F10 = HC1 * HC3;
+	
+	// Цикл #744
 
 
 
