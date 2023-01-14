@@ -429,3 +429,25 @@ Keep in mind: K = [1-50], N = [1-560] in FORTRAN
             Matrix[700][50][3] in FORTRAN
             Matrix[3][50][700] in C++
 
+
+Arrays(variables) that have to be converted into Eigen Matrices
+
+HH11 HH21 HH13 HH23 HH32 HH42 HH34 HH44
+F F2 F3 F4 F5 F6 F7 F10
+B B1 B4 B6 B7 B10
+DET1 DET2 DET10 DET20
+GG GG1 GG2 GG4 GG5
+LU LU1 LU2 LU3
+LI LI1 LI2 LI3
+AA BB CC DD
+AIK1 UK1
+HC1 HC3
+EVU EVI
+SS SS1
+A1 A2
+Z Y
+AU
+M20
+AAI
+
+
