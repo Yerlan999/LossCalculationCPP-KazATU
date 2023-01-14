@@ -432,22 +432,23 @@ Keep in mind: K = [1-50], N = [1-560] in FORTRAN
 
 Arrays(variables) that have to be converted into Eigen Matrices
 
-[check] HH11 HH21 HH13 HH23 HH32 HH42 HH34 HH44
-[check] F F2 F3 F4 F5 F6 F7 F10
-[check] B B1 B4 B6 B7 B10
-[check] DET1 DET2 DET10 DET20
-[check] GG GG1 GG2 GG4 GG5
-[check] LU LU1 LU2 LU3
-[check] LI LI1 LI2 LI3
-[check] AA BB CC DD
+
+HH11 HH21 HH13 HH23 HH32 HH42 HH34 HH44
+F F2 F3 F4 F5 F6 F7 F10
+B B1 B4 B6 B7 B10
+DET1 DET2 DET10 DET20
+GG GG1 GG2 GG4 GG5
+LU LU1 LU2 LU3
+LI LI1 LI2 LI3
+AA BB CC DD
 AIK1 UK1
-[check] HC1 HC3
-[check] EVU EVI
-[check] SS SS1
-[check] A1 A2
-[check] Z Y
-[check] AU
-[check] AAI
+HC1 HC3
+EVU EVI
+SS SS1
+A1 A2
+Z Y
+AU
+AAI
 
 
 //  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
@@ -574,7 +575,5 @@ MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
         MatrixXd ag; ag = MatrixXd::Zero(M, M);
         AG.push_back(ag);
     }
-
-
 
 

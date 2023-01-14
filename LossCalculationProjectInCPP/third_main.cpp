@@ -327,15 +327,19 @@ void raschet(int& k, int& n)
 	}
 
 	// Цикл #12. На самом деле лишний!
-	for (int i = 0; i < M10; i++) {
-		for (int j = 0; j < M10; j++) {
+	for (int i = 0; i < M10; i++) 
+	{
+		for (int j = 0; j < M10; j++) 
+		{
 			HH[i][j] = 0;
 		}
 	}
 
 	// Цикл #161
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < M; j++) {
+	for (int i = 0; i < M; i++) 
+	{
+		for (int j = 0; j < M; j++) 
+		{
 			if (i == j) D[i][i] = R[i];
 			if (i != j) D[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] - YA[j]), 2));
 			HC[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] + YA[j]), 2));
@@ -345,15 +349,19 @@ void raschet(int& k, int& n)
 	}
 
 	// Цикл #740
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < M; j++) {
+	for (int i = 0; i < M; i++) 
+	{
+		for (int j = 0; j < M; j++) 
+		{
 			XL1[i][j] = (0.145 * log10(1000. / D[i][j])) / (100. * PI);
 		}
 	}
 
 	// Цикл #743
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < M; j++) {
+	for (int i = 0; i < M; i++) 
+	{
+		for (int j = 0; j < M; j++) 
+		{
 			HC1(i,j) = 41.4 * pow(10., 6.) * log10(HC[i][j] / D[i][j]);
 		}
 	}
@@ -362,10 +370,33 @@ void raschet(int& k, int& n)
 	F10 = HC1 * HC3;
 	
 	// Цикл #744
+	for (int i = 0; i < M; i++)
+	{
+		for (int j = 0; j < M; j++)
+		{
+			HC2[i][j] = HC3(i, j) * 2. * PI * 50.;
+		}
+	}
 
+	// Цикл #847
+	for (int i = 0; i < M; i++)
+	{
+		for (int j = 0; j < M; j++)
+		{
+			XL[i][j] = XL1[i][j] * W * 2. * 50. * PI;
+			HC4[i][j] = HC2[i][j] * W;
+			double R10 = 0.0;
+			if (i == j) Z(i, j) = std::complex<double>(R11[i], XL[i][j]);
+			if (i != j) Z(i, j) = std::complex<double>(R10, XL[i][j]);
+			if (i == j) G[i][j] = 0.00000004 * YA[i] / YA[i];
+			if (i != j) G[i][j] = -0.00000004 * YA[0] / D[i][j];
+			G[i][j] = 0.;
+			Y(i, j) = complex(G[i][j], HC4[i][j]);
+		}
+	}
 
-
-
+	// Цикл #1300. До конца данной расчетной функции!
+	// Checking if some operations are valid (works)
 
 
 
@@ -601,15 +632,18 @@ int main() {
 
 
 	// Цикл #1501
-	for (int r = 0; r < num_recs; r++) {
+	for (int r = 0; r < num_recs; r++) 
+	{
 		PRP = 0;
 		// Цикл #1060
-		for (int h = 0; h < num_harms; h++) {
+		for (int h = 0; h < num_harms; h++) 
+		{
 			PRP = PRP + PPP[h][r];
 		}
 		RPR = 0;
 		// Цикл #1061
-		for (int h = 0; h < num_harms; h++) {
+		for (int h = 0; h < num_harms; h++) 
+		{
 			RPR = RPR + PPP[h][r];
 		}
 		SS1 = (PPP[0][r] / PPR1[r] - 1) * 100.;
@@ -623,9 +657,11 @@ int main() {
 
 	WD0 = 0;
 	// Цикл #1052
-	for (int h = 0; h < num_harms; h++) {
+	for (int h = 0; h < num_harms; h++) 
+	{
 		WD[0][h] = 0;
-		for (int r = 0; r < num_recs; r++) {
+		for (int r = 0; r < num_recs; r++) 
+		{
 			WD0 = WD0 + PPP[h][r] * DT / 60000.;
 			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000.;
 		}
@@ -633,28 +669,33 @@ int main() {
 
 	WD1 = WD0 - WD[0][0];
 	// Цикл #1053
-	for (int h = 0; h < num_harms; h++) {
+	for (int h = 0; h < num_harms; h++)
+	{
 		WD[1][h] = WD[0][h] / WD0 * 100.;
 	}
 
 	WD4 = 0;
 	// Цикл #1056
-	for (int h = 13; h < num_harms; h++) {
+	for (int h = 13; h < num_harms; h++) 
+	{
 		WD4 = WD4 + WD[1][h];
 	}
 
 	WD10 = 0;
 	// Цикл #1057
-	for (int r = 0; r < num_recs; r++) {
+	for (int r = 0; r < num_recs; r++) 
+	{
 		WD10 = WD10 + PPR1[r] * DT / 60000.;
 	}
 
 	// Цикл #1054
-	for (int r = 0; r < num_recs; r++) {
+	for (int r = 0; r < num_recs; r++) 
+	{
 		PD[0][r] = 0;
 		PD[1][r] = 0;
 		// Цикл #1058
-		for (int h = 0; h < num_harms; h++) {
+		for (int h = 0; h < num_harms; h++)
+		{
 			PD[0][r] = PD[0][r] + PPP[h][r];
 		}
 		PD[1][r] = PD[0][r] - PPP[0][r];
