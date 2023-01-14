@@ -426,28 +426,151 @@ C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 Keep in mind: K = [1-50], N = [1-560] in FORTRAN
 
-            Matrix[700][50][3] in FORTRAN
-            Matrix[3][50][700] in C++
+        Matrix[700][50][3] in FORTRAN
+        Matrix[3][50][700] in C++
 
 
 Arrays(variables) that have to be converted into Eigen Matrices
 
-HH11 HH21 HH13 HH23 HH32 HH42 HH34 HH44
-F F2 F3 F4 F5 F6 F7 F10
-B B1 B4 B6 B7 B10
-DET1 DET2 DET10 DET20
-GG GG1 GG2 GG4 GG5
-LU LU1 LU2 LU3
-LI LI1 LI2 LI3
-AA BB CC DD
+[check] HH11 HH21 HH13 HH23 HH32 HH42 HH34 HH44
+[check] F F2 F3 F4 F5 F6 F7 F10
+[check] B B1 B4 B6 B7 B10
+[check] DET1 DET2 DET10 DET20
+[check] GG GG1 GG2 GG4 GG5
+[check] LU LU1 LU2 LU3
+[check] LI LI1 LI2 LI3
+[check] AA BB CC DD
 AIK1 UK1
-HC1 HC3
-EVU EVI
-SS SS1
-A1 A2
-Z Y
-AU
-M20
-AAI
+[check] HC1 HC3
+[check] EVU EVI
+[check] SS SS1
+[check] A1 A2
+[check] Z Y
+[check] AU
+[check] AAI
 
 
+//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
+
+VectorXcd UK1; UK1 = VectorXcd::Zero(num_phases+num_tross);
+VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
+
+MatrixXcd HH11; HH11 = MatrixXcd::Zero(M, M);
+MatrixXcd HH21; HH21 = MatrixXcd::Zero(M, M);
+MatrixXcd HH13; HH13 = MatrixXcd::Zero(M, M);
+MatrixXcd HH23; HH23 = MatrixXcd::Zero(M, M);
+MatrixXcd HH32; HH32 = MatrixXcd::Zero(M, M);
+MatrixXcd HH42; HH42 = MatrixXcd::Zero(M, M);
+MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
+MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
+
+VectorXd DET10; VectorXd DET20; VectorXd SS; VectorXd SS1;
+VectorXcd DET1; DET1 = VectorXcd::Zero(M);
+VectorXd DET2; DET2 = VectorXd::Zero(M);
+
+MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
+MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
+
+MatrixXcd F; F = MatrixXcd::Zero(M, M);
+MatrixXd F2; F2 = MatrixXd::Zero(M, M);
+MatrixXd F3; F3 = MatrixXd::Zero(M, M);
+MatrixXd F4; F4 = MatrixXd::Zero(M, M);
+MatrixXd F5; F5 = MatrixXd::Zero(M, M);
+MatrixXd F6; F6 = MatrixXd::Zero(M, M);
+MatrixXd F7; F7 = MatrixXd::Zero(M, M);
+MatrixXd F10; F10 = MatrixXd::Zero(M, M);
+
+VectorXd B; B = VectorXd::Zero(M);
+VectorXcd B1; B1 = VectorXcd::Zero(M20);
+VectorXd B4; B4 = VectorXd::Zero(M20);
+VectorXd B6; B6 = VectorXd::Zero(M10);
+VectorXd B7; B7 = VectorXd::Zero(M10);
+VectorXcd B10; B10 = VectorXcd::Zero(M10);
+
+MatrixXcd LU;  LU = MatrixXcd::Zero(M, M);
+MatrixXcd LU1; LU1 = MatrixXcd::Zero(M, M);
+MatrixXcd LU2; LU2 = MatrixXcd::Zero(M, M);
+MatrixXcd LU3; LU3 = MatrixXcd::Zero(M, M);
+MatrixXcd LI;  LI = MatrixXcd::Zero(M, M);
+MatrixXcd LI1; LI1 = MatrixXcd::Zero(M, M);
+MatrixXcd LI2; LI2 = MatrixXcd::Zero(M, M);
+MatrixXcd LI3; LI3 = MatrixXcd::Zero(M, M);
+
+MatrixXcd Z; Z = MatrixXcd::Zero(M, M);
+MatrixXcd Y; Y = MatrixXcd::Zero(M, M);
+
+VectorXd AA; AA = VectorXd::Zero(M);
+VectorXd BB; BB = VectorXd::Zero(M);
+MatrixXd CC; CC = MatrixXd::Zero(M, M);
+MatrixXd DD; DD = MatrixXd::Zero(M, M);
+
+MatrixXd HC1; HC1 = MatrixXd::Zero(M, M);
+MatrixXd HC3; HC3 = MatrixXd::Zero(M, M);
+
+VectorXd EVI; EVI = VectorXd::Zero(M);
+VectorXd EVU; EVU = VectorXd::Zero(M);
+
+MatrixXd AU; AU = MatrixXd::Zero(M, M);
+MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
+
+
+
+**************************** Old Version of Declaring(Defining) Variables(Matrices) ********************************
+
+
+    std::complex<double> UK1[8] = {0}; std::complex<double> AIK1[8] = {0};
+
+
+    // Объявление основных (локальных) переменных внутри функции расчета.
+    double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET2[M] = { 0 }, DET4[M] = { 0 },
+           EVU[M] = { 0 }, EVI[M] = { 0 }, BB[M] = { 0 }, AIXM[M] = { 0 }, AA[M] = { 0 };
+    std::complex<double> B[M] = { 0 }, UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET1[M] = { 0 }, DET3[M] = { 0 };
+
+    double B4[M20] = { 0 };
+    std::complex<double> B1[M20] = { 0 }, B5[M20] = { 0 };
+
+    double B6[M10] = { 0 }, B7[M10] = { 0 };
+    std::complex<double> B10[M10] = { 0 };
+
+    double DET10[]={0}, DET20[] = { 0 }, SS[] = { 0 }, SS1[] = { 0 };
+
+    double HC1[M][M]={0}, HC2[M][M] = { 0 }, HC3[M][M] = { 0 }, HC4[M][M] = { 0 }, F10[M][M] = { 0 },
+           XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
+
+    double AU[M][M] = { 0 }, AAI[M][M] = { 0 };
+    std::complex<double> Z[M][M] = { 0 }, Y[M][M] = { 0 }, E[M][M] = { 0 }, F[M][M] = { 0 }, F1[M][M] = { 0 };
+
+    double F2[M][M] = { 0 }, D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
+
+    std::complex<double> LU[M][M] = { 0 }, LU1[M][M] = { 0 }, LU2[M][M] = { 0 }, LU3[M][M] = { 0 };
+    std::complex<double> LI[M][M] = { 0 }, LI1[M][M] = { 0 }, LI2[M][M] = { 0 }, LI3[M][M] = { 0 };
+
+    double F3[M][M] = { 0 }, F4[M][M] = { 0 }, F5[M][M] = { 0 }, F6[M][M] = { 0 }, F7[M][M] = { 0 };
+
+    double HH[M10][M10] = { 0 };
+    std::complex<double> HH11[M][M] = { 0 }, HH12[M][M] = { 0 }, HH13[M][M] = { 0 }, HH14[M][M] = { 0 },
+                         HH21[M][M] = { 0 }, HH22[M][M] = { 0 }, HH23[M][M] = { 0 }, HH24[M][M] = { 0 },
+                         HH31[M][M] = { 0 }, HH32[M][M] = { 0 }, HH33[M][M] = { 0 }, HH34[M][M] = { 0 },
+                         HH41[M][M] = { 0 }, HH42[M][M] = { 0 }, HH43[M][M] = { 0 }, HH44[M][M] = { 0 };
+
+    double CC[M][M] = { 0 }, DD[M][M] = { 0 };
+
+    std::complex<double>  GG[M20][M20] = { 0 }, GG1[M20][M20] = { 0 }, GG2[M20][M20] = { 0 }, GG3[M10][M20] = { 0 }, GG4[M10][M10] = { 0 }, GG5[M10][M10] = { 0 };
+
+
+    // Решение проблемы динамических размеров матрицы с помощью библиотеки Eigen
+    MatrixXcd A1; A1 = MatrixXcd::Zero(M1, M1);
+    MatrixXcd A2; A2 = MatrixXcd::Zero(M1, M1);
+    VectorXd IPVT1; IPVT1 = VectorXd::Zero(M1);
+
+    // Решение проблемы с матрицей AG. 3-x мерная [M1][M][M]. М1 - динамичен!!!
+    // Создание вектра с размером М1, хранящий в себе все субматрицы с размером МхМ
+    std::vector<MatrixXd> AG;
+    for (int i = 0; i < M1; i++)
+    {
+        MatrixXd ag; ag = MatrixXd::Zero(M, M);
+        AG.push_back(ag);
+    }

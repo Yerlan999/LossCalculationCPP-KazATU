@@ -156,8 +156,6 @@ double main_harm[8][3][700] = {0};
 // Данные о зазмемлении линии
 const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-std::complex<double> UK1[8] = {0}; std::complex<double> AIK1[8] = {0};
-
 std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
 std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
@@ -204,41 +202,93 @@ void raschet(int& k, int& n)
 	if (M <= 6) M1 = M;
 	if (M > 6) M1 = 6;
 	
+
+	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
+
+	MatrixXcd HH11; HH11 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH21; HH21 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH13; HH13 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH23; HH23 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH32; HH32 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH42; HH42 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
+
+	VectorXd DET10; VectorXd DET20; VectorXd SS; VectorXd SS1;
+	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
+	VectorXd DET2; DET2 = VectorXd::Zero(M);
+
+	MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
+	MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
+	MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20);
+	MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
+	MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
+
+	MatrixXcd F; F = MatrixXcd::Zero(M, M);
+	MatrixXd F2; F2 = MatrixXd::Zero(M, M);
+	MatrixXd F3; F3 = MatrixXd::Zero(M, M);
+	MatrixXd F4; F4 = MatrixXd::Zero(M, M);
+	MatrixXd F5; F5 = MatrixXd::Zero(M, M);
+	MatrixXd F6; F6 = MatrixXd::Zero(M, M);
+	MatrixXd F7; F7 = MatrixXd::Zero(M, M);
+	MatrixXd F10; F10 = MatrixXd::Zero(M, M);
+
+	VectorXd B; B = VectorXd::Zero(M);
+	VectorXcd B1; B1 = VectorXcd::Zero(M20);
+	VectorXd B4; B4 = VectorXd::Zero(M20);
+	VectorXd B6; B6 = VectorXd::Zero(M10);
+	VectorXd B7; B7 = VectorXd::Zero(M10);
+	VectorXcd B10; B10 = VectorXcd::Zero(M10);
+
+	MatrixXcd LU;  LU = MatrixXcd::Zero(M, M);
+	MatrixXcd LU1; LU1 = MatrixXcd::Zero(M, M);
+	MatrixXcd LU2; LU2 = MatrixXcd::Zero(M, M);
+	MatrixXcd LU3; LU3 = MatrixXcd::Zero(M, M);
+	MatrixXcd LI;  LI = MatrixXcd::Zero(M, M);
+	MatrixXcd LI1; LI1 = MatrixXcd::Zero(M, M);
+	MatrixXcd LI2; LI2 = MatrixXcd::Zero(M, M);
+	MatrixXcd LI3; LI3 = MatrixXcd::Zero(M, M);
+
+	MatrixXcd Z; Z = MatrixXcd::Zero(M, M);
+	MatrixXcd Y; Y = MatrixXcd::Zero(M, M);
+
+	VectorXd AA; AA = VectorXd::Zero(M);
+	VectorXd BB; BB = VectorXd::Zero(M);
+	MatrixXd CC; CC = MatrixXd::Zero(M, M);
+	MatrixXd DD; DD = MatrixXd::Zero(M, M);
+
+	MatrixXd HC1; HC1 = MatrixXd::Zero(M, M);
+	MatrixXd HC3; HC3 = MatrixXd::Zero(M, M);
+
+	VectorXd EVI; EVI = VectorXd::Zero(M);
+	VectorXd EVU; EVU = VectorXd::Zero(M);
+
+	MatrixXd AU; AU = MatrixXd::Zero(M, M);
+	MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
+
+
+
 	// Объявление основных (локальных) переменных внутри функции расчета.
-	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET2[M] = { 0 }, DET4[M] = { 0 },
-		   EVU[M] = { 0 }, EVI[M] = { 0 }, BB[M] = { 0 }, AIXM[M] = { 0 }, AA[M] = { 0 };
-	std::complex<double> B[M] = { 0 }, UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET1[M] = { 0 }, DET3[M] = { 0 };
+	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET4[M] = { 0 },
+		   AIXM[M] = { 0 };
+	std::complex<double> UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET3[M] = { 0 };
 
-	double B4[M20] = { 0 };
-	std::complex<double> B1[M20] = { 0 }, B5[M20] = { 0 };
+	std::complex<double> B5[M20] = { 0 };
 
-	double B6[M10] = { 0 }, B7[M10] = { 0 };
-	std::complex<double> B10[M10] = { 0 };
-
-	double DET10[]={0}, DET20[] = { 0 }, SS[] = { 0 }, SS1[] = { 0 }, EX1[] = { 0 };
-
-	double HC1[M][M]={0}, HC2[M][M] = { 0 }, HC3[M][M] = { 0 }, HC4[M][M] = { 0 }, F10[M][M] = { 0 },
+	double HC2[M][M] = { 0 }, HC4[M][M] = { 0 },
 		   XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
 
-	double AU[M][M] = { 0 }, AAI[M][M] = { 0 };
-	std::complex<double> Z[M][M] = { 0 }, Y[M][M] = { 0 }, E[M][M] = { 0 }, F[M][M] = { 0 }, F1[M][M] = { 0 };
+	std::complex<double> E[M][M] = { 0 }, F1[M][M] = { 0 };
 
-	double F2[M][M] = { 0 }, D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
-	std::complex<double> LU[M][M] = { 0 }, LI[M][M] = { 0 };
-
-	std::complex<double> LU1[M][M] = { 0 }, LI1[M][M] = { 0 }, LU2[M][M] = { 0 }, LU3[M][M] = { 0 }, LI2[M][M] = { 0 }, LI3[M][M] = { 0 };
-
-	double F3[M][M] = { 0 }, F4[M][M] = { 0 }, F5[M][M] = { 0 }, F6[M][M] = { 0 }, F7[M][M] = { 0 };
-
-	double HH[M10][M10] = { 0 };
-	std::complex<double> HH13[M][M] = { 0 }, HH14[M][M] = { 0 }, HH21[M][M] = { 0 }, HH22[M][M] = { 0 }, HH23[M][M] = { 0 }, HH31[M][M] = { 0 }, 
-						 HH32[M][M] = { 0 }, HH33[M][M] = { 0 }, HH34[M][M] = { 0 }, HH24[M][M] = { 0 }, HH41[M][M] = { 0 }, HH42[M][M] = { 0 }, HH43[M][M] = { 0 }, 
-						 HH44[M][M] = { 0 };
+	double D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
 	
-	double CC[M][M] = { 0 }, DD[M][M] = { 0 };
-	std::complex<double> HH11[M][M] = { 0 }, HH12[M][M] = { 0 };
-
-	std::complex<double>  GG[M20][M20] = { 0 }, GG1[M20][M20] = { 0 }, GG2[M20][M20] = { 0 }, GG3[M10][M20] = { 0 }, GG4[M10][M10] = { 0 }, GG5[M10][M10] = { 0 };
+	double HH[M10][M10] = { 0 };
+	std::complex<double> HH12[M][M] = { 0 }, HH14[M][M] = { 0 },
+						 HH22[M][M] = { 0 }, HH24[M][M] = { 0 },
+						 HH31[M][M] = { 0 }, HH33[M][M] = { 0 },
+						 HH41[M][M] = { 0 }, HH43[M][M] = { 0 };
+	
+	std::complex<double> GG3[M10][M20] = { 0 };
 
 
 	// Решение проблемы динамических размеров матрицы с помощью библиотеки Eigen 
@@ -259,7 +309,7 @@ void raschet(int& k, int& n)
 	if (PR == 2) PP2 = 0;
 	
 	float W = k+1;
-	std::complex<double> EX1(2.71828, 0);
+	std::complex<double> EX1(2.71828, 0.);
 
 	// Запись в файл #5 "Введенные общие данные" (Пропущенно намеренно!)
 	
@@ -302,7 +352,7 @@ void raschet(int& k, int& n)
 	// Цикл #743
 	for (int i = 0; i < M; i++) {
 		for (int j = 0; j < M; j++) {
-			HC1[i][j] = 41.4 * pow(10.,6.) * log10(HC[i][j] / D[i][j]);
+			HC1(i,j) = 41.4 * pow(10., 6.) * log10(HC[i][j] / D[i][j]);
 		}
 	}
 
@@ -319,7 +369,10 @@ void raschet(int& k, int& n)
 
 // Главная функция запуска программы!
 int main() {
-		
+	
+	VectorXcd UK1; UK1 = VectorXcd::Zero(num_phases + num_tross);
+	VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
+
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
