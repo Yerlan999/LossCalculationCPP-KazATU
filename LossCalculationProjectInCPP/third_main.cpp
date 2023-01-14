@@ -6,14 +6,14 @@
 #include <tuple>
 #include <cmath>
 #include <complex>
-//#include <Eigen/Dense>
+#include <Eigen/Dense>
 #include <OpenXLSX.hpp>
 
 using namespace std;
 using namespace std::chrono;
 
 using namespace OpenXLSX;
-//using namespace Eigen;
+using namespace Eigen;
 
 std::ofstream debug_file;
 
@@ -165,7 +165,7 @@ std::complex<double> AL(-0.5, 0.866025);
 
 float SKU0 = 0, SKU2 = 0, SKI0 = 0, SKI2 = 0;
 
-const double PI = 3.14159265358979f;
+const double PI = 3.14159265358979;
 
 float RZ = 35.3;
 float FF = 0, SS2 = 0, SS0 = 0, SS1 = 0, PP1 = 0, PP2 = 0, RPR = 0, PRP = 0, WD0 = 0, WD1 = 0, WD4 = 0, WD10 = 0;
@@ -191,7 +191,7 @@ const float S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 // Расчетная функция программы!
 void raschet(int& k, int& n)
 {
-	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]
+	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]	
 	
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
@@ -200,9 +200,10 @@ void raschet(int& k, int& n)
 	const int M10 = 2 * M;
 	const int M20 = 4 * M;
 	
-	if (M <= 6) const int M1 = M;
-	if (M > 6) const int M1 = 6;
-
+	int M1;
+	if (M <= 6) M1 = M;
+	if (M > 6) M1 = 6;
+	
 	// Объявление основных (локальных) переменных внутри функции расчета.
 	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET2[M] = { 0 }, DET4[M] = { 0 },
 		   EVU[M] = { 0 }, EVI[M] = { 0 }, BB[M] = { 0 }, AIXM[M] = { 0 }, AA[M] = { 0 };
@@ -231,8 +232,8 @@ void raschet(int& k, int& n)
 
 	double HH[M10][M10] = { 0 };
 	std::complex<double> HH13[M][M] = { 0 }, HH14[M][M] = { 0 }, HH21[M][M] = { 0 }, HH22[M][M] = { 0 }, HH23[M][M] = { 0 }, HH31[M][M] = { 0 }, 
-		HH32[M][M] = { 0 }, HH33[M][M] = { 0 }, HH34[M][M] = { 0 }, HH24[M][M] = { 0 }, HH41[M][M] = { 0 }, HH42[M][M] = { 0 }, HH43[M][M] = { 0 }, 
-		HH44[M][M] = { 0 };
+						 HH32[M][M] = { 0 }, HH33[M][M] = { 0 }, HH34[M][M] = { 0 }, HH24[M][M] = { 0 }, HH41[M][M] = { 0 }, HH42[M][M] = { 0 }, HH43[M][M] = { 0 }, 
+						 HH44[M][M] = { 0 };
 	
 	double CC[M][M] = { 0 }, DD[M][M] = { 0 };
 	std::complex<double> HH11[M][M] = { 0 }, HH12[M][M] = { 0 };
@@ -240,17 +241,24 @@ void raschet(int& k, int& n)
 	std::complex<double>  GG[M20][M20] = { 0 }, GG1[M20][M20] = { 0 }, GG2[M20][M20] = { 0 }, GG3[M10][M20] = { 0 }, GG4[M10][M10] = { 0 }, GG5[M10][M10] = { 0 };
 
 
-	// Проблемы ...
-	double IPVT1[M1] = { 0 };
-	std::complex<double> A1[M1][M1] = { 0 }, A2[M1][M1] = { 0 };
-	// Data type of "type" in Python?
-	std::complex<double> AG[M1][M][M] = { 0 };
+	// Решение проблемы динамических размеров матрицы с помощью библиотеки Eigen 
+	MatrixXcd A1; A1 = MatrixXcd::Zero(M1, M1);
+	MatrixXcd A2; A2 = MatrixXcd::Zero(M1, M1);
+	VectorXd IPVT1; IPVT1 = VectorXd::Zero(M1);
 
+	// Решение проблемы с матрицей AG. 3-x мерная [M1][M][M]. М1 - динамичен!!!
+	// Создание вектра с размером М1, хранящий в себе все субматрицы с размером МхМ
+	std::vector<MatrixXd> AG;
+	for (int i = 0; i < M1; i++)
+	{
+		MatrixXd ag; ag = MatrixXd::Zero(M, M);
+		AG.push_back(ag);
+	}
 }
 
 // Главная функция запуска программы!
 int main() {
-	
+		
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
@@ -392,10 +400,10 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			AIM[p][0][r] = main_harm[funi][p][r]*sqrt(2);
-			FIM[p][0][r] = main_harm[fi][p][r]*PI/180;
-			AIM1[p][0][r] = AIM[p][0][r]*cos(FIM[p][0][r]);
-			AIM2[p][0][r] = AIM[p][0][r]*sin(FIM[p][0][r]);
+			AIM[p][0][r] = main_harm[funi][p][r] * sqrt(2);
+			FIM[p][0][r] = main_harm[fi][p][r] * PI / 180;
+			AIM1[p][0][r] = AIM[p][0][r] * cos(FIM[p][0][r]);
+			AIM2[p][0][r] = AIM[p][0][r] * sin(FIM[p][0][r]);
 		}
 	}
 	// Цикл #117 в Фортране
@@ -405,30 +413,30 @@ int main() {
 		{
 			for (int h = 1; h < num_harms; h++)
 			{
-				AIM[p][h][r] = AIM[p][h][r]*AIM[p][0][r]/100;
-				FIM[p][h][r] = FIM[p][h][r]*PI/180;
-				AIM1[p][h][r] = AIM[p][h][r]*cos(FIM[p][h][r]);
-				AIM2[p][h][r] = AIM[p][h][r]*sin(FIM[p][h][r]);
+				AIM[p][h][r] = AIM[p][h][r] * AIM[p][0][r] / 100;
+				FIM[p][h][r] = FIM[p][h][r] * PI / 180;
+				AIM1[p][h][r] = AIM[p][h][r] * cos(FIM[p][h][r]);
+				AIM2[p][h][r] = AIM[p][h][r] * sin(FIM[p][h][r]);
 			}
 		}
 	}
-	
+
 
 	// Цикл #1500. Главный!
 	for (int n = 0; n < num_recs; n++) // 560 циклов
 	{
 		for (int k = 0; k < num_harms; k++) // 50 циклов
 		{
-		//label_1500:
+			//label_1500:
 			PR = 0;
 		label_1700:
 			PR = PR + 1;
-			
+
 			UK1[0] = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
 			UK1[1] = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
 			UK1[2] = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
 			UK1[3] = std::complex<double>(0.0, 0.0);
-			
+
 			AIK1[0] = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
 			AIK1[1] = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
 			AIK1[2] = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
@@ -436,36 +444,36 @@ int main() {
 
 			if (k > 1) goto label_1111;
 			if (k == 1 && PR == 2) goto label_1111;
-			
+
 			UK10 = (UK1[0] + UK1[1] + UK1[2]) / (double)3;
 			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2)) / (double)3;
 			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2) + UK1[2] * AL) / (double)3;
-			
+
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2) + std::pow(imag(UK12), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
 			SKU0 = sqrt(std::pow(real(UK10), 2) + std::pow(imag(UK10), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
-			
+
 			UK1[0] = UK11;
 			UK1[1] = UK11 * std::pow(AL, 2);
 			UK1[2] = UK11 * AL;
-			
+
 			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / (double)3;
 			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2)) / (double)3;
 			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2) + AIK1[2] * AL) / (double)3;
-			
+
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKI2 = sqrt(std::pow(real(AIK12), 2) + std::pow(imag(AIK12), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
 			SKI0 = sqrt(std::pow(real(AIK10), 2) + std::pow(imag(AIK10), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
-			
+
 			AIK1[0] = AIK11;
 			AIK1[1] = AIK11 * std::pow(AL, 2);
 			AIK1[2] = AIK11 * AL;
-		
+
 		label_1111:
-			
+
 			// Вызов расчетной функции!
 			raschet(k, n);
-			
+
 			if (k == 1 && PR == 1) PPR1[n] = PP1;
 			if (k == 1 && PR == 2) PPR2[n] = PP2;
 			if (k == 1 && PR == 1) goto label_1700;
@@ -489,7 +497,7 @@ int main() {
 		SS1 = (PPP[0][r] / PPR1[r] - 1) * 100;
 		SS2 = (RPR / PPR1[r]) * 100;
 		SS0 = PPP[0][r] - PPR1[r];
-		
+
 		// Запись данных из переменных PPP, PPP1, PPP2 .... PPP8
 		// в соответствующие файлы. (Пропущенно намеренно!)
 	}
@@ -537,11 +545,16 @@ int main() {
 
 	// Вывод предварительных значении результатов расчета!
 	// Запись результатов в файл "Результаты расчета" (Пропущенно намеренно!)
-	
-	//                                            ПОТЕРИ:	
-	
-	//           Всего        Основная гармоника       Методика    На высших гармониках  Прочие потери 
-	debug_file << WD0 << " || " << WD[0][0] << " || " << WD10 << " || " << WD1 << " || " << WD4 << endl;
+
+	debug_file
+		<< " ******************************************* Losses on Line ******************************************* " << endl;
+	debug_file
+		<< "|| Overall: " << WD0
+		<< " || Main harmonics: " << WD[0][0]
+		<< " || Methodics: " << WD10
+		<< " || On higher harmonics: " << WD1
+		<< " || Other losses: " << WD4
+		<< endl;
 
 
 	insert_end_separator();
