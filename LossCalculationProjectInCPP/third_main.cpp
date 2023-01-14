@@ -254,6 +254,67 @@ void raschet(int& k, int& n)
 		MatrixXd ag; ag = MatrixXd::Zero(M, M);
 		AG.push_back(ag);
 	}
+
+	if (PR == 1) PP1 = 0;
+	if (PR == 2) PP2 = 0;
+	
+	float W = k+1;
+	std::complex<double> EX1(2.71828, 0);
+
+	// Запись в файл #5 "Введенные общие данные" (Пропущенно намеренно!)
+	
+	// Цикл #845
+	for (int i = 0; i < M; i++)
+	{
+		R[i] = sqrt(S[i] / PI) / 1000.;
+		HI[i] = R[i] / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP[i] * GM[i] / 20.);
+		R0[i] = 1000. / (GM[i] * S[i]);
+		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4./3.));
+		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3. / (64. * HI[i]));
+		if (i == M);
+	}
+
+	// Цикл #12. На самом деле лишний!
+	for (int i = 0; i < M10; i++) {
+		for (int j = 0; j < M10; j++) {
+			HH[i][j] = 0;
+		}
+	}
+
+	// Цикл #161
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < M; j++) {
+			if (i == j) D[i][i] = R[i];
+			if (i != j) D[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] - YA[j]), 2));
+			HC[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] + YA[j]), 2));
+			E[i][j] = std::complex(0.0, 0.0);
+			E[i][i] = std::complex(1.0, 0.0);
+		}
+	}
+
+	// Цикл #740
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < M; j++) {
+			XL1[i][j] = (0.145 * log10(1000. / D[i][j])) / (100. * PI);
+		}
+	}
+
+	// Цикл #743
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < M; j++) {
+			HC1[i][j] = 41.4 * pow(10.,6.) * log10(HC[i][j] / D[i][j]);
+		}
+	}
+
+	// Inverse of HC1 matrix
+
+
+
+
+
+
+
+
 }
 
 // Главная функция запуска программы!
@@ -375,8 +436,8 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			UM[p][0][r] = main_harm[funu][0][r] * sqrt(2);
-			FUM[p][0][r] = main_harm[fu][0][r] * (PI / 180);
+			UM[p][0][r] = main_harm[funu][0][r] * sqrt(2.);
+			FUM[p][0][r] = main_harm[fu][0][r] * (PI / 180.);
 			UM1[p][0][r] = UM[p][0][r] * cos(FUM[p][0][r]);
 			UM2[p][0][r] = UM[p][0][r] * sin(FUM[p][0][r]);
 		};
@@ -388,8 +449,8 @@ int main() {
 		{
 			for (int h = 1; h < num_harms; h++)
 			{
-				UM[p][h][r] = UM[p][h][r] * UM[p][0][r] / 100;
-				FUM[p][h][r] = FUM[p][h][r] * PI / 180;
+				UM[p][h][r] = UM[p][h][r] * UM[p][0][r] / 100.;
+				FUM[p][h][r] = FUM[p][h][r] * PI / 180.;
 				UM1[p][h][r] = UM[p][h][r] * cos(FUM[p][h][r]);
 				UM2[p][h][r] = UM[p][h][r] * sin(FUM[p][h][r]);
 			}
@@ -400,8 +461,8 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			AIM[p][0][r] = main_harm[funi][p][r] * sqrt(2);
-			FIM[p][0][r] = main_harm[fi][p][r] * PI / 180;
+			AIM[p][0][r] = main_harm[funi][p][r] * sqrt(2.);
+			FIM[p][0][r] = main_harm[fi][p][r] * PI / 180.;
 			AIM1[p][0][r] = AIM[p][0][r] * cos(FIM[p][0][r]);
 			AIM2[p][0][r] = AIM[p][0][r] * sin(FIM[p][0][r]);
 		}
@@ -413,8 +474,8 @@ int main() {
 		{
 			for (int h = 1; h < num_harms; h++)
 			{
-				AIM[p][h][r] = AIM[p][h][r] * AIM[p][0][r] / 100;
-				FIM[p][h][r] = FIM[p][h][r] * PI / 180;
+				AIM[p][h][r] = AIM[p][h][r] * AIM[p][0][r] / 100.;
+				FIM[p][h][r] = FIM[p][h][r] * PI / 180.;
 				AIM1[p][h][r] = AIM[p][h][r] * cos(FIM[p][h][r]);
 				AIM2[p][h][r] = AIM[p][h][r] * sin(FIM[p][h][r]);
 			}
@@ -445,28 +506,28 @@ int main() {
 			if (k > 1) goto label_1111;
 			if (k == 1 && PR == 2) goto label_1111;
 
-			UK10 = (UK1[0] + UK1[1] + UK1[2]) / (double)3;
-			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2)) / (double)3;
-			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2) + UK1[2] * AL) / (double)3;
+			UK10 = (UK1[0] + UK1[1] + UK1[2]) / 3.;
+			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2.)) / 3.;
+			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2.) + UK1[2] * AL) / 3.;
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
-			SKU2 = sqrt(std::pow(real(UK12), 2) + std::pow(imag(UK12), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
-			SKU0 = sqrt(std::pow(real(UK10), 2) + std::pow(imag(UK10), 2)) / sqrt(std::pow(real(UK11), 2) + std::pow(imag(UK11), 2)) * 100;
+			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
+			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 
 			UK1[0] = UK11;
-			UK1[1] = UK11 * std::pow(AL, 2);
+			UK1[1] = UK11 * std::pow(AL, 2.);
 			UK1[2] = UK11 * AL;
 
-			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / (double)3;
-			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2)) / (double)3;
-			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2) + AIK1[2] * AL) / (double)3;
+			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / 3.;
+			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2.)) / 3.;
+			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2.) + AIK1[2] * AL) / 3.;
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
-			SKI2 = sqrt(std::pow(real(AIK12), 2) + std::pow(imag(AIK12), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
-			SKI0 = sqrt(std::pow(real(AIK10), 2) + std::pow(imag(AIK10), 2)) / sqrt(std::pow(real(AIK11), 2) + std::pow(imag(AIK11), 2)) * 100;
+			SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
+			SKI0 = sqrt(std::pow(real(AIK10), 2.) + std::pow(imag(AIK10), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
 
 			AIK1[0] = AIK11;
-			AIK1[1] = AIK11 * std::pow(AL, 2);
+			AIK1[1] = AIK11 * std::pow(AL, 2.);
 			AIK1[2] = AIK11 * AL;
 
 		label_1111:
@@ -482,20 +543,20 @@ int main() {
 	}
 
 
-	// Цикл #1501.
+	// Цикл #1501
 	for (int r = 0; r < num_recs; r++) {
 		PRP = 0;
-		// Цикл #1060.
+		// Цикл #1060
 		for (int h = 0; h < num_harms; h++) {
 			PRP = PRP + PPP[h][r];
 		}
 		RPR = 0;
-		// Цикл #1061.
+		// Цикл #1061
 		for (int h = 0; h < num_harms; h++) {
 			RPR = RPR + PPP[h][r];
 		}
-		SS1 = (PPP[0][r] / PPR1[r] - 1) * 100;
-		SS2 = (RPR / PPR1[r]) * 100;
+		SS1 = (PPP[0][r] / PPR1[r] - 1) * 100.;
+		SS2 = (RPR / PPR1[r]) * 100.;
 		SS0 = PPP[0][r] - PPR1[r];
 
 		// Запись данных из переменных PPP, PPP1, PPP2 .... PPP8
@@ -504,43 +565,43 @@ int main() {
 
 
 	WD0 = 0;
-	// Цикл #1052.
+	// Цикл #1052
 	for (int h = 0; h < num_harms; h++) {
 		WD[0][h] = 0;
 		for (int r = 0; r < num_recs; r++) {
-			WD0 = WD0 + PPP[h][r] * DT / 60000;
-			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000;
+			WD0 = WD0 + PPP[h][r] * DT / 60000.;
+			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000.;
 		}
 	}
 
 	WD1 = WD0 - WD[0][0];
-	// Цикл #1053.
+	// Цикл #1053
 	for (int h = 0; h < num_harms; h++) {
-		WD[1][h] = WD[0][h] / WD0 * 100;
+		WD[1][h] = WD[0][h] / WD0 * 100.;
 	}
 
 	WD4 = 0;
-	// Цикл #1056.
+	// Цикл #1056
 	for (int h = 13; h < num_harms; h++) {
 		WD4 = WD4 + WD[1][h];
 	}
 
 	WD10 = 0;
-	// Цикл #1057.
+	// Цикл #1057
 	for (int r = 0; r < num_recs; r++) {
-		WD10 = WD10 + PPR1[r] * DT / 60000;
+		WD10 = WD10 + PPR1[r] * DT / 60000.;
 	}
 
-	// Цикл #1054.
+	// Цикл #1054
 	for (int r = 0; r < num_recs; r++) {
 		PD[0][r] = 0;
 		PD[1][r] = 0;
-		// Цикл #1058.
+		// Цикл #1058
 		for (int h = 0; h < num_harms; h++) {
 			PD[0][r] = PD[0][r] + PPP[h][r];
 		}
 		PD[1][r] = PD[0][r] - PPP[0][r];
-		PD[2][r] = PD[1][r] / PD[0][r] * 100;
+		PD[2][r] = PD[1][r] / PD[0][r] * 100.;
 	}
 
 	// Вывод предварительных значении результатов расчета!
