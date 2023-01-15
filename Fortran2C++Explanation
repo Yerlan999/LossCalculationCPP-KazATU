@@ -577,3 +577,7 @@ MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
     }
 
 
+VectorXcd UK1; UK1 = VectorXcd::Zero(num_phases + num_tross);
+VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
+
+

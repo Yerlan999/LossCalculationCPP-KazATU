@@ -7,6 +7,7 @@
 #include <cmath>
 #include <complex>
 #include <Eigen/Dense>
+#include <Eigen/LU>
 #include <OpenXLSX.hpp>
 
 using namespace std;
@@ -156,6 +157,9 @@ double main_harm[8][3][700] = {0};
 // Данные о зазмемлении линии
 const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
+VectorXcd UK1;
+VectorXcd AIK1;
+
 std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
 std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
@@ -192,18 +196,18 @@ const double S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 void raschet(int& k, int& n)
 {
 	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]	
-	
+
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
 	const int M = ::MPR + ::MTR;
 	const int MMT = ::MM / ::MT;
 	const int M10 = 2 * M;
 	const int M20 = 4 * M;
-	
+
 	int M1;
 	if (M <= 6) M1 = M;
 	if (M > 6) M1 = 6;
-	
+
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
 
@@ -263,33 +267,33 @@ void raschet(int& k, int& n)
 	MatrixXd HC3; HC3 = MatrixXd::Zero(M, M);
 
 	VectorXd EVI; EVI = VectorXd::Zero(M);
-	VectorXd EVU; EVU = VectorXd::Zero(M);
+	// VectorXd EVU; EVU = VectorXd::Zero(M);
 
-	MatrixXd AU; AU = MatrixXd::Zero(M, M);
+	// MatrixXd AU; AU = MatrixXd::Zero(M, M);
 	MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
 
 
 
 	// Объявление основных (локальных) переменных внутри функции расчета.
 	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET4[M] = { 0 },
-		   AIXM[M] = { 0 };
+		AIXM[M] = { 0 };
 	std::complex<double> UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET3[M] = { 0 };
 
 	std::complex<double> B5[M20] = { 0 };
 
 	double HC2[M][M] = { 0 }, HC4[M][M] = { 0 },
-		   XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
+		XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
 
 	std::complex<double> E[M][M] = { 0 }, F1[M][M] = { 0 };
 
 	double D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
-	
+
 	double HH[M10][M10] = { 0 };
 	std::complex<double> HH12[M][M] = { 0 }, HH14[M][M] = { 0 },
-						 HH22[M][M] = { 0 }, HH24[M][M] = { 0 },
-						 HH31[M][M] = { 0 }, HH33[M][M] = { 0 },
-						 HH41[M][M] = { 0 }, HH43[M][M] = { 0 };
-	
+		HH22[M][M] = { 0 }, HH24[M][M] = { 0 },
+		HH31[M][M] = { 0 }, HH33[M][M] = { 0 },
+		HH41[M][M] = { 0 }, HH43[M][M] = { 0 };
+
 	std::complex<double> GG3[M10][M20] = { 0 };
 
 
@@ -309,36 +313,36 @@ void raschet(int& k, int& n)
 
 	if (PR == 1) PP1 = 0;
 	if (PR == 2) PP2 = 0;
-	
-	float W = k+1;
+
+	float W = k + 1;
 	std::complex<double> EX1(2.71828, 0.);
 
 	// Запись в файл #5 "Введенные общие данные" (Пропущенно намеренно!)
-	
+
 	// Цикл #845
 	for (int i = 0; i < M; i++)
 	{
 		R[i] = sqrt(S[i] / PI) / 1000.;
 		HI[i] = R[i] / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP[i] * GM[i] / 20.);
 		R0[i] = 1000. / (GM[i] * S[i]);
-		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4./3.));
+		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4. / 3.));
 		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3. / (64. * HI[i]));
-		if (i == M) ;
+		if (i == M);
 	}
 
 	// Цикл #12. На самом деле лишний!
-	for (int i = 0; i < M10; i++) 
+	for (int i = 0; i < M10; i++)
 	{
-		for (int j = 0; j < M10; j++) 
+		for (int j = 0; j < M10; j++)
 		{
 			HH[i][j] = 0;
 		}
 	}
 
 	// Цикл #161
-	for (int i = 0; i < M; i++) 
+	for (int i = 0; i < M; i++)
 	{
-		for (int j = 0; j < M; j++) 
+		for (int j = 0; j < M; j++)
 		{
 			if (i == j) D[i][i] = R[i];
 			if (i != j) D[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] - YA[j]), 2));
@@ -349,26 +353,26 @@ void raschet(int& k, int& n)
 	}
 
 	// Цикл #740
-	for (int i = 0; i < M; i++) 
+	for (int i = 0; i < M; i++)
 	{
-		for (int j = 0; j < M; j++) 
+		for (int j = 0; j < M; j++)
 		{
 			XL1[i][j] = (0.145 * log10(1000. / D[i][j])) / (100. * PI);
 		}
 	}
 
 	// Цикл #743
-	for (int i = 0; i < M; i++) 
+	for (int i = 0; i < M; i++)
 	{
-		for (int j = 0; j < M; j++) 
+		for (int j = 0; j < M; j++)
 		{
-			HC1(i,j) = 41.4 * pow(10., 6.) * log10(HC[i][j] / D[i][j]);
+			HC1(i, j) = 41.4 * pow(10., 6.) * log10(HC[i][j] / D[i][j]);
 		}
 	}
 
 	HC3 = HC1.inverse();
 	F10 = HC1 * HC3;
-	
+
 	// Цикл #744
 	for (int i = 0; i < M; i++)
 	{
@@ -395,19 +399,127 @@ void raschet(int& k, int& n)
 		}
 	}
 
+
 	// Цикл #1300. До конца данной расчетной функции!
-	// Checking if some operations are valid (works)
+	for (int iii = 0; iii < ::MT; iii++)
+	{
+		if (M != 3) goto label_767;
+		// Цикл #761
+		for (int i = 0; i < 3; i++)
+		{
+			B5[i] = UK1(i);
+			B5[i + 3] = AIK1(i);
+			B5[i + 6] = std::complex<double>(0., 0.);
+			B5[i + 9] = std::complex<double>(0., 0.);
+		}
+	label_767:
+		if (M != 4) goto label_768;
+		// Цикл #762
+		for (int i = 0; i < 3; i++)
+		{
+			B5[i] = UK1(i);
+			B5[M - 1] = std::complex<double>(0., 0.);
+			B5[i + M] = AIK1(i);
+			B5[2 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 2 * M] = std::complex<double>(0., 0.);
+			B5[3 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 3 * M] = std::complex<double>(0., 0.);
+			B5[4 * M - 1] = std::complex<double>(0., 0.);
+		}
+	label_768:
+		if (M != 6) goto label_769;
+		// Цикл #764
+		for (int i = 0; i < 3; i++)
+		{
+			B5[i] = UK1(i);
+			B5[i + 3] = UK1(i);
+			B5[i + M] = AIK1(i);
+			B5[i + M + 3] = AIK1(i);
+			B5[i + 2 * M] = std::complex<double>(0., 0.);
+			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
+			B5[i + 3 * M] = std::complex<double>(0., 0.);
+			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
+		}
+	label_769:
+		if (M != 7) goto label_770;
+		// Цикл #765
+		for (int i = 0; i < 3; i++)
+		{
+			B5[i] = UK1(i);
+			B5[i + 3] = UK1(i);
+			B5[M - 1] = std::complex<double>(0., 0.);
+			B5[i + M] = AIK1(i);
+			B5[i + M + 3] = AIK1(i);
+			B5[2 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 2 * M] = std::complex<double>(0., 0.);
+			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
+			B5[3 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 3 * M] = std::complex<double>(0., 0.);
+			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
+			B5[4 * M - 1] = std::complex<double>(0., 0.);
+		}
 
+	label_770:
+		if (M != 8) goto label_771;
+		// Цикл #766
+		for (int i = 0; i < 3; i++)
+		{
+			B5[i] = UK1(i);
+			B5[i + 3] = UK1(i);
+			B5[MPR + 1 - 1] = std::complex<double>(0., 0.);
+			B5[MPR + 2 - 1] = std::complex<double>(0., 0.);
+			B5[i + M] = AIK1(i);
+			B5[i + M + 3] = AIK1(i);
+			B5[2 * M - 1 - 1] = std::complex<double>(0., 0.);
+			B5[2 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 2 * M] = std::complex<double>(0., 0.);
+			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
+			B5[3 * M - 1 - 1] = std::complex<double>(0., 0.);
+			B5[3 * M - 1] = std::complex<double>(0., 0.);
+			B5[i + 3 * M] = std::complex<double>(0., 0.);
+			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
+			B5[4 * M - 1 - 1] = std::complex<double>(0., 0.);
+			B5[4 * M - 1] = std::complex<double>(0., 0.);
+		}
 
+	label_771:
+		// *********************************************
+		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
+		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
+		// Важно! AU выше откомментить !!!
+		auto AU = Z * Y;
+		SS1 = sqrt(AU(0, 0));
 
+		// ВЫЧИСЛЕНИЕ СОБСТВЕННЫХ ЗНАЧЕНИЙ МАТРИЦЫ АU
+		// Важно! EVU выше откомментить !!!
+		auto EVU = AU.inverse();
+
+		// ФОРМИРОВАНИЕ МАТРИЦЫ ВАНДЕРМОНДА
+		// Цикл #20
+		for (int j = 0; j < M; j++)
+		{
+			for (int i = 0; i < M; i++)
+			{
+				F(i, j) = pow(EVU(i), j);
+				F1[i][j] = F(i, j);
+			}
+		}
+
+		// ФАКТОРИЗАЦИЯ МАТРИЦЫ ВАНДЕРМОНДА
+		// Цикл #201
+		for (int i = 0; i < M1; i++)
+		{
+			for (int j = 0; j < M1; j++)
+			{
+				A1(i, j) = F(i, j);
+			}
+		}
+	}
 }
 
 // Главная функция запуска программы!
 int main() {
 	
-	VectorXcd UK1; UK1 = VectorXcd::Zero(num_phases + num_tross);
-	VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
-
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
