@@ -38,7 +38,6 @@ void insert_end_separator()
 	debug_file << " " << endl;
 }
 
-
 // Функция для конвертации текста в цифру с плав. точкой
 float stringToFloat(string s)
 {
@@ -56,7 +55,6 @@ int stringToInt(string s)
 	converter >> toInt;
 	return toInt;
 }
-
 
 // Класс помощник для получения данных по Амплитуде и Фазе гармоник
 class CustomRangePairs
@@ -100,7 +98,6 @@ public:
 		odd_difference = -1;
 	}
 };
-
 
 // Класс помощник для составления диапазона для определенного присоединения
 class ProsoedRowRange 
@@ -153,12 +150,11 @@ double WD[2][50] = {0}; double II[10] = {0};
 enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e };
 double main_harm[8][3][700] = {0};
 
-
 // Данные о зазмемлении линии
 const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-VectorXcd UK1;
-VectorXcd AIK1;
+typedef Matrix< std::complex<double>, num_phases+num_tross, 1 > MainVector;
+MainVector UK1, AIK1;
 
 std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
 std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
@@ -514,8 +510,13 @@ void raschet(int& k, int& n)
 				A1(i, j) = F(i, j);
 			}
 		}
+		
+		// I'm here right now...
+		
+
 	}
 }
+
 
 // Главная функция запуска программы!
 int main() {
@@ -692,43 +693,43 @@ int main() {
 			PR = 0;
 		label_1700:
 			PR = PR + 1;
+			
+			UK1(0) = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
+			UK1(1) = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
+			UK1(2) = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
+			UK1(3) = std::complex<double>(0.0, 0.0);
 
-			UK1[0] = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
-			UK1[1] = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
-			UK1[2] = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
-			UK1[3] = std::complex<double>(0.0, 0.0);
-
-			AIK1[0] = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
-			AIK1[1] = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
-			AIK1[2] = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
-			AIK1[3] = std::complex<double>(0.0, 0.0);
+			AIK1(0) = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
+			AIK1(1) = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
+			AIK1(2) = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
+			AIK1(3) = std::complex<double>(0.0, 0.0);
 
 			if (k > 1) goto label_1111;
 			if (k == 1 && PR == 2) goto label_1111;
 
-			UK10 = (UK1[0] + UK1[1] + UK1[2]) / 3.;
-			UK11 = (UK1[0] + UK1[1] * AL + UK1[2] * std::pow(AL, 2.)) / 3.;
-			UK12 = (UK1[0] + UK1[1] * std::pow(AL, 2.) + UK1[2] * AL) / 3.;
+			UK10 = (UK1(0) + UK1(1) + UK1(2)) / 3.;
+			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / 3.;
+			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / 3.;
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 
-			UK1[0] = UK11;
-			UK1[1] = UK11 * std::pow(AL, 2.);
-			UK1[2] = UK11 * AL;
+			UK1(0) = UK11;
+			UK1(1) = UK11 * std::pow(AL, 2.);
+			UK1(2) = UK11 * AL;
 
-			AIK10 = (AIK1[0] + AIK1[1] + AIK1[2]) / 3.;
-			AIK11 = (AIK1[0] + AIK1[1] * AL + AIK1[2] * std::pow(AL, 2.)) / 3.;
-			AIK12 = (AIK1[0] + AIK1[1] * std::pow(AL, 2.) + AIK1[2] * AL) / 3.;
+			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / 3.;
+			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / 3.;
+			AIK12 = (AIK1(0) + AIK1(1) * std::pow(AL, 2.) + AIK1(2) * AL) / 3.;
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
 			SKI0 = sqrt(std::pow(real(AIK10), 2.) + std::pow(imag(AIK10), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
 
-			AIK1[0] = AIK11;
-			AIK1[1] = AIK11 * std::pow(AL, 2.);
-			AIK1[2] = AIK11 * AL;
+			AIK1(0) = AIK11;
+			AIK1(1) = AIK11 * std::pow(AL, 2.);
+			AIK1(2) = AIK11 * AL;
 
 		label_1111:
 
