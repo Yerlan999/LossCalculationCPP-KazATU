@@ -115,8 +115,12 @@
             }
 
 
-            CALL DLFTCG(M1,A1,M1,A2,M1,IPVT1)
-            CALL DLFDCG(M1,A2,M1,IPVT1,DET10,DET20)
+            PartialPivLU<MatrixXcd> part_piv_lu(A1);
+            MatrixXcd A2 = part_piv_lu.matrixLU();
+            DET10 = A2.determinant();
+            SS = DET10;
+
+
         // ВЫЧИСЛЕНИЕ ОПРЕДЕЛИТЕЛЯ ВАНДЕРМОНДА
             CONTINUE
             SS=DET10*(10.**DET20)

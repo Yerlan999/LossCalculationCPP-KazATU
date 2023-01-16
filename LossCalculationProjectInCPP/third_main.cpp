@@ -216,7 +216,7 @@ void raschet(int& k, int& n)
 	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
 
-	VectorXd DET10; VectorXd DET20; // VectorXd SS; VectorXd SS1;
+	// VectorXd DET10; VectorXd DET20; // VectorXd SS; VectorXd SS1;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
 	VectorXd DET2; DET2 = VectorXd::Zero(M);
 
@@ -483,12 +483,12 @@ void raschet(int& k, int& n)
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
 		// Важно! AU выше откомментить !!!
-		auto AU = Z * Y;
+		Product AU = Z * Y;
 		SS1 = sqrt(AU(0, 0));
 
 		// ВЫЧИСЛЕНИЕ СОБСТВЕННЫХ ЗНАЧЕНИЙ МАТРИЦЫ АU
 		// Важно! EVU выше откомментить !!!
-		auto EVU = AU.inverse();
+		Inverse EVU = AU.inverse();
 
 		// ФОРМИРОВАНИЕ МАТРИЦЫ ВАНДЕРМОНДА
 		// Цикл #20
@@ -513,8 +513,12 @@ void raschet(int& k, int& n)
 		
 		// I'm here right now...
 		// LU factorization of A1 matrix
-		A2 = A1.partialPivLu();
-		
+		PartialPivLU<MatrixXcd> part_piv_lu(A1);
+		MatrixXcd A2 = part_piv_lu.matrixLU();
+		dcomplex DET10 = A2.determinant();
+		SS = DET10;
+
+		cout << "No issues till this point. Go on. Good job!" << endl;
 
 	}
 }
@@ -526,27 +530,27 @@ int main() {
 	// **************************** # Testing Polygon Start # ****************************
 	
 	
-	MatrixXcd TestA1{
-		{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
-		{std::complex<double>(7,26), std::complex<double>(0,50), std::complex<double>(0,-7), std::complex<double>(16,0),},
-		{std::complex<double>(9,74), std::complex<double>(-4,5), std::complex<double>(-8,-77), std::complex<double>(6,0),},
-		{std::complex<double>(2,7), std::complex<double>(4,5), std::complex<double>(-78,-7), std::complex<double>(46,0),}
-	};
-	cout << "Original A1 matrix: " << endl;
-	cout << TestA1 << endl;
-	
-	PartialPivLU<MatrixXcd> part_piv_lu(TestA1);
-	
+	//MatrixXcd TestA1{
+	//	{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
+	//	{std::complex<double>(7,26), std::complex<double>(0,50), std::complex<double>(0,-7), std::complex<double>(16,0),},
+	//	{std::complex<double>(9,74), std::complex<double>(-4,5), std::complex<double>(-8,-77), std::complex<double>(6,0),},
+	//	{std::complex<double>(2,7), std::complex<double>(4,5), std::complex<double>(-78,-7), std::complex<double>(46,0),}
+	//};
+	//cout << "Original A1 matrix: " << endl;
+	//cout << TestA1 << endl;
+	//
+	//PartialPivLU<MatrixXcd> part_piv_lu(TestA1);
+	//
 
-	cout << "LU of A1: " << endl;
-	MatrixXcd lu_A1 = part_piv_lu.matrixLU();
-	cout << lu_A1 << endl;
+	//cout << "LU of A1: " << endl;
+	//MatrixXcd lu_A1 = part_piv_lu.matrixLU();
+	//cout << lu_A1 << endl;
 
-	cout << "Det of LU: " << endl;
-	dcomplex det_A1lu = lu_A1.determinant();
-	cout << det_A1lu << endl;
+	//cout << "Det of LU: " << endl;
+	//dcomplex det_A1lu = lu_A1.determinant();
+	//cout << det_A1lu << endl;
 
-	return 0;
+	//return 0;
 
 
 	// **************************** # Testing Polygon End # ****************************
@@ -652,6 +656,13 @@ int main() {
 	}
 	phaser.reset();
 	sheets_counter = 1;
+
+	auto half_stop = high_resolution_clock::now();
+	auto half_duration = duration_cast<seconds>(half_stop - start);
+	debug_file << "Excel file has been read successfully!" << endl;
+	debug_file << "Took to read the file: " << half_duration.count() << " seconds." << std::endl;
+	
+	insert_gap();
 
 	// Листы EXCEL файла прочитаны. Предварительные матрицы составлены.
 	// Проведение расчетов!
