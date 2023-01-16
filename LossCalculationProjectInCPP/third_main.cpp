@@ -512,6 +512,8 @@ void raschet(int& k, int& n)
 		}
 		
 		// I'm here right now...
+		// LU factorization of A1 matrix
+		A2 = A1.partialPivLu();
 		
 
 	}
@@ -521,6 +523,34 @@ void raschet(int& k, int& n)
 // Главная функция запуска программы!
 int main() {
 	
+	// **************************** # Testing Polygon Start # ****************************
+	
+	
+	MatrixXcd TestA1{
+		{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
+		{std::complex<double>(7,26), std::complex<double>(0,50), std::complex<double>(0,-7), std::complex<double>(16,0),},
+		{std::complex<double>(9,74), std::complex<double>(-4,5), std::complex<double>(-8,-77), std::complex<double>(6,0),},
+		{std::complex<double>(2,7), std::complex<double>(4,5), std::complex<double>(-78,-7), std::complex<double>(46,0),}
+	};
+	cout << "Original A1 matrix: " << endl;
+	cout << TestA1 << endl;
+	
+	PartialPivLU<MatrixXcd> part_piv_lu(TestA1);
+	
+
+	cout << "LU of A1: " << endl;
+	MatrixXcd lu_A1 = part_piv_lu.matrixLU();
+	cout << lu_A1 << endl;
+
+	cout << "Det of LU: " << endl;
+	dcomplex det_A1lu = lu_A1.determinant();
+	cout << det_A1lu << endl;
+
+	return 0;
+
+
+	// **************************** # Testing Polygon End # ****************************
+
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
