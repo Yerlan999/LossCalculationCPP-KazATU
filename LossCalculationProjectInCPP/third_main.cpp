@@ -511,12 +511,49 @@ void raschet(int& k, int& n)
 			}
 		}
 		
-		// I'm here right now...
-		// LU factorization of A1 matrix
+
 		PartialPivLU<MatrixXcd> part_piv_lu(A1);
 		MatrixXcd A2 = part_piv_lu.matrixLU();
+		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
 		dcomplex DET10 = A2.determinant();
 		SS = DET10;
+
+
+		// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
+		// жХЙК #21
+		for (int j = 0; j < M1; j++)
+		{   // жХЙК #211
+			for (int ii = 0; ii < M1; ii++)
+			{	// жХЙК #211
+				for (int jj = 0; jj < M1; jj++)
+				{
+					F(ii, jj) = F1[ii][jj];
+				}
+			}
+			// жХЙК #22
+			for (int i = 0; i < M1; i++) {
+				F(i, j) = pow(EVU(i), 0.5);
+			}
+			// жХЙК #202
+			for (int ii = 0; ii < M1; ii++)
+			{	// жХЙК #202
+				for (int jj = 0; jj < M1; jj++)
+				{
+					A1(ii, jj) = F(ii, jj);
+				}
+			}
+
+			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
+			PartialPivLU<MatrixXcd> part_piv_lu(A1);
+			MatrixXcd A2 = part_piv_lu.matrixLU();
+			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
+			DET1(j) = A2.determinant();
+
+		}
+
+
+
+
 
 		cout << "No issues till this point. Go on. Good job!" << endl;
 
@@ -530,30 +567,39 @@ int main() {
 	// **************************** # Testing Polygon Start # ****************************
 	
 	
-	//MatrixXcd TestA1{
+	//MatrixXcd TestA1
+	//{
 	//	{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
 	//	{std::complex<double>(7,26), std::complex<double>(0,50), std::complex<double>(0,-7), std::complex<double>(16,0),},
 	//	{std::complex<double>(9,74), std::complex<double>(-4,5), std::complex<double>(-8,-77), std::complex<double>(6,0),},
 	//	{std::complex<double>(2,7), std::complex<double>(4,5), std::complex<double>(-78,-7), std::complex<double>(46,0),}
 	//};
-	//cout << "Original A1 matrix: " << endl;
-	//cout << TestA1 << endl;
 	//
-	//PartialPivLU<MatrixXcd> part_piv_lu(TestA1);
+	//MatrixXd TestA2
+	//{
+	//	{2., 4., 8., -64.},
+	//	{-7., 10., -20., 16.,},
+	//	{9., -4., -8., 6.},
+	//	{2., 4., -78., 46.}
+	//};
+
+	//MatrixXd TestA3
+	//{
+	//	{2., 4., 8., -64.},
+	//	{-7., 10., -20., 16.,},
+	//	{9., -4., -8., 6.},
+	//	{2., 4., -78., 46.}
+	//};
+
+	//cout << "A3 * A2: " << endl;
+	//cout << TestA2 * TestA3 << endl;
+
 	//
-
-	//cout << "LU of A1: " << endl;
-	//MatrixXcd lu_A1 = part_piv_lu.matrixLU();
-	//cout << lu_A1 << endl;
-
-	//cout << "Det of LU: " << endl;
-	//dcomplex det_A1lu = lu_A1.determinant();
-	//cout << det_A1lu << endl;
-
 	//return 0;
 
 
 	// **************************** # Testing Polygon End # ****************************
+
 
 	auto start = high_resolution_clock::now();
 

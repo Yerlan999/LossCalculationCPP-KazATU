@@ -121,27 +121,39 @@
             SS = DET10;
 
 
-        // ВЫЧИСЛЕНИЕ ОПРЕДЕЛИТЕЛЯ ВАНДЕРМОНДА
-            CONTINUE
-            SS=DET10*(10.**DET20)
-        // ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
-            DO 21 J=1,M1
-            DO 211 II=1,M1
-            DO 211 JJ=1,M1
-            F(II,JJ)=F1(II,JJ)
-          211   CONTINUE
-            DO 22 I=1,M1
-            F(I,J)=EVU(I)**0.5
-           22   CONTINUE
-              DO 202 II=1,M1
-            DO 202 JJ=1,M1
-            A1(II,JJ)=F(II,JJ)
-          202   CONTINUE
-        // ФАКТОРИЗАЦИЯ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
-              CALL DLFTCG(M1,A1,M1,A2,M1,IPVT1)
-        // ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ ОПРЕДЕЛИТЕЛЕЙ ВАНДЕРМОНДА
-            CALL DLFDCG(M1,A2,M1,IPVT1,DET1(J),DET2(J))
-           21   CONTINUE
+            // ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
+            for (int j = 0; j < M1; j++)
+            {
+                for (int ii = 0; ii < M1; ii++)
+                {
+                    for (int jj = 0; jj < M1; jj++)
+                    {
+                        F(ii,jj)=F1[ii][jj];
+                    }
+                }
+
+                for (int i = 0; i < M1; i++){
+                    F(i,j)=pow(EVU(i),0.5);
+                }
+
+                for (int ii = 0; ii < M1; ii++)
+                {
+                    for (int jj = 0; jj < M1; jj++)
+                    {
+                        A1(ii,jj)=F(ii,jj);
+                    }
+                }
+
+                // ФАКТОРИЗАЦИЯ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
+                PartialPivLU<MatrixXcd> part_piv_lu(A1);
+                MatrixXcd A2 = part_piv_lu.matrixLU();
+                // ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ ОПРЕДЕЛИТЕЛЕЙ ВАНДЕРМОНДА
+                DET1(j) = A2.determinant();
+
+            }
+
+
+
         // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЯ ФУНКЦИИ ОТ МАТРИЦЫ
          1700   CONTINUE
             CALL DMCRCR(M,M,AU, M,M,M,AU,M,M,M,F2,M)
