@@ -513,8 +513,7 @@ void raschet(int& k, int& n)
 		}
 		
 
-		PartialPivLU<MatrixXcd> part_piv_lu(A1);
-		MatrixXcd A2 = part_piv_lu.matrixLU();
+		A2 = A1.partialPivLu().matrixLU();
 		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
 		DET10 = A2.determinant(); DET20 = 0.;
 		SS = DET10*pow(10,DET20);
@@ -545,8 +544,7 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-			PartialPivLU<MatrixXcd> part_piv_lu(A1);
-			MatrixXcd A2 = part_piv_lu.matrixLU();
+			A2 = A1.partialPivLu().matrixLU();
 			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
 			DET1(j) = A2.determinant(); DET2(j) = 0.;
 
@@ -600,6 +598,68 @@ void raschet(int& k, int& n)
 			}
 		}
 
+		F3 = LU * LU;
+		// бшвхякемхе люрпхжш LI
+		// оепелмнфемхе люрпхж оюпюлерпнб
+		AAI = Y * Z;
+		// бшвхякемхе янаярбеммшу гмювемхи люрпхжш AAI
+		EVI = AAI.eigenvalues();
+
+		// тнплхпнбюмхе люрпхжш бюмдеплнмдю
+		// жХЙК #1120
+		for (int j = 0; j < M; j++)
+		{
+			for (int i = 0; i < M; i++)
+			{
+				F(i, j) = pow(EVI(i),j);
+				F1[i][j] = F(i, j);
+			}
+		}
+
+		// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
+		// жХЙК #1201
+		for (int i = 0; i < M1; i++)
+		{
+			for (int j = 0; j < M1; j++)
+			{
+				A1(i, j) = F(i, j);
+			}
+		}
+
+		A2 = A1.partialPivLu().matrixLU();
+		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
+		DET10 = A2.determinant(); DET20 = 0.;
+
+		// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
+		// жХЙК #121
+		for (int j = 0; j < M1; j++)
+		{
+			// жХЙК #1211
+			for (int ii = 0; ii < M1; ii++)
+			{
+				for (int jj = 0; jj < M1; jj++)
+				{
+					F(ii, jj) = F1[ii][jj];
+				}
+			}
+			// жХЙК #122
+			for (int i = 0; i < M1; i++)
+			{
+				F(i, j) = pow(EVI(i),0.5);
+			}
+			// жХЙК #1202
+			for (int ii = 0; ii < M1; ii++)
+			{
+				for (int jj = 0; jj < M1; jj++)
+				{
+					A1(ii, jj) = F(ii, jj);
+				}
+			}
+		}
+
+
+
+
 		cout << "No issues till this point. Go on. Good job!" << endl;
 
 	}
@@ -636,9 +696,13 @@ int main() {
 	//	{2., 4., -78., 46.}
 	//};
 
-	//cout << "A3 * A2: " << endl;
-	//cout << TestA2 * TestA3 << endl;
+	//MatrixXcd TestA4 = TestA1.partialPivLu().matrixLU();
 
+	//cout << "LU of First " << endl;
+	//cout << TestA4 << endl;
+
+	//cout << "Det of Second " << endl;
+	//cout << TestA4.determinant() << endl;
 	//
 	//return 0;
 
