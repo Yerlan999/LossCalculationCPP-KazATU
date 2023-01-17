@@ -216,7 +216,7 @@ void raschet(int& k, int& n)
 	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
 
-	// VectorXd DET10; VectorXd DET20; // VectorXd SS; VectorXd SS1;
+	std::complex<double> DET10, SS, SS1; double DET20;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
 	VectorXd DET2; DET2 = VectorXd::Zero(M);
 
@@ -227,19 +227,19 @@ void raschet(int& k, int& n)
 	MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
 
 	MatrixXcd F; F = MatrixXcd::Zero(M, M);
-	MatrixXd F2; F2 = MatrixXd::Zero(M, M);
-	MatrixXd F3; F3 = MatrixXd::Zero(M, M);
-	MatrixXd F4; F4 = MatrixXd::Zero(M, M);
-	MatrixXd F5; F5 = MatrixXd::Zero(M, M);
-	MatrixXd F6; F6 = MatrixXd::Zero(M, M);
-	MatrixXd F7; F7 = MatrixXd::Zero(M, M);
-	MatrixXd F10; F10 = MatrixXd::Zero(M, M);
+	MatrixXcd F2; F2 = MatrixXcd::Zero(M, M);
+	MatrixXcd F3; F3 = MatrixXcd::Zero(M, M);
+	MatrixXcd F4; F4 = MatrixXcd::Zero(M, M);
+	MatrixXcd F5; F5 = MatrixXcd::Zero(M, M);
+	MatrixXcd F6; F6 = MatrixXcd::Zero(M, M);
+	MatrixXcd F7; F7 = MatrixXcd::Zero(M, M);
+	MatrixXcd F10; F10 = MatrixXcd::Zero(M, M);
 
-	VectorXd B; B = VectorXd::Zero(M);
+	VectorXcd B; B = VectorXcd::Zero(M);
 	VectorXcd B1; B1 = VectorXcd::Zero(M20);
-	VectorXd B4; B4 = VectorXd::Zero(M20);
-	VectorXd B6; B6 = VectorXd::Zero(M10);
-	VectorXd B7; B7 = VectorXd::Zero(M10);
+	VectorXcd B4; B4 = VectorXcd::Zero(M20);
+	VectorXcd B6; B6 = VectorXcd::Zero(M10);
+	VectorXcd B7; B7 = VectorXcd::Zero(M10);
 	VectorXcd B10; B10 = VectorXcd::Zero(M10);
 
 	MatrixXcd LU;  LU = MatrixXcd::Zero(M, M);
@@ -254,19 +254,19 @@ void raschet(int& k, int& n)
 	MatrixXcd Z; Z = MatrixXcd::Zero(M, M);
 	MatrixXcd Y; Y = MatrixXcd::Zero(M, M);
 
-	VectorXd AA; AA = VectorXd::Zero(M);
-	VectorXd BB; BB = VectorXd::Zero(M);
-	MatrixXd CC; CC = MatrixXd::Zero(M, M);
-	MatrixXd DD; DD = MatrixXd::Zero(M, M);
+	VectorXcd AA; AA = VectorXcd::Zero(M);
+	VectorXcd BB; BB = VectorXcd::Zero(M);
+	MatrixXcd CC; CC = MatrixXcd::Zero(M, M);
+	MatrixXcd DD; DD = MatrixXcd::Zero(M, M);
 
 	MatrixXd HC1; HC1 = MatrixXd::Zero(M, M);
 	MatrixXd HC3; HC3 = MatrixXd::Zero(M, M);
 
-	VectorXd EVI; EVI = VectorXd::Zero(M);
-	// VectorXd EVU; EVU = VectorXd::Zero(M);
+	VectorXcd EVI; EVI = VectorXcd::Zero(M);
+	VectorXcd EVU; EVU = VectorXcd::Zero(M);
 
-	// MatrixXd AU; AU = MatrixXd::Zero(M, M);
-	MatrixXd AAI; AAI = MatrixXd::Zero(M, M);
+	MatrixXcd AU; AU = MatrixXcd::Zero(M, M);
+	MatrixXcd AAI; AAI = MatrixXcd::Zero(M, M);
 
 
 
@@ -300,10 +300,10 @@ void raschet(int& k, int& n)
 
 	// Решение проблемы с матрицей AG. 3-x мерная [M1][M][M]. М1 - динамичен!!!
 	// Создание вектра с размером М1, хранящий в себе все субматрицы с размером МхМ
-	std::vector<MatrixXd> AG;
+	std::vector<MatrixXcd> AG;
 	for (int i = 0; i < M1; i++)
 	{
-		MatrixXd ag; ag = MatrixXd::Zero(M, M);
+		MatrixXcd ag; ag = MatrixXcd::Zero(M, M);
 		AG.push_back(ag);
 	}
 
@@ -343,8 +343,8 @@ void raschet(int& k, int& n)
 			if (i == j) D[i][i] = R[i];
 			if (i != j) D[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] - YA[j]), 2));
 			HC[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] + YA[j]), 2));
-			E[i][j] = std::complex(0.0, 0.0);
-			E[i][i] = std::complex(1.0, 0.0);
+			E[i][j] = std::complex<double>(0.0, 0.0);
+			E[i][i] = std::complex<double>(1.0, 0.0);
 		}
 	}
 
@@ -391,7 +391,7 @@ void raschet(int& k, int& n)
 			if (i == j) G[i][j] = 0.00000004 * YA[i] / YA[i];
 			if (i != j) G[i][j] = -0.00000004 * YA[0] / D[i][j];
 			G[i][j] = 0.;
-			Y(i, j) = complex(G[i][j], HC4[i][j]);
+			Y(i, j) = std::complex<double>(G[i][j], HC4[i][j]);
 		}
 	}
 
@@ -483,12 +483,13 @@ void raschet(int& k, int& n)
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
 		// Важно! AU выше откомментить !!!
-		Product AU = Z * Y;
+		
+		AU = Z * Y;
 		SS1 = sqrt(AU(0, 0));
-
+		
 		// ВЫЧИСЛЕНИЕ СОБСТВЕННЫХ ЗНАЧЕНИЙ МАТРИЦЫ АU
 		// Важно! EVU выше откомментить !!!
-		Inverse EVU = AU.inverse();
+		EVU = AU.eigenvalues();
 
 		// ФОРМИРОВАНИЕ МАТРИЦЫ ВАНДЕРМОНДА
 		// Цикл #20
@@ -515,9 +516,9 @@ void raschet(int& k, int& n)
 		PartialPivLU<MatrixXcd> part_piv_lu(A1);
 		MatrixXcd A2 = part_piv_lu.matrixLU();
 		// ВЫЧИСЛЕНИЕ ОПРЕДЕЛИТЕЛЯ ВАНДЕРМОНДА
-		dcomplex DET10 = A2.determinant();
-		SS = DET10;
-
+		DET10 = A2.determinant(); DET20 = 0.;
+		SS = DET10*pow(10,DET20);
+		
 
 		// ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
 		// Цикл #21
@@ -547,13 +548,57 @@ void raschet(int& k, int& n)
 			PartialPivLU<MatrixXcd> part_piv_lu(A1);
 			MatrixXcd A2 = part_piv_lu.matrixLU();
 			// ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ ОПРЕДЕЛИТЕЛЕЙ ВАНДЕРМОНДА
-			DET1(j) = A2.determinant();
+			DET1(j) = A2.determinant(); DET2(j) = 0.;
 
 		}
+		
+		F2 = AU * AU;
+		F3 = F2 * AU;
+		F4 = F3 * AU;
+		F5 = F4 * AU;
+		F6 = F5 * AU;
+		F7 = F6 * AU;
+		
+		// Цикл #441
+		for (int i = 0; i < M1; i++)
+		{
+			for (int ii = 0; ii < M; ii++)
+			{
+				for (int jj = 0; jj < M; jj++)
+				{
+					if (i == 0) AG[0](ii, jj) = E[ii][jj];
+					if (i == 1) AG[1](ii, jj) = AU(ii, jj);
+					if (i == 2) AG[2](ii, jj) = F2(ii, jj);
+					if (i == 3) AG[3](ii, jj) = F3(ii, jj);
+					if (i == 4) AG[4](ii, jj) = F4(ii, jj);
+					if (i == 5) AG[5](ii, jj) = F5(ii, jj);
+					if (i == 6) AG[6](ii, jj) = F6(ii, jj);
+					if (i == 7) AG[7](ii, jj) = F7(ii, jj);
+				}
+			}
+		}
 
-
-
-
+		// Цикл #442
+		for (int ii = 0; ii < M; ii++)
+		{
+			for (int jj = 0; jj < M; jj++)
+			{
+				LU(ii, jj) = 0.;
+			}
+		}
+		// Цикл #410
+		for (int i = 0; i < M1; i++)
+		{
+			DET3[i] = DET1(i) / DET10;
+			DET4[i] = DET2(i) - DET20; // !Все равно, все равно 0-ю. Лишняя операция
+			for (int ii = 0; ii < M; ii++)
+			{
+				for (int jj = 0; jj < M; jj++)
+				{
+					LU(ii, jj) = LU(ii, jj) + AG[i](ii, jj) * DET3[i]; //* (pow(10, DET4(i)));
+				}
+			}
+		}
 
 		cout << "No issues till this point. Go on. Good job!" << endl;
 

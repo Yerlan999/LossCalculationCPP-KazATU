@@ -154,37 +154,61 @@
 
 
 
-        // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЯ ФУНКЦИИ ОТ МАТРИЦЫ
-         1700   CONTINUE
-            CALL DMCRCR(M,M,AU, M,M,M,AU,M,M,M,F2,M)
-            CALL DMCRCR(M,M,F2,M,M,M,AU,M,M,M,F3,M)
-            CALL DMCRCR(M,M,F3,M,M,M,AU,M,M,M,F4,M)
-            CALL DMCRCR(M,M,F4,M,M,M,AU,M,M,M,F5,M)
-            CALL DMCRCR(M,M,F5,M,M,M,AU,M,M,M,F6,M)
-            CALL DMCRCR(M,M,F6,M,M,M,AU,M,M,M,F7,M)
-            DO 441 I=1,M1
-            DO 441 II=1,M
-            DO 441 JJ=1,M
-            if(I.EQ.1)AG(1,II,JJ)=E(II,JJ)
-            if(I.EQ.2)AG(2,II,JJ)=AU(II,JJ)
-            if(I.EQ.3)AG(3,II,JJ)=F2(II,JJ)
-            if(I.EQ.4)AG(4,II,JJ)=F3(II,JJ)
-            if(I.EQ.5)AG(5,II,JJ)=F4(II,JJ)
-            if(I.EQ.6)AG(6,II,JJ)=F5(II,JJ)
-            if(I.EQ.7)AG(7,II,JJ)=F6(II,JJ)
-            if(I.EQ.8)AG(8,II,JJ)=F7(II,JJ)
-          441   CONTINUE
-              DO 442 II=1,M
-            DO 442 JJ=1,M
-            LU(II,JJ)=0.
-          442   CONTINUE
-            DO 410 I=1,M1
-            DET3(I)=DET1(I)/DET10
-            DET4(I)=DET2(I)-DET20
-            DO 410 II=1,M
-            DO 410 JJ=1,M
-            LU(II,JJ)=LU(II,JJ)+AG(I,II,JJ)*DET3(I)*(10**DET4(I))
-          410   CONTINUE
+            // ВЫЧИСЛЕНИЕ ЗНАЧЕНИЯ ФУНКЦИИ ОТ МАТРИЦЫ
+
+            Product F2 = AU * AU;
+            Product F3 = F2 * AU;
+            Product F4 = F3 * AU;
+            Product F5 = F4 * AU;
+            Product F6 = F5 * AU;
+            Product F7 = F6 * AU;
+
+
+            for (int i = 0; i < M1; i++)
+            {
+                for (int ii = 0; ii < M; ii++)
+                {
+                    for (int jj = 0; jj < M; jj++)
+                    {
+                        if(i == 0) AG[0](ii,jj)=E[ii][jj];
+                        if(i == 1) AG[1](ii,jj)=AU(ii,jj);
+                        if(i == 2) AG[2](ii,jj)=F2(ii,jj);
+                        if(i == 3) AG[3](ii,jj)=F3(ii,jj);
+                        if(i == 4) AG[4](ii,jj)=F4(ii,jj);
+                        if(i == 5) AG[5](ii,jj)=F5(ii,jj);
+                        if(i == 6) AG[6](ii,jj)=F6(ii,jj);
+                        if(i == 7) AG[7](ii,jj)=F7(ii,jj);
+                    }
+                }
+            }
+
+
+
+            for (int ii = 0; ii < M; ii++)
+            {
+                for (int jj = 0; jj < M; jj++)
+                {
+                    LU(ii,jj)=0.;
+                }
+            }
+
+            for (int i = 0; i < M1; i++)
+            {
+                DET3(i)=DET1(i)/DET10;
+                DET4(i)=DET2(i)-DET20;
+                for (int ii = 0; ii < M; ii++)
+                {
+                    for (int jj = 0; jj < M; jj++)
+                    {
+                        LU(ii,jj)=LU(ii,jj)+AG[i](ii,jj)*DET3(i)*(pow(10,DET4(i)));
+                    }
+                }
+            }
+
+
+C ***************************** I am here now **********************************
+
+
             CALL DMCRCR(M,M,LU,M,M,M,LU,M,M,M,F3,M)
         C************************************************************
         C************************************************************
