@@ -655,8 +655,63 @@ void raschet(int& k, int& n)
 					A1(ii, jj) = F(ii, jj);
 				}
 			}
+		
+			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
+			A2 = A1.partialPivLu().matrixLU();
+			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
+			DET1(j) = A2.determinant(); DET2(j) = 0.;
+		
+		}
+		
+		// бшвхякемхе гмювемхъ тсмйжхх нр люрпхжш
+		F2 = AAI * AAI;
+		F3 = F2 * AAI;
+		F4 = F3 * AAI;
+		F5 = F4 * AAI;
+		F6 = F5 * AAI;
+		F7 = F6 * AAI;
+
+		// жХЙК #1441
+		for (int i = 0; i < M1; i++)
+		{
+			for (int ii = 0; ii < M; ii++)
+			{
+				for (int jj = 0; jj < M; jj++)
+				{
+					if (i == 0) AG[0](ii, jj) = E[ii][jj];
+					if (i == 1) AG[1](ii, jj) = AAI(ii, jj);
+					if (i == 2) AG[2](ii, jj) = F2(ii, jj);
+					if (i == 3) AG[3](ii, jj) = F3(ii, jj);
+					if (i == 4) AG[4](ii, jj) = F4(ii, jj);
+					if (i == 5) AG[5](ii, jj) = F5(ii, jj);
+					if (i == 6) AG[6](ii, jj) = F6(ii, jj);
+					if (i == 7) AG[7](ii, jj) = F7(ii, jj);
+				}
+			}
+		}
+		// жХЙК #1442
+		for (int ii = 0; ii < M; ii++)
+		{
+			for (int jj = 0; jj < M; jj++)
+			{
+				LI(ii, jj) = 0.;
+			}
 		}
 
+		// жХЙК #1410
+		for (int i = 0; i < M1; i++)
+		{
+			for (int ii = 0; ii < M; ii++)
+			{
+				for (int jj = 0; jj < M; jj++)
+				{
+					LI(ii, jj) = LI(ii, jj) + (DET1(i) * pow(10, DET2(i)) * AG[i](ii, jj)) / (DET10 * pow(10, DET20));
+				}
+			}
+		}
+
+		F3 = LI * LI;
+		int LM = MMT;
 
 
 
