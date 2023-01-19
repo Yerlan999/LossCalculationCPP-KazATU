@@ -215,6 +215,14 @@ void raschet(int& k, int& n)
 	MatrixXcd HH42; HH42 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH12; HH12 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH22; HH22 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH31; HH31 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH41; HH41 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH14; HH14 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH24; HH24 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH33; HH33 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH43; HH43 = MatrixXcd::Zero(M, M);
 
 	std::complex<double> DET10, SS, SS1; double DET20;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
@@ -223,6 +231,7 @@ void raschet(int& k, int& n)
 	MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
 	MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
 	MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20);
+	MatrixXcd GG3; GG3 = MatrixXcd::Zero(M10, M20);
 	MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
 	MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
 
@@ -285,12 +294,6 @@ void raschet(int& k, int& n)
 	double D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
 
 	double HH[M10][M10] = { 0 };
-	std::complex<double> HH12[M][M] = { 0 }, HH14[M][M] = { 0 },
-		HH22[M][M] = { 0 }, HH24[M][M] = { 0 },
-		HH31[M][M] = { 0 }, HH33[M][M] = { 0 },
-		HH41[M][M] = { 0 }, HH43[M][M] = { 0 };
-
-	std::complex<double> GG3[M10][M20] = { 0 };
 
 
 	// Решение проблемы динамических размеров матрицы с помощью библиотеки Eigen 
@@ -944,6 +947,287 @@ void raschet(int& k, int& n)
 
 		}
 
+		
+
+		// Финальная стадия расчетов!!!
+		for (int i = 0; i < M20; i++) {
+			for (int j = 0; j < M20; j++) {
+				GG(i, j) = 0.;
+				GG1(i, j) = 0.;
+				GG2(i, j) = 0.;
+			}
+		}
+
+		for (int i = 0; i < M; i++) {
+			GG(i, i) = 1.;
+			GG(i, i + M) = 1.;
+			GG(i + M, i + 2 * M) = 1.;
+			GG(i + M, i + 3 * M) = 1.;
+			GG1(i, i) = 1.;
+			GG1(i, i + M) = 1.;
+			GG1(i + M, i + 2 * M) = 1.;
+			GG1(i + M, i + 3 * M) = 1.;
+		}
+
+		for (int i = 0; i < M; i++) {
+			for (int j = 0; j < M; j++) {
+				GG(i + 2 * M, j) = -LU(i, j);
+				GG(i + 2 * M, j + M) = LU(i, j);
+				GG(i + 3 * M, j + 2 * M) = -1. * LI(i, j);
+				GG(i + 3 * M, j + 3 * M) = +LI(i, j);
+
+				GG1(i + 2 * M, j) = LU3(i, j);
+				GG1(i + 2 * M, j + M) = LU2(i, j);
+				GG1(i + 3 * M, j + 2 * M) = LI3(i, j);
+				GG1(i + 3 * M, j + 3 * M) = LI2(i, j);
+			}
+		}
+
+		GG2 = GG1.inverse(); // or .completeOrthogonalDecomposition().pseudoInverse();
+
+		for (int i = 0; i < M; i++) {
+			for (int j = 0; j < M; j++) {
+				HH11(i, j) = GG2(i, j);
+				HH12(i, j) = GG2(i, j + M);
+				HH13(i, j) = GG2(i, j + 2 * M);
+				HH14(i, j) = GG2(i, j + 3 * M);
+				HH21(i, j) = GG2(i + M, j);
+				HH22(i, j) = GG2(i + M, j + M);
+				HH23(i, j) = GG2(i + M, j + 2 * M);
+				HH24(i, j) = GG2(i + M, j + 3 * M);
+				HH31(i, j) = GG2(i + 2 * M, j);
+				HH32(i, j) = GG2(i + 2 * M, j + M);
+				HH33(i, j) = GG2(i + 2 * M, j + 2 * M);
+				HH34(i, j) = GG2(i + 2 * M, j + 3 * M);
+				HH41(i, j) = GG2(i + 3 * M, j);
+				HH42(i, j) = GG2(i + 3 * M, j + M);
+				HH43(i, j) = GG2(i + 3 * M, j + 2 * M);
+				HH44(i, j) = GG2(i + 3 * M, j + 3 * M);
+			}
+		}
+
+		F = LU3 * HH11;
+		HH11 = LU * F;
+		F = LU2 * HH21;
+		HH21 = LU * F;
+		F = LU3 * HH13;
+		HH13 = LU * F;
+		F = LU2 * HH23;
+		HH23 = LU * F;
+		F = LI3 * HH32;
+		HH32 = LI * F;
+		F = LI2 * HH42;
+		HH42 = LI * F;
+		F = LI3 * HH34;
+		HH34 = LI * F;
+		F = LI2 * HH44;
+		HH44 = LI * F;
+
+		for (int i = 0; i < M10; i++) {
+			for (int j = 0; j < M20; j++) {
+				GG3(i, j) = 0.0;
+			}
+		}
+
+		for (int i = 0; i < M; i++) {
+			for (int j = 0; j < M; j++) {
+				GG3(i, j) = -1. * HH11(i, j) + HH21(i, j);
+				GG3(i, j + 2 * M) = -1. * HH13(i, j) + HH23(i, j);
+				GG3(i, j + 3 * M) = -1. * Z(i, j);
+				GG3(i + M, j + M) = -1. * HH32(i, j) + HH42(i, j);
+				GG3(i + M, j + 2 * M) = -1. * Y(i, j);
+				GG3(i + M, j + 3 * M) = -1. * HH34(i, j) + HH44(i, j);
+			}
+		}
+
+		K1 = 0;
+		int K0 = 0;
+
+		// Might have an issue ...
+
+		for (int j = 0; j < M20; j++) {
+
+			if (IH[j] == 1) K1 = K1 + 1;
+			if (IH[j] == 0) goto label_309;
+
+			for (int i = 0; i < M10; i++) {
+				GG4(i, K1) = -GG3(i, j);
+				B10(K1) = B5[j];
+			}
+
+			goto label_307;
+
+		label_309:
+			if (IH[j] == 0) K0 = K0 + 1;
+				if (IH[j] == 1) goto label_307;
+					for (int i = 0; i < M10; i++) {
+						GG5(i, K0) = GG3(i, j);
+					}
+		label_307:
+			continue;
+		}
+
+		B6 = GG4 * B10;
+		B7 = GG5.inverse() * B6; // should be .dot(B6) or .completeOrthogonalDecomposition().pseudoInverse();
+
+		K1 = 0;
+
+		for (int j = 0; j < M20; j++) {
+			if (IH[j] == 0) K1 = K1 + 1;
+			if (IH[j] == 1) goto label_322;
+			B5[j] = B7(K1);
+		label_322:
+			continue;
+		}
+
+		for (int i = 0; i < M; i++) {
+			UK1(i) = B5[i];
+			AIK1(i) = B5[i + M];
+		}
+
+		AA = Z * AIK1;
+		BB = Y * UK1;
+		CC = LI * LI3;
+		DD = LI * LI2;
+
+		for (int i = 0; i < M; i++) {
+			B1(i) = UK1(i);
+			B1(i + M) = AIK1(i);
+			B1(i + 2 * M) = AA(i);
+			B1(i + 3 * M) = BB(i);
+		}
+
+		B4 = GG.inverse() * B1; // should be .dot(B1) or .completeOrthogonalDecomposition().pseudoInverse();
+
+		for (int i = 0; i < M; i++) {
+			AA(i) = 0.;
+			B(i) = 0.;
+			B(i) = B4(i);
+		}
+
+		AA = LU3 * B;
+
+		for (int i = 0; i < M; i++) {
+			BB(i) = 0.;
+			B(i) = 0.;
+			B(i) = B4(i + M);
+		}
+
+		BB = LU2 * B;
+
+		for (int i = 0; i < M; i++) {
+			UX[i] = AA(i) + BB(i);
+			if (LM == MMT) UK1(i) = UX[i];
+			UXM[i] = sqrt(pow(real(UX[i]), 2.) + pow(imag(UX[i]), 2.));
+		}
+
+		for (int i = 0; i < M; i++) {
+			AA(i) = 0.;
+			B(i) = 0.;
+			B(i) = B4(i + 2 * M);
+		}
+
+		AA = LI3 * B;
+
+		for (int i = 0; i < M; i++) {
+			BB(i) = 0.;
+			B(i) = 0.;
+			B(i) = B4(i + 3 * M);
+		}
+
+		BB = LI2 * B;
+
+		for (int i = 0; i < M; i++) {
+
+			AIX[i] = AA(i) + BB(i);
+			if (LM == MMT) AIK1(i) = AIX[i];
+			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
+
+			// might be an issue with powers of ...
+
+			if (i == 0 and k == 0 and PR == 2)
+			{
+				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+			}
+			if (i == 0 and k > 0)
+			{
+				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+			}
+			if (i == 1 and k == 0 and PR == 2)
+			{
+				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+			}
+			if (i == 1 and k > 0)
+			{
+				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+			}
+			if (i == 2 and k == 0 and PR == 2)
+			{
+				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+			}
+			if (i == 2 and k > 0)
+			{
+				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+			}
+			if (i == 3 and k == 0 and PR == 2)
+			{
+				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+			}
+			if (i == 3 and k > 0)
+			{
+				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+			}
+			if (i == 4 and k == 0 and PR == 2)
+			{
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			}
+			if (i == 4 and k > 0)
+			{
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			}
+			if (i == 5 and k == 0 and PR == 2)
+			{
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			}
+			if (i == 5 and k > 0)
+			{
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			}
+			if (i == 6 and k == 0 and PR == 2)
+			{
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			}
+			if (i == 6 and k > 0)
+			{
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			}
+			if (i == 7 and k == 0 and PR == 2)
+			{
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			}
+			if (i == 7 and k > 0)
+			{
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			}
+
+			if (k == 0 and PR == 2)
+			{
+				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+			}
+			if (k > 0)
+			{
+				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+			}
+
+			if (k == 0 and PR == 1);
+			{PP1 = PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+			if (k == 0 and PR == 2);
+			{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+			SM[i] = UX[i] * conj(AIX[i]) / 2.;
+		}
+
+		// UXM_array.append(UXM)
+		// AIXM_array.append(AIXM)
 
 
 

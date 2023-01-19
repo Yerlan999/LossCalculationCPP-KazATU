@@ -585,3 +585,4 @@ VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
 //PartialPivLU<MatrixXcd> part_piv_lu(TestA1);
 //MatrixXcd lu_A1 = part_piv_lu.matrixLU();
 //dcomplex det_A1lu = lu_A1.determinant();
+
