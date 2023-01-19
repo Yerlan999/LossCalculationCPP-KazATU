@@ -947,9 +947,9 @@ void raschet(int& k, int& n)
 
 		}
 
-		
 
 		// Финальная стадия расчетов!!!
+		
 		for (int i = 0; i < M20; i++) {
 			for (int j = 0; j < M20; j++) {
 				GG(i, j) = 0.;
@@ -957,7 +957,7 @@ void raschet(int& k, int& n)
 				GG2(i, j) = 0.;
 			}
 		}
-
+		
 		for (int i = 0; i < M; i++) {
 			GG(i, i) = 1.;
 			GG(i, i + M) = 1.;
@@ -1040,19 +1040,19 @@ void raschet(int& k, int& n)
 			}
 		}
 
-		K1 = 0;
+		int K1 = 0;
 		int K0 = 0;
 
-		// Might have an issue ...
-
+		// Might have an issue ... YES!!! There is an ISSUE INDEED, as I said
+		// The problem is that K1 is becoming more than 7
 		for (int j = 0; j < M20; j++) {
-
+			
 			if (IH[j] == 1) K1 = K1 + 1;
 			if (IH[j] == 0) goto label_309;
 
 			for (int i = 0; i < M10; i++) {
-				GG4(i, K1) = -GG3(i, j);
-				B10(K1) = B5[j];
+				GG4(i, K1-1) = -1. * GG3(i, j);
+				B10(K1-1) = B5[j];
 			}
 
 			goto label_307;
@@ -1061,7 +1061,7 @@ void raschet(int& k, int& n)
 			if (IH[j] == 0) K0 = K0 + 1;
 				if (IH[j] == 1) goto label_307;
 					for (int i = 0; i < M10; i++) {
-						GG5(i, K0) = GG3(i, j);
+						GG5(i, K0-1) = GG3(i, j);
 					}
 		label_307:
 			continue;
@@ -1075,7 +1075,7 @@ void raschet(int& k, int& n)
 		for (int j = 0; j < M20; j++) {
 			if (IH[j] == 0) K1 = K1 + 1;
 			if (IH[j] == 1) goto label_322;
-			B5[j] = B7(K1);
+			B5[j] = B7(K1-1);
 		label_322:
 			continue;
 		}
@@ -1219,10 +1219,10 @@ void raschet(int& k, int& n)
 				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
 			}
 
-			if (k == 0 and PR == 1);
-			{PP1 = PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
-			if (k == 0 and PR == 2);
-			{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+			if (k == 0 and PR == 1)
+				{PP1 = PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+			if (k == 0 and PR == 2)
+				{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
 			SM[i] = UX[i] * conj(AIX[i]) / 2.;
 		}
 
@@ -1231,7 +1231,7 @@ void raschet(int& k, int& n)
 
 
 
-		cout << "No issues till this point. Go on. Good job!" << endl;
+		//cout << "No issues till this point. Go on. Good job!" << endl;
 
 	}
 }
