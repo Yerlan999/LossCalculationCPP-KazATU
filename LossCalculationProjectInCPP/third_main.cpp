@@ -829,6 +829,123 @@ void raschet(int& k, int& n)
 		}
 
 
+		// тНПЛХПНБЮМХЕ LI LI1 LI2 LI3 EVI
+
+		for (int n = 1; n < 3; n++)
+		{
+			double SA;
+			if (n == 1) SA = -1.;
+			if (n == 2) SA = 1.;
+
+			// бшвхякемхе люрпхвмшу щйяонмемжхюкэмшу тсмйжхи
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LI1(ii, jj) = SA * MMT * LI(ii, jj);
+				}
+			}
+
+			// бшвхякемхе янаярбеммшу гмювемхи люрпхжш LI1
+			EVI = LI1.eigenvalues();
+
+			// тнплхпнбюмхе люрпхжш бюмдеплнмдю
+			for (int i = 0; i < M; i++) {
+				for (int j = 0; j < M; j++) {
+					F(i, j) = pow(EVI(i), j);
+				}
+			}
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					F1[ii][jj] = F(ii, jj);
+				}
+			}
+
+			for (int ii = 0; ii < M1; ii++) {
+				for (int jj = 0; jj < M1; jj++) {
+					A1(ii, jj) = F(ii, jj);
+				}
+			}
+
+			// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
+			A2 = A1.partialPivLu().matrixLU();
+			// бшвхякемхе нопедекхрекъ бюмдеплнмдю
+			DET10 = A2.determinant(); DET20 = 0.;
+
+			// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
+			for (int j = 0; j < M; j++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						F(ii, jj) = F1[ii][jj];
+					}
+				}
+
+				for (int i = 0; i < M; i++) {
+					F(i, j) = pow(EX1, EVI(i));
+				}
+
+				for (int ii = 0; ii < M1; ii++) {
+					for (int jj = 0; jj < M1; jj++) {
+						A1(ii, jj) = F(ii, jj);
+					}
+				}
+
+				// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
+				A2 = A1.partialPivLu().matrixLU();
+				// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
+				DET1(j) = A2.determinant(); DET2(j) = 0.;
+			}
+
+			F2 = LI1 * LI1;
+			F3 = F2 * LI1;
+			F4 = F3 * LI1;
+			F5 = F4 * LI1;
+			F6 = F5 * LI1;
+			F7 = F6 * LI1;
+
+			for (int i = 0; i < M1; i++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						if (i == 0) AG[0](ii, jj) = E[ii][jj];
+						if (i == 1) AG[1](ii, jj) = LI1(ii, jj);
+						if (i == 2) AG[2](ii, jj) = F2(ii, jj);
+						if (i == 3) AG[3](ii, jj) = F3(ii, jj);
+						if (i == 4) AG[4](ii, jj) = F4(ii, jj);
+						if (i == 5) AG[5](ii, jj) = F5(ii, jj);
+						if (i == 6) AG[6](ii, jj) = F6(ii, jj);
+						if (i == 7) AG[7](ii, jj) = F7(ii, jj);
+					}
+				}
+			}
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LI2(ii, jj) = 0.;
+				}
+			}
+
+			for (int i = 0; i < M1; i++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						LI2(ii, jj) = LI2(ii, jj) + (DET1(i) * (pow(10, DET2(i))) * AG[i](ii, jj));//(DET10*(10**DET20));
+					}
+				}
+			}
+
+			if (n == 2)  goto label_82411;
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LI3(ii, jj) = LI2(ii, jj);
+				}
+			}
+
+		label_82411:
+			F2 = LI3 * LI2;
+
+		}
+
+
+
 
 		cout << "No issues till this point. Go on. Good job!" << endl;
 
