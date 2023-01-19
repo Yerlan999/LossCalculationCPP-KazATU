@@ -1147,82 +1147,82 @@ void raschet(int& k, int& n)
 
 			if (i == 0 and k == 0 and PR == 2)
 			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+				::PPP1[k][n] = ::PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
 			}
 			if (i == 0 and k > 0)
 			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+				::PPP1[k][n] = ::PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
 			}
 			if (i == 1 and k == 0 and PR == 2)
 			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+				::PPP2[k][n] = ::PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
 			}
 			if (i == 1 and k > 0)
 			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+				::PPP2[k][n] = ::PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
 			}
 			if (i == 2 and k == 0 and PR == 2)
 			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+				::PPP3[k][n] = ::PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
 			}
 			if (i == 2 and k > 0)
 			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+				::PPP3[k][n] = ::PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
 			}
 			if (i == 3 and k == 0 and PR == 2)
 			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+				::PPP4[k][n] = ::PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
 			}
 			if (i == 3 and k > 0)
 			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+				::PPP4[k][n] = ::PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
 			}
-			if (i == 4 and k == 0 and PR == 2)
-			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
-			}
-			if (i == 4 and k > 0)
-			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
-			}
-			if (i == 5 and k == 0 and PR == 2)
-			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
-			}
-			if (i == 5 and k > 0)
-			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
-			}
-			if (i == 6 and k == 0 and PR == 2)
-			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
-			}
-			if (i == 6 and k > 0)
-			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
-			}
-			if (i == 7 and k == 0 and PR == 2)
-			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
-			}
-			if (i == 7 and k > 0)
-			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
-			}
+			//if (i == 4 and k == 0 and PR == 2)
+			//{
+			//	::PPP5[k][n] = ::PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			//}
+			//if (i == 4 and k > 0)
+			//{
+			//	::PPP5[k][n] = ::PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			//}
+			//if (i == 5 and k == 0 and PR == 2)
+			//{
+			//	::PPP6[k][n] = ::PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			//}
+			//if (i == 5 and k > 0)
+			//{
+			//	::PPP6[k][n] = ::PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			//}
+			//if (i == 6 and k == 0 and PR == 2)
+			//{
+			//	::PPP7[k][n] = ::PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			//}
+			//if (i == 6 and k > 0)
+			//{
+			//	::PPP7[k][n] = ::PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			//}
+			//if (i == 7 and k == 0 and PR == 2)
+			//{
+			//	::PPP8[k][n] = ::PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			//}
+			//if (i == 7 and k > 0)
+			//{
+			//	::PPP8[k][n] = ::PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			//}
 
 			if (k == 0 and PR == 2)
 			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				::PPP[k][n] = ::PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
 			}
 			if (k > 0)
 			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				::PPP[k][n] = ::PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
 			}
 
 			if (k == 0 and PR == 1)
-				{PP1 = PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+				{::PP1 = ::PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
 			if (k == 0 and PR == 2)
-				{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+				{::PP2 = ::PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
 			SM[i] = UX[i] * conj(AIX[i]) / 2.;
 		}
 
