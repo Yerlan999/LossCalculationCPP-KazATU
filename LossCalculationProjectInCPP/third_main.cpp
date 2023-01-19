@@ -713,6 +713,121 @@ void raschet(int& k, int& n)
 		F3 = LI * LI;
 		int LM = MMT;
 
+		// Ôîğìèğîâàíèå LU LU1 LU2 LU3 
+
+		for (int n = 1; n < 3; n++)
+		{
+			double SA;
+			if (n == 1) SA = -1.;
+			if (n == 2) SA = 1.;
+
+			// ÂÛ×ÈÑËÅÍÈÅ ÌÀÒĞÈ×ÍÛÕ İÊÑÏÎÍÅÍÖÈÀËÜÍÛÕ ÔÓÍÊÖÈÉ
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LU1(ii, jj) = SA * MMT * LU(ii, jj);
+				}
+			}
+
+			// ÂÛ×ÈÑËÅÍÈÅ ÑÎÁÑÒÂÅÍÍÛÕ ÇÍÀ×ÅÍÈÉ ÌÀÒĞÈÖÛ LU1
+			EVU = LU1.eigenvalues();
+
+			// ÔÎĞÌÈĞÎÂÀÍÈÅ ÌÀÒĞÈÖÛ ÂÀÍÄÅĞÌÎÍÄÀ
+			for (int i = 0; i < M; i++) {
+				for (int j = 0; j < M; j++) {
+					F(i, j) = pow(EVU(i), j);
+				}
+			}
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					F1[ii][jj] = F(ii, jj);
+				}
+			}
+
+			for (int ii = 0; ii < M1; ii++) {
+				for (int jj = 0; jj < M1; jj++) {
+					A1(ii, jj) = F(ii, jj);
+				}
+			}
+
+			// ÔÀÊÒÎĞÈÇÀÖÈß ÌÀÒĞÈÖÛ ÂÀÍÄÅĞÌÎÍÄÀ
+			A2 = A1.partialPivLu().matrixLU();
+			// ÂÛ×ÈÑËÅÍÈÅ ÎÏĞÅÄÅËÈÒÅËß ÂÀÍÄÅĞÌÎÍÄÀ
+			DET10 = A2.determinant(); DET20 = 0.;
+
+			// ÂÛ×ÈÑËÅÍÈÅ ÄÎÏÎËÍßŞÙÈÕ ÌÀÒĞÈÖ ÂÀÍÄÅĞÌÎÍÄÀ
+			for (int j = 0; j < M; j++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						F(ii, jj) = F1[ii][jj];
+					}
+				}
+
+				for (int i = 0; i < M; i++) {
+					F(i, j) = pow(EX1, EVU(i));
+				}
+
+				for (int ii = 0; ii < M1; ii++) {
+					for (int jj = 0; jj < M1; jj++) {
+						A1(ii, jj) = F(ii, jj);
+					}
+				}
+
+				// ÔÀÊÒÎĞÈÇÀÖÈß ÄÎÏÎËÍßŞÙÈÕ ÌÀÒĞÈÖ ÂÀÍÄÅĞÌÎÍÄÀ
+				A2 = A1.partialPivLu().matrixLU();
+				// ÂÛ×ÈÑËÅÍÈÅ ÄÎÏÎËÍßŞÙÈÕ ÎÏĞÅÄÅËÈÒÅËÅÉ ÂÀÍÄÅĞÌÎÍÄÀ
+				DET1(j) = A2.determinant(); DET2(j) = 0.;
+			}
+
+			F2 = LU1 * LU1;
+			F3 = F2 * LU1;
+			F4 = F3 * LU1;
+			F5 = F4 * LU1;
+			F6 = F5 * LU1;
+			F7 = F6 * LU1;
+
+			for (int i = 0; i < M1; i++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						if (i == 0) AG[0](ii, jj) = E[ii][jj];
+						if (i == 1) AG[1](ii, jj) = LU1(ii, jj);
+						if (i == 2) AG[2](ii, jj) = F2(ii, jj);
+						if (i == 3) AG[3](ii, jj) = F3(ii, jj);
+						if (i == 4) AG[4](ii, jj) = F4(ii, jj);
+						if (i == 5) AG[5](ii, jj) = F5(ii, jj);
+						if (i == 6) AG[6](ii, jj) = F6(ii, jj);
+						if (i == 7) AG[7](ii, jj) = F7(ii, jj);
+					}
+				}
+			}
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LU2(ii, jj) = 0.;
+				}
+			}
+
+			for (int i = 0; i < M1; i++) {
+				for (int ii = 0; ii < M; ii++) {
+					for (int jj = 0; jj < M; jj++) {
+						LU2(ii, jj) = LU2(ii, jj) + (DET1(i) * (pow(10, DET2(i))) * AG[i](ii, jj));//(DET10*(10**DET20));
+					}
+				}
+			}
+
+			if (n == 2)  goto label_72411;
+
+			for (int ii = 0; ii < M; ii++) {
+				for (int jj = 0; jj < M; jj++) {
+					LU3(ii, jj) = LU2(ii, jj);
+				}
+			}
+
+		label_72411:
+			F2 = LU3 * LU2;
+
+		}
+
 
 
 		cout << "No issues till this point. Go on. Good job!" << endl;
@@ -723,10 +838,10 @@ void raschet(int& k, int& n)
 
 // Ãëàâíàÿ ôóíêöèÿ çàïóñêà ïğîãğàììû!
 int main() {
-	
+
 	// **************************** # Testing Polygon Start # ****************************
-	
-	
+
+
 	//MatrixXcd TestA1
 	//{
 	//	{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
@@ -871,7 +986,7 @@ int main() {
 	auto half_duration = duration_cast<seconds>(half_stop - start);
 	debug_file << "Excel file has been read successfully!" << endl;
 	debug_file << "Took to read the file: " << half_duration.count() << " seconds." << std::endl;
-	
+
 	insert_gap();
 
 	// Ëèñòû EXCEL ôàéëà ïğî÷èòàíû. Ïğåäâàğèòåëüíûå ìàòğèöû ñîñòàâëåíû.
@@ -944,7 +1059,7 @@ int main() {
 			PR = 0;
 		label_1700:
 			PR = PR + 1;
-			
+
 			UK1(0) = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
 			UK1(1) = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
 			UK1(2) = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
@@ -996,17 +1111,17 @@ int main() {
 
 
 	// Öèêë #1501
-	for (int r = 0; r < num_recs; r++) 
+	for (int r = 0; r < num_recs; r++)
 	{
 		PRP = 0;
 		// Öèêë #1060
-		for (int h = 0; h < num_harms; h++) 
+		for (int h = 0; h < num_harms; h++)
 		{
 			PRP = PRP + PPP[h][r];
 		}
 		RPR = 0;
 		// Öèêë #1061
-		for (int h = 0; h < num_harms; h++) 
+		for (int h = 0; h < num_harms; h++)
 		{
 			RPR = RPR + PPP[h][r];
 		}
@@ -1021,10 +1136,10 @@ int main() {
 
 	WD0 = 0;
 	// Öèêë #1052
-	for (int h = 0; h < num_harms; h++) 
+	for (int h = 0; h < num_harms; h++)
 	{
 		WD[0][h] = 0;
-		for (int r = 0; r < num_recs; r++) 
+		for (int r = 0; r < num_recs; r++)
 		{
 			WD0 = WD0 + PPP[h][r] * DT / 60000.;
 			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000.;
@@ -1040,20 +1155,20 @@ int main() {
 
 	WD4 = 0;
 	// Öèêë #1056
-	for (int h = 13; h < num_harms; h++) 
+	for (int h = 13; h < num_harms; h++)
 	{
 		WD4 = WD4 + WD[1][h];
 	}
 
 	WD10 = 0;
 	// Öèêë #1057
-	for (int r = 0; r < num_recs; r++) 
+	for (int r = 0; r < num_recs; r++)
 	{
 		WD10 = WD10 + PPR1[r] * DT / 60000.;
 	}
 
 	// Öèêë #1054
-	for (int r = 0; r < num_recs; r++) 
+	for (int r = 0; r < num_recs; r++)
 	{
 		PD[0][r] = 0;
 		PD[1][r] = 0;
