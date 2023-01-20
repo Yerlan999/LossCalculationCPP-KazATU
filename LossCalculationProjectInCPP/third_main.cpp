@@ -191,6 +191,7 @@ const double S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 // Расчетная функция программы!
 void raschet(int& k, int& n)
 {
+	// UK1 AIK1 - Главные матрицы!
 	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]	
 
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
@@ -203,6 +204,18 @@ void raschet(int& k, int& n)
 	int M1;
 	if (M <= 6) M1 = M;
 	if (M > 6) M1 = 6;
+
+	 
+	// ******************************* # DEBUGGER BLOCK # *******************************
+	cout << "Reading to debug file..." << endl;
+	debug_file << "|| Loop # || k: " << k << " || n: " << n << " ||" << endl;
+	
+	debug_file << UK1(0) << endl;
+	debug_file << UK1(1) << endl;
+	debug_file << UK1(2) << endl;
+	
+	insert_gap();
+	// ******************************* # DEBUGGER BLOCK # *******************************
 
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
@@ -486,7 +499,7 @@ void raschet(int& k, int& n)
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
 		// Важно! AU выше откомментить !!!
-		
+
 		AU = Z * Y;
 		SS1 = sqrt(AU(0, 0));
 		
@@ -1142,7 +1155,7 @@ void raschet(int& k, int& n)
 			AIX[i] = AA(i) + BB(i);
 			if (LM == MMT) AIK1(i) = AIX[i];
 			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
-
+			
 			// might be an issue with powers of ...
 
 			if (i == 0 and k == 0 and PR == 2)
@@ -1212,11 +1225,11 @@ void raschet(int& k, int& n)
 
 			if (k == 0 and PR == 2)
 			{
-				::PPP[k][n] = ::PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				::PPP[k][n] = (::PPP[k][n] + pow(AIXM[i], 2.)) / (2. * R11[i]);
 			}
 			if (k > 0)
 			{
-				::PPP[k][n] = ::PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				::PPP[k][n] = (::PPP[k][n] + pow(AIXM[i], 2.)) / (2. * R11[i]);
 			}
 
 			if (k == 0 and PR == 1)
