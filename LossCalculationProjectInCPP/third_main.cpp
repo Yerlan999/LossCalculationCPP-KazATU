@@ -5,6 +5,7 @@
 #include <chrono>
 #include <tuple>
 #include <cmath>
+#include <iomanip>
 #include <complex>
 #include <Eigen/Dense>
 #include <Eigen/LU>
@@ -204,19 +205,6 @@ void raschet(int& k, int& n)
 	int M1;
 	if (M <= 6) M1 = M;
 	if (M > 6) M1 = 6;
-
-	 
-	// ******************************* # DEBUGGER BLOCK # *******************************
-	cout << "Reading to debug file..." << endl;
-	debug_file << "|| Loop # || k: " << k << " || n: " << n << " ||" << endl;
-	
-	debug_file << UK1(0) << endl;
-	debug_file << UK1(1) << endl;
-	debug_file << UK1(2) << endl;
-	
-	insert_gap();
-	// ******************************* # DEBUGGER BLOCK # *******************************
-
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
 
@@ -1428,7 +1416,7 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			for (int h = 1; h < num_harms; h++)
+			for (int h = 1; h < num_harms + 1; h++)
 			{
 				UM[p][h][r] = UM[p][h][r] * UM[p][0][r] / 100.;
 				FUM[p][h][r] = FUM[p][h][r] * PI / 180.;
@@ -1453,7 +1441,7 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			for (int h = 1; h < num_harms; h++)
+			for (int h = 1; h < num_harms + 1; h++)
 			{
 				AIM[p][h][r] = AIM[p][h][r] * AIM[p][0][r] / 100.;
 				FIM[p][h][r] = FIM[p][h][r] * PI / 180.;
@@ -1467,7 +1455,7 @@ int main() {
 	// Цикл #1500. Главный!
 	for (int n = 0; n < num_recs; n++) // 560 циклов
 	{
-		for (int k = 0; k < num_harms; k++) // 50 циклов
+		for (int k = 0; k < num_harms + 1; k++) // 50 циклов
 		{
 			//label_1500:
 			PR = 0;
@@ -1484,12 +1472,24 @@ int main() {
 			AIK1(2) = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
 			AIK1(3) = std::complex<double>(0.0, 0.0);
 
-			if (k > 1) goto label_1111;
-			if (k == 1 && PR == 2) goto label_1111;
 
-			UK10 = (UK1(0) + UK1(1) + UK1(2)) / 3.;
-			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / 3.;
-			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / 3.;
+			// ******************************* # DEBUGGER BLOCK # *******************************
+			cout << "Writing to debug file..." << endl;
+			debug_file << "|| Loop # || k: " << k << " || n: " << n << " ||" << endl;
+
+			debug_file << scientific << UK1(0) << endl;
+
+			insert_gap();
+			// ******************************* # DEBUGGER BLOCK # *******************************
+
+
+
+			if (k > 0) goto label_1111;
+			if (k == 0 && PR == 2) goto label_1111;
+
+			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
+			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
+			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
@@ -1499,9 +1499,9 @@ int main() {
 			UK1(1) = UK11 * std::pow(AL, 2.);
 			UK1(2) = UK11 * AL;
 
-			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / 3.;
-			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / 3.;
-			AIK12 = (AIK1(0) + AIK1(1) * std::pow(AL, 2.) + AIK1(2) * AL) / 3.;
+			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
+			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
+			AIK12 = (AIK1(0) + AIK1(1) * std::pow(AL, 2.) + AIK1(2) * AL) / (3.);
 
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
@@ -1512,13 +1512,13 @@ int main() {
 			AIK1(2) = AIK11 * AL;
 
 		label_1111:
-
+			
 			// Вызов расчетной функции!
 			raschet(k, n);
 
-			if (k == 1 && PR == 1) PPR1[n] = PP1;
-			if (k == 1 && PR == 2) PPR2[n] = PP2;
-			if (k == 1 && PR == 1) goto label_1700;
+			if (k == 0 && PR == 1) PPR1[n] = PP1;
+			if (k == 0 && PR == 2) PPR2[n] = PP2;
+			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
 	}
@@ -1529,13 +1529,13 @@ int main() {
 	{
 		PRP = 0;
 		// Цикл #1060
-		for (int h = 0; h < num_harms; h++)
+		for (int h = 0; h < num_harms + 1; h++)
 		{
 			PRP = PRP + PPP[h][r];
 		}
 		RPR = 0;
 		// Цикл #1061
-		for (int h = 0; h < num_harms; h++)
+		for (int h = 0; h < num_harms + 1; h++)
 		{
 			RPR = RPR + PPP[h][r];
 		}
@@ -1550,7 +1550,7 @@ int main() {
 
 	WD0 = 0;
 	// Цикл #1052
-	for (int h = 0; h < num_harms; h++)
+	for (int h = 0; h < num_harms + 1; h++)
 	{
 		WD[0][h] = 0;
 		for (int r = 0; r < num_recs; r++)
@@ -1562,14 +1562,14 @@ int main() {
 
 	WD1 = WD0 - WD[0][0];
 	// Цикл #1053
-	for (int h = 0; h < num_harms; h++)
+	for (int h = 0; h < num_harms + 1; h++)
 	{
 		WD[1][h] = WD[0][h] / WD0 * 100.;
 	}
 
 	WD4 = 0;
 	// Цикл #1056
-	for (int h = 13; h < num_harms; h++)
+	for (int h = 13; h < num_harms + 1; h++)
 	{
 		WD4 = WD4 + WD[1][h];
 	}
@@ -1587,7 +1587,7 @@ int main() {
 		PD[0][r] = 0;
 		PD[1][r] = 0;
 		// Цикл #1058
-		for (int h = 0; h < num_harms; h++)
+		for (int h = 0; h < num_harms + 1; h++)
 		{
 			PD[0][r] = PD[0][r] + PPP[h][r];
 		}
