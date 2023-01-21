@@ -162,12 +162,12 @@ std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
-double SKU0 = 0, SKU2 = 0, SKI0 = 0, SKI2 = 0;
+double SKU0 = 0., SKU2 = 0., SKI0 = 0., SKI2 = 0.;
 
 const double PI = 3.14159265358979;
 
 double RZ = 35.3;
-double FF = 0, SS2 = 0, SS0 = 0, PP1 = 0, PP2 = 0, RPR = 0, PRP = 0, WD0 = 0, WD1 = 0, WD4 = 0, WD10 = 0;
+double FF = 0., SS2 = 0., SS0 = 0., PP1 = 0., PP2 = 0., RPR = 0., PRP = 0., WD0 = 0., WD1 = 0., WD4 = 0., WD10 = 0.;
 
 std::complex<double> SS(0., 0.), SS1(0., 0.);
 
@@ -1474,18 +1474,32 @@ int main() {
 
 
 			// ******************************* # DEBUGGER BLOCK # *******************************
-			cout << "Writing to debug file..." << endl;
-			debug_file << "|| Loop # || k: " << k << " || n: " << n << " ||" << endl;
+			std::cout << "Writing to debug file..." << endl;
 
-			debug_file << scientific << UK1(0) << endl;
+			// Loop's values printing module
+			debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+
+			// Matrix(es) checking module
+			//for (int i = 0; i < 560; i++){
+			//	for (int k = 0; k < 50; k++){
+			//		auto value2check = AIM1[0][k][i];
+			//		if (value2check < 0) debug_file << scientific << value2check << "   ";
+			//		else debug_file << scientific << " " << value2check << "   ";}
+			//	debug_file << endl;}
+			//std::cout << "Writing to debug file has been finished!" << endl;
+			//return 0;
+
+			// Other cases checker module
+			//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+			debug_file << scientific << UK1(0)  << endl;
 
 			insert_gap();
 			// ******************************* # DEBUGGER BLOCK # *******************************
 
 
-
 			if (k > 0) goto label_1111;
 			if (k == 0 && PR == 2) goto label_1111;
+
 
 			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
 			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
@@ -1511,7 +1525,7 @@ int main() {
 			AIK1(1) = AIK11 * std::pow(AL, 2.);
 			AIK1(2) = AIK11 * AL;
 
-		label_1111:
+		label_1111:			 
 			
 			// Вызов расчетной функции!
 			raschet(k, n);
@@ -1555,8 +1569,8 @@ int main() {
 		WD[0][h] = 0;
 		for (int r = 0; r < num_recs; r++)
 		{
-			WD0 = WD0 + PPP[h][r] * DT / 60000.;
-			WD[0][h] = WD[0][h] + PPP[h][r] * DT / 60000.;
+			WD0 = (WD0 + PPP[h][r] * DT) / (60000.);
+			WD[0][h] = (WD[0][h] + PPP[h][r] * DT) / (60000.);
 		}
 	}
 
@@ -1564,10 +1578,10 @@ int main() {
 	// Цикл #1053
 	for (int h = 0; h < num_harms + 1; h++)
 	{
-		WD[1][h] = WD[0][h] / WD0 * 100.;
+		WD[1][h] = (WD[0][h]) / (WD0 * 100.);
 	}
 
-	WD4 = 0;
+	WD4 = 0.;
 	// Цикл #1056
 	for (int h = 13; h < num_harms + 1; h++)
 	{
@@ -1578,7 +1592,7 @@ int main() {
 	// Цикл #1057
 	for (int r = 0; r < num_recs; r++)
 	{
-		WD10 = WD10 + PPR1[r] * DT / 60000.;
+		WD10 = (WD10 + PPR1[r] * DT) / (60000.);
 	}
 
 	// Цикл #1054
@@ -1592,7 +1606,7 @@ int main() {
 			PD[0][r] = PD[0][r] + PPP[h][r];
 		}
 		PD[1][r] = PD[0][r] - PPP[0][r];
-		PD[2][r] = PD[1][r] / PD[0][r] * 100.;
+		PD[2][r] = (PD[1][r]) / (PD[0][r] * 100.);
 	}
 
 	// Вывод предварительных значении результатов расчета!

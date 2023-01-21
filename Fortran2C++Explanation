@@ -586,3 +586,34 @@ VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
 //MatrixXcd lu_A1 = part_piv_lu.matrixLU();
 //dcomplex det_A1lu = lu_A1.determinant();
 
+
+
+
+
+
+
+
+
+
+
+                    UK10=(UK1(1)+UK1(2)+UK1(3))/3.
+                    UK11=(UK1(1)+UK1(2)*AL+UK1(3)*AL**2)/3.
+                    UK12=(UK1(1)+UK1(2)*AL**2+UK1(3)*AL)/3.
+
+                    SKU2=SQRT(REAL(UK12)**2+AIMAG(UK12)**2)/SQRT(REAL(UK11)**2+AIMAG(UK11)**2)*100
+                    SKU0=SQRT(REAL(UK10)**2+AIMAG(UK10)**2)/SQRT(REAL(UK11)**2+AIMAG(UK11)**2)*100
+
+                    UK1(1)=UK11
+                    UK1(2)=UK11*AL**2
+                    UK1(3)=UK11*AL
+
+                    AIK10=(AIK1(1)+AIK1(2)+AIK1(3))/3.
+                    AIK11=(AIK1(1)+AIK1(2)*AL+AIK1(3)*AL**2)/3.
+                    AIK12=(AIK1(1)+AIK1(2)*AL**2+AIK1(3)*AL)/3.
+
+                    SKI2=SQRT(REAL(AIK12)**2+AIMAG(AIK12)**2)/SQRT(REAL(AIK11)**2+AIMAG(AIK11)**2)*100
+                    SKI0=SQRT(REAL(AIK10)**2+AIMAG(AIK10)**2)/SQRT(REAL(AIK11)**2+AIMAG(AIK11)**2)*100
+
+                    AIK1(1)=AIK11
+                    AIK1(2)=AIK11*AL**2
+                    AIK1(3)=AIK11*AL
