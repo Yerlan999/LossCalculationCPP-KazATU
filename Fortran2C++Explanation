@@ -617,3 +617,45 @@ VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
                     AIK1(1)=AIK11
                     AIK1(2)=AIK11*AL**2
                     AIK1(3)=AIK11*AL
+
+
+
+
+
+// ******************************* # DEBUGGER BLOCK # *******************************
+//std::cout << "Writing to debug file..." << endl;
+
+// Loop's values printing module
+debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+
+// Matrix(es) checking module
+//for (int i = 0; i < 560; i++){
+//  for (int k = 0; k < 50; k++){
+//    auto value2check = AIM1[0][k][i];
+//    if (value2check < 0) debug_file << scientific << value2check << "   ";
+//    else debug_file << scientific << " " << value2check << "   ";}
+//  debug_file << endl;}
+//std::cout << "Writing to debug file has been finished!" << endl;
+//return 0;
+
+// Other cases checker module
+//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+debug_file << "UK1(0) after definging: " << endl;
+debug_file << scientific << UK1(0)  << endl;
+
+//insert_gap();
+// ******************************* # DEBUGGER BLOCK # *******************************
+
+
+
+
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+C      PRINT *,AIXM(I)
+C DO 789 I=1,560
+  WRITE(777,*) K,N,PR
+C WRITE(777,337)(UK1(I,K,1),K=1,50)
+C      WRITE(777,337) UM1(N,K,1),UM2(N,K,1)
+      WRITE(777,337) UK1(3)
+  WRITE(777,*) '       '
+C789  CONTINUE
+C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

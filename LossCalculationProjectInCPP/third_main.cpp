@@ -1471,31 +1471,7 @@ int main() {
 			AIK1(1) = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
 			AIK1(2) = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
 			AIK1(3) = std::complex<double>(0.0, 0.0);
-
-
-			// ******************************* # DEBUGGER BLOCK # *******************************
-			std::cout << "Writing to debug file..." << endl;
-
-			// Loop's values printing module
-			debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
-
-			// Matrix(es) checking module
-			//for (int i = 0; i < 560; i++){
-			//	for (int k = 0; k < 50; k++){
-			//		auto value2check = AIM1[0][k][i];
-			//		if (value2check < 0) debug_file << scientific << value2check << "   ";
-			//		else debug_file << scientific << " " << value2check << "   ";}
-			//	debug_file << endl;}
-			//std::cout << "Writing to debug file has been finished!" << endl;
-			//return 0;
-
-			// Other cases checker module
-			//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
-			debug_file << scientific << UK1(0)  << endl;
-
-			insert_gap();
-			// ******************************* # DEBUGGER BLOCK # *******************************
-
+			
 
 			if (k > 0) goto label_1111;
 			if (k == 0 && PR == 2) goto label_1111;
@@ -1512,6 +1488,10 @@ int main() {
 			UK1(0) = UK11;
 			UK1(1) = UK11 * std::pow(AL, 2.);
 			UK1(2) = UK11 * AL;
+			
+			// *************************************************
+			debug_file << scientific << "Second UK1(0): " << UK1(0) << endl;
+			// *************************************************
 
 			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
 			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
@@ -1526,7 +1506,7 @@ int main() {
 			AIK1(2) = AIK11 * AL;
 
 		label_1111:			 
-			
+
 			// Вызов расчетной функции!
 			raschet(k, n);
 
