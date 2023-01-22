@@ -984,7 +984,7 @@ void raschet(int& k, int& n)
 			}
 		}
 
-		GG2 = GG1.inverse(); // or .completeOrthogonalDecomposition().pseudoInverse();
+		GG2 = GG1.inverse(); // . inverse() or .completeOrthogonalDecomposition().pseudoInverse();
 
 		for (int i = 0; i < M; i++) {
 			for (int j = 0; j < M; j++) {
@@ -1044,8 +1044,7 @@ void raschet(int& k, int& n)
 		int K1 = 0;
 		int K0 = 0;
 
-		// Might have an issue ... YES!!! There is an ISSUE INDEED, as I said
-		// The problem is that K1 is becoming more than 7
+		
 		for (int j = 0; j < M20; j++) {
 			
 			if (IH[j] == 1) K1 = K1 + 1;
@@ -1069,7 +1068,7 @@ void raschet(int& k, int& n)
 		}
 
 		B6 = GG4 * B10;
-		B7 = GG5.inverse() * B6; // should be .dot(B6) or .completeOrthogonalDecomposition().pseudoInverse();
+		B7 = GG5.inverse() * B6; // should be .dot(B6) and .inverse() or .completeOrthogonalDecomposition().pseudoInverse();
 
 		K1 = 0;
 
@@ -1098,7 +1097,7 @@ void raschet(int& k, int& n)
 			B1(i + 3 * M) = BB(i);
 		}
 
-		B4 = GG.inverse() * B1; // should be .dot(B1) or .completeOrthogonalDecomposition().pseudoInverse();
+		B4 = GG.inverse() * B1; // should be .dot(B1) and .inverse() or .completeOrthogonalDecomposition().pseudoInverse();
 
 		for (int i = 0; i < M; i++) {
 			AA(i) = 0.;
@@ -1453,35 +1452,6 @@ int main() {
 
 
 
-
-	// ******************************* # DEBUGGER BLOCK # *******************************
-	//std::cout << "Writing to debug file..." << endl;
-
-	// Loop's values printing module
-	//debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
-
-	// Matrix(es) checking module
-	for (int i = 0; i < 560; i++){
-	  for (int k = 0; k < 50; k++){
-	    auto value2check = UM1[1][k][i];
-	    if (value2check < 0) debug_file << scientific << value2check << "   ";
-	    else debug_file << scientific << " " << value2check << "   ";}
-	  debug_file << endl;}
-	std::cout << "Writing to debug file has been finished!" << endl;
-	return 0;
-
-	// Other cases checker module
-	//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
-	//debug_file << "UK1(0) after definging: " << endl;
-	//debug_file << scientific << UK1(0) << endl;
-
-	//insert_gap();
-	// ******************************* # DEBUGGER BLOCK # *******************************
-
-
-
-
-
 	// Цикл #1500. Главный!
 	for (int n = 0; n < num_recs; n++) // 560 циклов
 	{
@@ -1510,7 +1480,7 @@ int main() {
 			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
 			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
 			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
-						
+			
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
@@ -1536,7 +1506,7 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n);
-
+			
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
