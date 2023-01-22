@@ -1405,8 +1405,8 @@ int main() {
 	{
 		for (int p = 0; p < num_phases; p++)
 		{
-			UM[p][0][r] = main_harm[funu][0][r] * sqrt(2.);
-			FUM[p][0][r] = main_harm[fu][0][r] * (PI / 180.);
+			UM[p][0][r] = main_harm[funu][p][r] * sqrt(2.);
+			FUM[p][0][r] = main_harm[fu][p][r] * (PI / 180.);
 			UM1[p][0][r] = UM[p][0][r] * cos(FUM[p][0][r]);
 			UM2[p][0][r] = UM[p][0][r] * sin(FUM[p][0][r]);
 		};
@@ -1452,6 +1452,36 @@ int main() {
 	}
 
 
+
+
+	// ******************************* # DEBUGGER BLOCK # *******************************
+	//std::cout << "Writing to debug file..." << endl;
+
+	// Loop's values printing module
+	//debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+
+	// Matrix(es) checking module
+	for (int i = 0; i < 560; i++){
+	  for (int k = 0; k < 50; k++){
+	    auto value2check = UM1[1][k][i];
+	    if (value2check < 0) debug_file << scientific << value2check << "   ";
+	    else debug_file << scientific << " " << value2check << "   ";}
+	  debug_file << endl;}
+	std::cout << "Writing to debug file has been finished!" << endl;
+	return 0;
+
+	// Other cases checker module
+	//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+	//debug_file << "UK1(0) after definging: " << endl;
+	//debug_file << scientific << UK1(0) << endl;
+
+	//insert_gap();
+	// ******************************* # DEBUGGER BLOCK # *******************************
+
+
+
+
+
 	// Цикл #1500. Главный!
 	for (int n = 0; n < num_recs; n++) // 560 циклов
 	{
@@ -1480,7 +1510,7 @@ int main() {
 			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
 			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
 			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
-
+						
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
@@ -1489,9 +1519,6 @@ int main() {
 			UK1(1) = UK11 * std::pow(AL, 2.);
 			UK1(2) = UK11 * AL;
 			
-			// *************************************************
-			debug_file << scientific << "Second UK1(0): " << UK1(0) << endl;
-			// *************************************************
 
 			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
 			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
