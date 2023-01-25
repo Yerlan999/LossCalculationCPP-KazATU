@@ -648,11 +648,11 @@ debug_file << scientific << UK1(0)  << endl;
 
 
 
-// *************************************************
+// ******************************* # DEBUGGER BLOCK # *******************************
 debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
 debug_file << scientific << "UK1(0): " << UK1(0) << " || UK1(1): " << UK1(1) << " || UK1(2): " << UK1(2) << endl;
 insert_gap();
-// *************************************************
+// ******************************* # DEBUGGER BLOCK # *******************************
 
 
 
@@ -667,3 +667,27 @@ C      WRITE(777,337) UM1(N,K,1),UM2(N,K,1)
   WRITE(777,*) '       '
 C789  CONTINUE
 C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+
+G20 = 16 ||| G10 = 8
+
+MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20);
+MatrixXcd GG3; GG3 = MatrixXcd::Zero(M10, M20);
+MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
+MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
+
+
+
+
+
+
+IN RASCHET SUBROUTINE (FUNCTION) VARIABLES CHECKER
+
+
+HC1 - fine!
+HC3 - fine!
+F10 - NOT FINE!!! even though F10 is the product of HC1 and HC3

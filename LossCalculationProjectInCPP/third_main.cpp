@@ -243,7 +243,7 @@ void raschet(int& k, int& n)
 	MatrixXcd F5; F5 = MatrixXcd::Zero(M, M);
 	MatrixXcd F6; F6 = MatrixXcd::Zero(M, M);
 	MatrixXcd F7; F7 = MatrixXcd::Zero(M, M);
-	MatrixXcd F10; F10 = MatrixXcd::Zero(M, M);
+	MatrixXd F10; F10 = MatrixXd::Zero(M, M);
 
 	VectorXcd B; B = VectorXcd::Zero(M);
 	VectorXcd B1; B1 = VectorXcd::Zero(M20);
@@ -314,11 +314,11 @@ void raschet(int& k, int& n)
 	if (PR == 1) PP1 = 0;
 	if (PR == 2) PP2 = 0;
 
-	float W = k + 1;
+	double W = (double)k + 1.;
 	std::complex<double> EX1(2.71828, 0.);
 
 	// Запись в файл #5 "Введенные общие данные" (Пропущенно намеренно!)
-
+	
 	// Цикл #845
 	for (int i = 0; i < M; i++)
 	{
@@ -327,7 +327,7 @@ void raschet(int& k, int& n)
 		R0[i] = 1000. / (GM[i] * S[i]);
 		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4. / 3.));
 		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3. / (64. * HI[i]));
-		if (i == M);
+		if (i == M) { ; } // pass statement equivalent?
 	}
 
 	// Цикл #12. На самом деле лишний!
@@ -483,7 +483,7 @@ void raschet(int& k, int& n)
 		}
 
 	label_771:
-		// *********************************************
+		
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
 		// Важно! AU выше откомментить !!!
@@ -1274,7 +1274,7 @@ int main() {
 
 	//cout << "Det of Second " << endl;
 	//cout << TestA4.determinant() << endl;
-	//
+	// 
 	//return 0;
 
 
