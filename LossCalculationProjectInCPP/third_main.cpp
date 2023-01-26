@@ -372,7 +372,7 @@ void raschet(int& k, int& n)
 
 	HC3 = HC1.inverse();
 	F10 = HC1 * HC3;
-
+	
 	// Цикл #744
 	for (int i = 0; i < M; i++)
 	{
@@ -1143,6 +1143,31 @@ void raschet(int& k, int& n)
 			if (LM == MMT) AIK1(i) = AIX[i];
 			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
 			
+			// ******************************* # DEBUGGER BLOCK # *******************************
+			//std::cout << "Writing to debug file..." << endl;
+
+			// Loop's values printing module
+			debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+
+			// Matrix(es) checking module
+			//for (int i = 0; i < 560; i++){
+			//  for (int k = 0; k < 50; k++){
+			//    auto value2check = AIM1[0][k][i];
+			//    if (value2check < 0) debug_file << scientific << value2check << "   ";
+			//    else debug_file << scientific << " " << value2check << "   ";}
+			//  debug_file << endl;}
+			//std::cout << "Writing to debug file has been finished!" << endl;
+			//return 0;
+
+			// Other cases checker module
+			//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+			//debug_file << "UK1(0) after definging: " << endl;
+			debug_file << scientific << AIXM[i] << endl;
+
+			insert_gap();
+			// ******************************* # DEBUGGER BLOCK # *******************************
+			
+
 			// might be an issue with powers of ...
 
 			if (i == 0 and k == 0 and PR == 2)
@@ -1274,7 +1299,7 @@ int main() {
 
 	//cout << "Det of Second " << endl;
 	//cout << TestA4.determinant() << endl;
-	// 
+	//
 	//return 0;
 
 
@@ -1506,7 +1531,7 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n);
-			
+						
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;

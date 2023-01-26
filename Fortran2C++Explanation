@@ -687,7 +687,45 @@ MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
 
 IN RASCHET SUBROUTINE (FUNCTION) VARIABLES CHECKER
 
+Starting Variable Tracing from the BOTTON to the TOP
 
-HC1 - fine!
-HC3 - fine!
-F10 - NOT FINE!!! even though F10 is the product of HC1 and HC3
+
+
+
+
+
+
+
+        AIX is NOT FINE*
+
+FORTRAN     PYTHON       C++
+
+100         99.49706     6.305293e+112
+100         99.49782     6.305288e+112
+100         99.49677     6.305295e+112
+0.67        0.00141      5.297824e+111
+100         99.4329      inf
+100         99.43449     inf
+100         99.43236     inf
+0.67        0.00141      -nan(ind)
+...         ...          ...
+so on       so on        so on
+
+
+        AIXM is NOT FINE
+
+FORTRAN     PYTHON       C++
+
+100         99.49706     6.305293e+112
+100         99.49782     6.305288e+112
+100         99.49677     6.305295e+112
+0.67        0.00141      5.297824e+111
+100         99.4329      inf
+100         99.43449     inf
+100         99.43236     inf
+0.67        0.00141      -nan(ind)
+...         ...          ...
+so on       so on        so on
+
+
+
