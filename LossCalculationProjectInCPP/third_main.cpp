@@ -332,7 +332,7 @@ void raschet(int& k, int& n)
 		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3./(64. * HI[i]));
 		if (i == M) { ; } // pass statement equivalent?
 	}
-		
+	
 	// Цикл #12. На самом деле лишний!
 	for (int i = 0; i < M10; i++)
 	{
@@ -497,6 +497,43 @@ void raschet(int& k, int& n)
 		// ВЫЧИСЛЕНИЕ СОБСТВЕННЫХ ЗНАЧЕНИЙ МАТРИЦЫ АU
 		// Важно! EVU выше откомментить !!!
 		EVU = AU.eigenvalues();
+
+
+
+
+		// ******************************* # DEBUGGER BLOCK # *******************************
+		//std::cout << "Writing to debug file..." << endl;
+
+		// Loop's values printing module
+		debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+
+		// Matrix(es) checking module
+		//for (int i = 0; i < 560; i++){
+		//  for (int k = 0; k < 50; k++){
+		//    auto value2check = AIM1[0][k][i];
+		//    if (value2check < 0) debug_file << scientific << value2check << "   ";
+		//    else debug_file << scientific << " " << value2check << "   ";}
+		//  debug_file << endl;}
+		//std::cout << "Writing to debug file has been finished!" << endl;
+		//return 0;
+
+		// Vector(s) checking module
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	debug_file << scientific << R11[i] << "  ";
+		//}
+		//debug_file << endl;
+
+		// Other cases checker module
+		//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+		//debug_file << "UK1(0) after definging: " << endl;
+		debug_file << scientific << EVU << endl;
+
+		insert_gap();
+		// ******************************* # DEBUGGER BLOCK # *******************************
+
+
+
 
 		// ФОРМИРОВАНИЕ МАТРИЦЫ ВАНДЕРМОНДА
 		// Цикл #20
