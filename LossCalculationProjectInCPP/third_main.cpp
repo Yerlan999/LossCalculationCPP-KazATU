@@ -1142,31 +1142,6 @@ void raschet(int& k, int& n)
 			AIX[i] = AA(i) + BB(i);
 			if (LM == MMT) AIK1(i) = AIX[i];
 			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
-			
-			// ******************************* # DEBUGGER BLOCK # *******************************
-			//std::cout << "Writing to debug file..." << endl;
-
-			// Loop's values printing module
-			debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
-
-			// Matrix(es) checking module
-			//for (int i = 0; i < 560; i++){
-			//  for (int k = 0; k < 50; k++){
-			//    auto value2check = AIM1[0][k][i];
-			//    if (value2check < 0) debug_file << scientific << value2check << "   ";
-			//    else debug_file << scientific << " " << value2check << "   ";}
-			//  debug_file << endl;}
-			//std::cout << "Writing to debug file has been finished!" << endl;
-			//return 0;
-
-			// Other cases checker module
-			//debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
-			//debug_file << "UK1(0) after definging: " << endl;
-			debug_file << scientific << AIXM[i] << endl;
-
-			insert_gap();
-			// ******************************* # DEBUGGER BLOCK # *******************************
-			
 
 			// might be an issue with powers of ...
 
