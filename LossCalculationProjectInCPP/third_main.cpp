@@ -332,7 +332,7 @@ void raschet(int& k, int& n)
 		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3./(64. * HI[i]));
 		if (i == M) { ; } // pass statement equivalent?
 	}
-
+		
 	// Цикл #12. На самом деле лишний!
 	for (int i = 0; i < M10; i++)
 	{
