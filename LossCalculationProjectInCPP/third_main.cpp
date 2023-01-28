@@ -18,6 +18,7 @@ using namespace OpenXLSX;
 using namespace Eigen;
 
 std::ofstream debug_file;
+std::ofstream aixm_file;
 
 // Прочие функции для оформления вывода на консоль
 void insert_gap()
@@ -130,6 +131,8 @@ int sheets_counter = 1;
 int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
+
+int breaker_counter = 10;
 
 // Матрицы данных. Параметры режима
 double UM[3][50][700] = {0};  double AIM[3][50][700] = {0};
@@ -325,8 +328,8 @@ void raschet(int& k, int& n)
 		R[i] = sqrt(S[i] / PI) / 1000.;
 		HI[i] = R[i] / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP[i] * GM[i] / 20.);
 		R0[i] = 1000. / (GM[i] * S[i]);
-		if (HI[i] < 1) R11[i] = R0[i] * (1 + std::pow(HI[i], 4. / 3.));
-		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3. / (64. * HI[i]));
+		if (HI[i] < 1) R11[i] = R0[i] * (1. + pow(HI[i], 4.)/(3.));
+		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3./(64. * HI[i]));
 		if (i == M) { ; } // pass statement equivalent?
 	}
 
@@ -1143,6 +1146,10 @@ void raschet(int& k, int& n)
 			if (LM == MMT) AIK1(i) = AIX[i];
 			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
 
+			// !!! Temporary for debugging purposes !!!
+			aixm_file << AIXM[i] << endl;
+			// !!! Temporary for debugging purposes !!!
+			
 			// might be an issue with powers of ...
 
 			if (i == 0 and k == 0 and PR == 2)
@@ -1284,6 +1291,7 @@ int main() {
 	auto start = high_resolution_clock::now();
 
 	debug_file.open("debug.txt", std::ios_base::app);
+	aixm_file.open("aixm.txt", std::ios_base::out);
 
 	XLDocument doc;
 	doc.open("./Promzona.xlsx"); // Открываем Excel файл
@@ -1506,12 +1514,20 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n);
-						
+			
+			// !!! Temporary for debugging purposes !!!
+			breaker_counter--;
+			if (breaker_counter == 0) break;
+			// !!! Temporary for debugging purposes !!!
+
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
+		// !!! Temporary for debugging purposes !!!
+		if (breaker_counter == 0) break;
+		// !!! Temporary for debugging purposes !!!
 	}
 
 
