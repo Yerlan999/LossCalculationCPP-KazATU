@@ -1295,7 +1295,7 @@ int main() {
 
 	auto start = high_resolution_clock::now();
 
-	debug_file.open("debug.txt", std::ios_base::app);
+	debug_file.open("debug.txt", std::ios_base::out); // ::app for appending 
 	aixm_file.open("aixm.txt", std::ios_base::out);
 
 	XLDocument doc;
