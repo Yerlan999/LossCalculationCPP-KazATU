@@ -497,7 +497,9 @@ void raschet(int& k, int& n)
 		// бшвхякемхе янаярбеммшу гмювемхи люрпхжш юU
 		// бЮФМН! EVU БШЬЕ НРЙНЛЛЕМРХРЭ !!!
 		EVU = AU.eigenvalues();
+		EVU.reverseInPlace();
 
+		
 		// тнплхпнбюмхе люрпхжш бюмдеплнмдю
 		// жХЙК #20
 		for (int j = 0; j < M; j++)
@@ -611,6 +613,7 @@ void raschet(int& k, int& n)
 		AAI = Y * Z;
 		// бшвхякемхе янаярбеммшу гмювемхи люрпхжш AAI
 		EVI = AAI.eigenvalues();
+		EVI.reverseInPlace();
 
 		// тнплхпнбюмхе люрпхжш бюмдеплнмдю
 		// жХЙК #1120
@@ -737,6 +740,7 @@ void raschet(int& k, int& n)
 
 			// бшвхякемхе янаярбеммшу гмювемхи люрпхжш LU1
 			EVU = LU1.eigenvalues();
+			EVU.reverseInPlace();
 
 			// тнплхпнбюмхе люрпхжш бюмдеплнмдю
 			for (int i = 0; i < M; i++) {
@@ -853,6 +857,7 @@ void raschet(int& k, int& n)
 
 			// бшвхякемхе янаярбеммшу гмювемхи люрпхжш LI1
 			EVI = LI1.eigenvalues();
+			EVI.reverseInPlace();
 
 			// тнплхпнбюмхе люрпхжш бюмдеплнмдю
 			for (int i = 0; i < M; i++) {
