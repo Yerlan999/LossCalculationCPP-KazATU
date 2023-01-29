@@ -522,9 +522,8 @@ void raschet(int& k, int& n)
 		}
 		
 
-		A2 = A1.partialPivLu().matrixLU();
+		DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
 		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
-		DET10 = A2.determinant(); DET20 = 0.;
 		SS = DET10*pow(10,DET20);
 
 
@@ -553,9 +552,9 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-			A2 = A1.partialPivLu().matrixLU();
+			DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
 			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
-			DET1(j) = A2.determinant(); DET2(j) = 0.;
+			
 
 		}
 		
@@ -636,9 +635,9 @@ void raschet(int& k, int& n)
 			}
 		}
 
-		A2 = A1.partialPivLu().matrixLU();
+		DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
 		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
-		DET10 = A2.determinant(); DET20 = 0.;
+		
 
 		// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
 		// жХЙК #121
@@ -667,9 +666,9 @@ void raschet(int& k, int& n)
 			}
 		
 			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-			A2 = A1.partialPivLu().matrixLU();
+			DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
 			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
-			DET1(j) = A2.determinant(); DET2(j) = 0.;
+			
 		
 		}
 		
@@ -762,9 +761,9 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
-			A2 = A1.partialPivLu().matrixLU();
+			DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
 			// бшвхякемхе нопедекхрекъ бюмдеплнмдю
-			DET10 = A2.determinant(); DET20 = 0.;
+			
 
 			// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
 			for (int j = 0; j < M; j++) {
@@ -785,9 +784,9 @@ void raschet(int& k, int& n)
 				}
 
 				// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-				A2 = A1.partialPivLu().matrixLU();
+				DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
 				// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
-				DET1(j) = A2.determinant(); DET2(j) = 0.;
+				
 			}
 
 			F2 = LU1 * LU1;
@@ -879,9 +878,9 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
-			A2 = A1.partialPivLu().matrixLU();
+			DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
 			// бшвхякемхе нопедекхрекъ бюмдеплнмдю
-			DET10 = A2.determinant(); DET20 = 0.;
+			
 
 			// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
 			for (int j = 0; j < M; j++) {
@@ -902,9 +901,9 @@ void raschet(int& k, int& n)
 				}
 
 				// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-				A2 = A1.partialPivLu().matrixLU();
+				DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
 				// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
-				DET1(j) = A2.determinant(); DET2(j) = 0.;
+				
 			}
 
 			F2 = LI1 * LI1;
@@ -1255,13 +1254,13 @@ int main() {
 	// **************************** # Testing Polygon Start # ****************************
 
 
-	//MatrixXcd TestA1
-	//{
-	//	{std::complex<double>(2,3), std::complex<double>(4,5), std::complex<double>(8,-7), std::complex<double>(-64,0),},
-	//	{std::complex<double>(7,26), std::complex<double>(0,50), std::complex<double>(0,-7), std::complex<double>(16,0),},
-	//	{std::complex<double>(9,74), std::complex<double>(-4,5), std::complex<double>(-8,-77), std::complex<double>(6,0),},
-	//	{std::complex<double>(2,7), std::complex<double>(4,5), std::complex<double>(-78,-7), std::complex<double>(46,0),}
-	//};
+	/*MatrixXcd TestA1
+	{
+		{std::complex<double>(0.001,-0.74), std::complex<double>(-4.,0.5), std::complex<double>(8.9852,-7.), std::complex<double>(-6.4,0.32),},
+		{std::complex<double>(-0.7,2.6), std::complex<double>(0.22,5.), std::complex<double>(0.45,-7.), std::complex<double>(1.6,100.),},
+		{std::complex<double>(.19,-0.74), std::complex<double>(-4.,5.), std::complex<double>(-8.23,-0.0077), std::complex<double>(6.54,0.111),},
+		{std::complex<double>(0.32,-7.), std::complex<double>(4.74,5.45), std::complex<double>(-0.78,-0.7), std::complex<double>(4.6,0.001),}
+	};*/
 	//
 	//MatrixXd TestA2
 	//{
@@ -1279,15 +1278,18 @@ int main() {
 	//	{2., 4., -78., 46.}
 	//};
 
-	//MatrixXcd TestA4 = TestA1.partialPivLu().matrixLU();
+	/*MatrixXcd TestA4 = TestA1.partialPivLu().matrixLU();
 
-	//cout << "LU of First " << endl;
-	//cout << TestA4 << endl;
+	cout << "Mat " << endl;
+	cout << TestA1 << endl;
 
-	//cout << "Det of Second " << endl;
-	//cout << TestA4.determinant() << endl;
-	//
-	//return 0;
+	cout << "LU of Mat " << endl;
+	cout << TestA4 << endl;
+
+	cout << "Det of Mat " << endl;
+	cout << TestA4.determinant() << endl;
+	
+	return 0;*/
 
 
 	// **************************** # Testing Polygon End # ****************************
