@@ -132,7 +132,7 @@ int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
 
-int breaker_counter = 10;
+int breaker_counter = 20;
 
 // Матрицы данных. Параметры режима
 double UM[3][50][700] = {0};  double AIM[3][50][700] = {0};
@@ -557,7 +557,7 @@ void raschet(int& k, int& n)
 			
 
 		}
-		
+
 		F2 = AU * AU;
 		F3 = F2 * AU;
 		F4 = F3 * AU;
