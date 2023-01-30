@@ -622,36 +622,40 @@ VectorXcd AIK1; AIK1 = VectorXcd::Zero(num_phases+num_tross);
 
 
 
-  // ******************************* # DEBUGGER BLOCK # *******************************
-  //std::cout << "Writing to debug file..." << endl;
+    // ******************************* # DEBUGGER BLOCK # *******************************
+    //std::cout << "Writing to debug file..." << endl;
 
-  // Loop's values printing module
-  //debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+    // Loop's values printing module
+    //debug_file << "|| Loop # || k: " << k << " || n: " << n << " || PR: " << PR << endl;
+    debug_file << " " << k << " " << n << " " << PR << endl;
 
-  // Matrix(es) checking module
-  //for (int i = 0; i < 560; i++){
-  //  for (int k = 0; k < 50; k++){
-  //    auto value2check = AIM1[0][k][i];
-  //    if (value2check < 0) debug_file << scientific << value2check << "   ";
-  //    else debug_file << scientific << " " << value2check << "   ";}
-  //  debug_file << endl;}
-  //std::cout << "Writing to debug file has been finished!" << endl;
-  //return 0;
+    // Matrix(es) checking module
+    //for (int i = 0; i < 560; i++){
+    //  for (int k = 0; k < 50; k++){
+    //    auto value2check = AIM1[0][k][i];
+    //    if (value2check < 0) debug_file << scientific << value2check << "   ";
+    //    else debug_file << scientific << " " << value2check << "   ";}
+    //  debug_file << endl;}
+    //std::cout << "Writing to debug file has been finished!" << endl;
+    //return 0;
 
-  // Vector(s) checking module
-  /*for (int i = 0; i < 4; i++)
-  {
-    debug_file << scientific << R11[i] << "  ";
-  }
-  debug_file << endl;*/
+    // Vector(s) checking module
+    //for (int i = 0; i < 4; i++)
+    //{
+    //  debug_file << scientific << R11[i] << "  ";
+    //}
+    //debug_file << endl;
 
-  // Other cases checker module
-  //debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
-  //debug_file << "UK1(0) after definging: " << endl;
-  //debug_file << scientific << Z << endl;
+    // Other cases checker module
+    //debug_file << scientific << UM1[0][k][n] << "   " << UM2[0][k][n]  << endl;
+    //debug_file << "UK1(0) after definging: " << endl;
 
-  //insert_gap();
-  // ******************************* # DEBUGGER BLOCK # *******************************
+    //DET10 = A1.partialPivLu().determinant();
+
+    debug_file << scientific << LI << endl;
+
+    insert_gap();
+    // ******************************* # DEBUGGER BLOCK # *******************************
 
 
 // ******************************* # DEBUGGER BLOCK # *******************************
@@ -1177,6 +1181,14 @@ C++:
 
 
 
+### LU ### - FINE!
+
+
+
+
+### LI ### - NOT FINE!? How come if F3 is FINE???
+
+
 
 
 ### F3 ### - FINE!
@@ -1232,25 +1244,6 @@ C++:
 
 
 
-###  ### -
-
-Python:
-
-Fortran:
-
-C++:
-
-
-
-
-###  ### -
-
-Python:
-
-Fortran:
-
-C++:
-
 
 
 
@@ -1289,16 +1282,25 @@ The last step variable: CONTROL VARIABLE
 
 FORTRAN     PYTHON       C++
 
-100         99.49706     6.305293e+112
-100         99.49782     6.305288e+112
-100         99.49677     6.305295e+112
-0.67        0.00141      5.297824e+111
-100         99.4329      inf
-100         99.43449     inf
-100         99.43236     inf
-0.67        0.00141      -nan(ind)
+100         99.49706     99.5372
+100         99.49782     99.5319
+100         99.49677     99.528
+0.67        0.00141      0.668604
+100         99.4329      99.5136
+100         99.43449     99.503
+100         99.43236     99.4952
+0.67        0.00141      0.668252
 ...         ...          ...
 so on       so on        so on
 
 Conclusion: Something really wrong happens in C++ code.
+
+
+
+
+
+
+
+
+
 

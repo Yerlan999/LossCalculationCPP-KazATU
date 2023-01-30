@@ -228,9 +228,9 @@ void raschet(int& k, int& n)
 	MatrixXcd HH33; HH33 = MatrixXcd::Zero(M, M);
 	MatrixXcd HH43; HH43 = MatrixXcd::Zero(M, M);
 
-	std::complex<double> DET10, SS, SS1; double DET20;
+	std::complex<double> DET10, SS1;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
-	VectorXd DET2; DET2 = VectorXd::Zero(M);
+	
 
 	MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
 	MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
@@ -522,9 +522,8 @@ void raschet(int& k, int& n)
 		}
 		
 
-		DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
+		DET10 = A1.partialPivLu().determinant();
 		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
-		SS = DET10*pow(10,DET20);
 
 
 		// бшвхякемхе днонкмъчыху люрпхж бюмдеплнмдю
@@ -552,7 +551,7 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-			DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
+			DET1(j) = A1.partialPivLu().determinant();
 			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
 			
 
@@ -596,12 +595,11 @@ void raschet(int& k, int& n)
 		for (int i = 0; i < M1; i++)
 		{
 			DET3[i] = DET1(i) / DET10;
-			DET4[i] = DET2(i) - DET20; // !бЯЕ ПЮБМН, БЯЕ ПЮБМН 0-Ч. кХЬМЪЪ НОЕПЮЖХЪ
 			for (int ii = 0; ii < M; ii++)
 			{
 				for (int jj = 0; jj < M; jj++)
 				{
-					LU(ii, jj) = LU(ii, jj) + AG[i](ii, jj) * DET3[i]; //* (pow(10, DET4(i)));
+					LU(ii, jj) = LU(ii, jj) + AG[i](ii, jj) * DET3[i];
 				}
 			}
 		}
@@ -635,7 +633,7 @@ void raschet(int& k, int& n)
 			}
 		}
 
-		DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
+		DET10 = A1.partialPivLu().determinant();
 		// бшвхякемхе нопедекхрекъ бюмдеплнмдю
 		
 
@@ -666,7 +664,7 @@ void raschet(int& k, int& n)
 			}
 		
 			// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-			DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
+			DET1(j) = A1.partialPivLu().determinant();
 			// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
 			
 		
@@ -714,7 +712,7 @@ void raschet(int& k, int& n)
 			{
 				for (int jj = 0; jj < M; jj++)
 				{
-					LI(ii, jj) = LI(ii, jj) + (DET1(i) * pow(10, DET2(i)) * AG[i](ii, jj)) / (DET10 * pow(10, DET20));
+					LI(ii, jj) = LI(ii, jj) + (DET1(i) * AG[i](ii, jj)) / (DET10);
 				}
 			}
 		}
@@ -761,7 +759,7 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
-			DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
+			DET10 = A1.partialPivLu().determinant();
 			// бшвхякемхе нопедекхрекъ бюмдеплнмдю
 			
 
@@ -784,7 +782,7 @@ void raschet(int& k, int& n)
 				}
 
 				// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-				DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
+				DET1(j) = A1.partialPivLu().determinant();
 				// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
 				
 			}
@@ -820,7 +818,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						LU2(ii, jj) = LU2(ii, jj) + (DET1(i) * (pow(10, DET2(i))) * AG[i](ii, jj));//(DET10*(10**DET20));
+						LU2(ii, jj) = LU2(ii, jj) + (DET1(i) * AG[i](ii, jj))/(DET10);
 					}
 				}
 			}
@@ -878,7 +876,7 @@ void raschet(int& k, int& n)
 			}
 
 			// тюйрнпхгюжхъ люрпхжш бюмдеплнмдю
-			DET10 = A1.partialPivLu().determinant(); DET20 = 0.;
+			DET10 = A1.partialPivLu().determinant();
 			// бшвхякемхе нопедекхрекъ бюмдеплнмдю
 			
 
@@ -901,7 +899,7 @@ void raschet(int& k, int& n)
 				}
 
 				// тюйрнпхгюжхъ днонкмъчыху люрпхж бюмдеплнмдю
-				DET1(j) = A1.partialPivLu().determinant(); DET2(j) = 0.;
+				DET1(j) = A1.partialPivLu().determinant();
 				// бшвхякемхе днонкмъчыху нопедекхрекеи бюмдеплнмдю
 				
 			}
@@ -937,7 +935,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						LI2(ii, jj) = LI2(ii, jj) + (DET1(i) * (pow(10, DET2(i))) * AG[i](ii, jj));//(DET10*(10**DET20));
+						LI2(ii, jj) = LI2(ii, jj) + (DET1(i) * AG[i](ii, jj))/(DET10);
 					}
 				}
 			}
@@ -1523,8 +1521,8 @@ int main() {
 			raschet(k, n);
 			
 			// !!! Temporary for debugging purposes !!!
-			breaker_counter--;
-			if (breaker_counter == 0) break;
+			//breaker_counter--;
+			//if (breaker_counter == 0) break;
 			// !!! Temporary for debugging purposes !!!
 
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
@@ -1533,7 +1531,7 @@ int main() {
 			if (PR == 2) continue; //goto label_1500;
 		}
 		// !!! Temporary for debugging purposes !!!
-		if (breaker_counter == 0) break;
+		//if (breaker_counter == 0) break;
 		// !!! Temporary for debugging purposes !!!
 	}
 
