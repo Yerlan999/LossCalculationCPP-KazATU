@@ -669,17 +669,17 @@ insert_gap();
 
 C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 C      PRINT *,AIXM(I)
-  WRITE(777,*) LL,NN,PR
-      DO 789 I=1,4
+C WRITE(777,*) LL,NN,PR
+C      DO 789 I=1,4
 C     FOR MATRICES
-C      WRITE(777,339)(F(I,K),K=1,4)
+C      WRITE(777,339)(LI(I,K),K=1,4)
 C     FOR VECTORS
-  WRITE(777,339) EVU(I)
+C WRITE(777,339) EVU(I)
 C      WRITE(777,339) UM1(N,K,1),UM2(N,K,1)
 C      WRITE(777,339) AIK1(1), AIK1(2), AIK1(3)
-C      WRITE(777,340) F
- 789  CONTINUE
-      WRITE(777,*) '       '
+      WRITE(777,*) PPP(NN,LL)
+C789   CONTINUE
+C      WRITE(777,*) '       '
 C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
   339 FORMAT(204(E12.5,1X))
