@@ -24,6 +24,29 @@ using namespace OpenXLSX;
 using namespace Eigen;
 
 
+// Прочие функции для оформления вывода на консоль
+void insert_gap(wofstream& report_file)
+{
+	report_file << L" \n";
+}
+
+void insert_start_separator(wofstream& report_file)
+{
+	report_file << L" \n";
+	wstring start_title = L" =========================================================== * Начало * =========================================================== \n";
+	report_file << start_title;
+	report_file << L" \n";
+}
+
+void insert_end_separator(wofstream& report_file)
+{
+	report_file << L" \n";
+	wstring end_title = L" =========================================================== * Конец * =========================================================== \n";
+	report_file << end_title;
+	report_file << L" \n";
+}
+
+
 // Класс помощник для получения данных по Амплитуде и Фазе гармоник
 class CustomRangePairs
 {
@@ -1196,6 +1219,7 @@ void raschet(int& k, int& n)
 // Главная функция запуска программы!
 int main() {
 
+
 	auto start = high_resolution_clock::now();
 
 	_setmode(_fileno(stdout), _O_U16TEXT);
@@ -1204,6 +1228,7 @@ int main() {
 	wofstream report_file(L"Отчет.txt");
 	report_file.imbue(utf8_locale);
 
+	insert_start_separator(report_file);
 
 	XLDocument doc;
 	
@@ -1212,6 +1237,7 @@ int main() {
 		if (file.path().extension() == ".xlsx")
 		{
 			doc.open(file.path().generic_string()); // Открываем Excel файл
+			wstring excel_name_title = L"Название excel файла: \n";
 		}
 	}
 
@@ -1311,8 +1337,9 @@ int main() {
 	wstring second_title = L" секунд.";
 	report_file << excel_read_title << endl;
 	report_file << excel_read_time_title << half_duration.count() << second_title << std::endl;
-
-
+	
+	insert_gap(report_file);
+	
 	// Листы EXCEL файла прочитаны. Предварительные матрицы составлены.
 	// Проведение расчетов!
 
@@ -1514,6 +1541,8 @@ int main() {
 	
 	wstring title = L" ********************************************************  Потери на линии ********************************************************  ";
 	
+	insert_gap(report_file);
+
 	wstring overall = L"|| Всего: ";
 	wstring main_harmonics = L" || Основная гармоника: ";
 	wstring methodics = L" || Методоика: ";
@@ -1531,6 +1560,7 @@ int main() {
 		<< other << WD4
 		<< endl;
 
+	insert_gap(report_file);
 
 	wstring finish_time_title = L"Итого заняло времени: ";
 	wstring calculation_time_title = L"Расчет занял времени: ";
@@ -1539,6 +1569,8 @@ int main() {
 	auto duration = duration_cast<seconds>(stop - start);
 	report_file << calculation_time_title << duration.count() - half_duration.count() << second_title << std::endl;
 	report_file << finish_time_title << duration.count() << second_title << std::endl;
+
+	insert_end_separator(report_file);
 
 	return 0;
 }

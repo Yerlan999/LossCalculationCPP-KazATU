@@ -804,8 +804,6 @@ int breaker_counter = 20;
     //if (breaker_counter == 0) break;
     // !!! Temporary for debugging purposes !!!
 
-
-
 // Прочие функции для оформления вывода на консоль
 void insert_gap()
 {
@@ -815,7 +813,7 @@ void insert_gap()
 void insert_start_separator()
 {
   report_file << L" " << endl;
-  wstring start_title = L" =================================== * Начало * =================================== " ;
+  wstring start_title = L" =================================== * Начало * =================================== ";
   report_file << start_title << endl;
   report_file << L" " << endl;
 }
