@@ -1541,8 +1541,6 @@ int main() {
 	
 	wstring title = L" ********************************************************  Потери на линии ********************************************************  ";
 	
-	insert_gap(report_file);
-
 	wstring overall = L"|| Всего: ";
 	wstring main_harmonics = L" || Основная гармоника: ";
 	wstring methodics = L" || Методоика: ";
@@ -1552,6 +1550,9 @@ int main() {
 
 	report_file
 		<< title << endl;
+	
+	insert_gap(report_file);
+
 	report_file
 		<< overall << WD0
 		<< main_harmonics << WD[0][0]
