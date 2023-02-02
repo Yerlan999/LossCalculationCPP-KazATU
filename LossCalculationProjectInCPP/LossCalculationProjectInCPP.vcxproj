@@ -78,6 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,6 +95,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +129,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files %28x86%29\OpenXLSX.Library\include\OpenXLSX;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\eigen;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources\utilities;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\sources;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\zippy;C:\Users\Пользователь\Desktop\LossCalculationProjectInCPP\LossCalculationProjectInCPP\OpenXLSX\external\pugixml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

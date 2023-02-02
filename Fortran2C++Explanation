@@ -688,6 +688,90 @@ C @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEBUGGING TOOL @@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 
 
+  // **************************** # Testing Polygon Start # ****************************
+
+
+  /*MatrixXcd TestA1
+  {
+    {std::complex<double>(0.001,-0.74), std::complex<double>(-4.,0.5), std::complex<double>(8.9852,-7.), std::complex<double>(-6.4,0.32),},
+    {std::complex<double>(-0.7,2.6), std::complex<double>(0.22,5.), std::complex<double>(0.45,-7.), std::complex<double>(1.6,100.),},
+    {std::complex<double>(.19,-0.74), std::complex<double>(-4.,5.), std::complex<double>(-8.23,-0.0077), std::complex<double>(6.54,0.111),},
+    {std::complex<double>(0.32,-7.), std::complex<double>(4.74,5.45), std::complex<double>(-0.78,-0.7), std::complex<double>(4.6,0.001),}
+  };*/
+  //
+  //MatrixXd TestA2
+  //{
+  //  {2., 4., 8., -64.},
+  //  {-7., 10., -20., 16.,},
+  //  {9., -4., -8., 6.},
+  //  {2., 4., -78., 46.}
+  //};
+
+  //MatrixXd TestA3
+  //{
+  //  {2., 4., 8., -64.},
+  //  {-7., 10., -20., 16.,},
+  //  {9., -4., -8., 6.},
+  //  {2., 4., -78., 46.}
+  //};
+
+  /*MatrixXcd TestA4 = TestA1.partialPivLu().matrixLU();
+
+  cout << "Mat " << endl;
+  cout << TestA1 << endl;
+
+  cout << "LU of Mat " << endl;
+  cout << TestA4 << endl;
+
+  cout << "Det of Mat " << endl;
+  cout << TestA4.determinant() << endl;
+
+  return 0;*/
+
+
+  // **************************** # Testing Polygon End # ****************************
+
+
+std::ofstream debug_file;
+std::ofstream aixm_file;
+
+debug_file.open("debug.txt", std::ios_base::out); // ::app for appending
+aixm_file.open("aixm.txt", std::ios_base::out);
+
+// Вывод основных данных о Excel файле
+insert_start_separator();
+debug_file << "Workbook's WorkSheets count: " << worksheets_count << endl;
+
+insert_gap();
+debug_file << "First Worksheet's Columns count: " << f_columns_count << endl;
+debug_file << "First Worksheet's Rows count: " << f_rows_count << endl;
+insert_gap();
+
+
+
+
+
+// Функция для конвертации текста в цифру с плав. точкой
+float stringToFloat(string s)
+{
+  float toFloat;
+  stringstream converter(s);
+  converter >> toFloat;
+  return toFloat;
+}
+
+// Функция для конвертации текста в цифру
+int stringToInt(string s)
+{
+  int toInt;
+  stringstream converter(s);
+  converter >> toInt;
+  return toInt;
+}
+
+
+
+
 
 G20 = 16 ||| G10 = 8
 
@@ -700,7 +784,49 @@ MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
 
 
 
+      // Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+      SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
+      SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 
+      // Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+      SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
+      SKI0 = sqrt(std::pow(real(AIK10), 2.) + std::pow(imag(AIK10), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
+
+
+int breaker_counter = 20;
+
+      // !!! Temporary for debugging purposes !!!
+      //breaker_counter--;
+      //if (breaker_counter == 0) break;
+      // !!! Temporary for debugging purposes !!!
+
+    // !!! Temporary for debugging purposes !!!
+    //if (breaker_counter == 0) break;
+    // !!! Temporary for debugging purposes !!!
+
+
+
+// Прочие функции для оформления вывода на консоль
+void insert_gap()
+{
+  report_file << L" " << endl;
+}
+
+void insert_start_separator()
+{
+  report_file << L" " << endl;
+  wstring start_title = L" =================================== * Начало * =================================== " ;
+  report_file << start_title << endl;
+  report_file << L" " << endl;
+}
+
+void insert_end_separator()
+{
+  report_file << L" " << endl;
+  wstring end_title = L" =================================== * Конец * =================================== ";
+  report_file << end_title << endl;
+  report_file << L" " << endl;
+}
 
 
 ****************************************************************************************** VARIABLES CHECKER ******************************************************************************************
@@ -1294,13 +1420,3 @@ FORTRAN     PYTHON       C++
 so on       so on        so on
 
 Conclusion: Something really wrong happens in C++ code.
-
-
-
-
-
-
-
-
-
-

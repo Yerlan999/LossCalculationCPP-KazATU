@@ -1,15 +1,21 @@
 // Импортироване необходимых библиотек
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <chrono>
+#include <io.h>         
 #include <tuple>
 #include <cmath>
+#include <chrono>
+#include <codecvt>
+#include <fcntl.h>   
 #include <iomanip>
 #include <complex>
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <OpenXLSX.hpp>
+
+using std::filesystem::directory_iterator;
 
 using namespace std;
 using namespace std::chrono;
@@ -17,46 +23,6 @@ using namespace std::chrono;
 using namespace OpenXLSX;
 using namespace Eigen;
 
-std::ofstream debug_file;
-std::ofstream aixm_file;
-
-// Прочие функции для оформления вывода на консоль
-void insert_gap()
-{
-	debug_file << ' ' << endl;
-}
-
-void insert_start_separator()
-{
-	debug_file << " " << endl;
-	debug_file << "======================== *START* ========================" << endl;
-	debug_file << " " << endl;
-}
-
-void insert_end_separator()
-{
-	debug_file << " " << endl;
-	debug_file << "========================= *END* =========================" << endl;
-	debug_file << " " << endl;
-}
-
-// Функция для конвертации текста в цифру с плав. точкой
-float stringToFloat(string s)
-{
-	float toFloat;
-	stringstream converter(s);
-	converter >> toFloat;
-	return toFloat;
-}
-
-// Функция для конвертации текста в цифру
-int stringToInt(string s)
-{
-	int toInt;
-	stringstream converter(s);
-	converter >> toInt;
-	return toInt;
-}
 
 // Класс помощник для получения данных по Амплитуде и Фазе гармоник
 class CustomRangePairs
@@ -132,7 +98,6 @@ int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
 
-int breaker_counter = 20;
 
 // Матрицы данных. Параметры режима
 double UM[3][50][700] = {0};  double AIM[3][50][700] = {0};
@@ -191,6 +156,7 @@ const double OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
 const double GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
 const double S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 
+const string current_dir_path = ".";
 
 // Расчетная функция программы!
 void raschet(int& k, int& n)
@@ -402,7 +368,6 @@ void raschet(int& k, int& n)
 		}
 	}
 
-
 	// Цикл #1300. До конца данной расчетной функции!
 	for (int iii = 0; iii < ::MT; iii++)
 	{
@@ -520,11 +485,9 @@ void raschet(int& k, int& n)
 				A1(i, j) = F(i, j);
 			}
 		}
-		
 
 		DET10 = A1.partialPivLu().determinant();
 		// ВЫЧИСЛЕНИЕ ОПРЕДЕЛИТЕЛЯ ВАНДЕРМОНДА
-
 
 		// ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
 		// Цикл #21
@@ -552,9 +515,7 @@ void raschet(int& k, int& n)
 
 			// ФАКТОРИЗАЦИЯ ДОПОЛНЯЮЩИХ МАТРИЦ ВАНДЕРМОНДА
 			DET1(j) = A1.partialPivLu().determinant();
-			// ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ ОПРЕДЕЛИТЕЛЕЙ ВАНДЕРМОНДА
-			
-
+			// ВЫЧИСЛЕНИЕ ДОПОЛНЯЮЩИХ ОПРЕДЕЛИТЕЛЕЙ ВАНДЕРМОНДА		
 		}
 
 		F2 = AU * AU;
@@ -963,7 +924,7 @@ void raschet(int& k, int& n)
 				GG2(i, j) = 0.;
 			}
 		}
-		
+
 		for (int i = 0; i < M; i++) {
 			GG(i, i) = 1.;
 			GG(i, i + M) = 1.;
@@ -989,7 +950,7 @@ void raschet(int& k, int& n)
 			}
 		}
 
-		GG2 = GG1.inverse(); // . inverse() or .completeOrthogonalDecomposition().pseudoInverse();
+		GG2 = GG1.inverse();
 
 		for (int i = 0; i < M; i++) {
 			for (int j = 0; j < M; j++) {
@@ -1073,7 +1034,7 @@ void raschet(int& k, int& n)
 		}
 
 		B6 = GG4 * B10;
-		B7 = GG5.inverse() * B6; // should be .dot(B6) and .inverse() or .completeOrthogonalDecomposition().pseudoInverse();
+		B7 = GG5.inverse() * B6;
 
 		K1 = 0;
 
@@ -1102,7 +1063,7 @@ void raschet(int& k, int& n)
 			B1(i + 3 * M) = BB(i);
 		}
 
-		B4 = GG.inverse() * B1; // should be .dot(B1) and .inverse() or .completeOrthogonalDecomposition().pseudoInverse();
+		B4 = GG.inverse() * B1;
 
 		for (int i = 0; i < M; i++) {
 			AA(i) = 0.;
@@ -1148,12 +1109,6 @@ void raschet(int& k, int& n)
 			if (LM == MMT) AIK1(i) = AIX[i];
 			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
 
-			// !!! Temporary for debugging purposes !!!
-			//aixm_file << AIXM[i] << endl;
-			// !!! Temporary for debugging purposes !!!
-			
-			// might be an issue with powers of ...
-
 			if (i == 0 and k == 0 and PR == 2)
 			{
 				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
@@ -1186,38 +1141,38 @@ void raschet(int& k, int& n)
 			{
 				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
 			}
-			//if (i == 4 and k == 0 and PR == 2)
-			//{
-			//	PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
-			//}
-			//if (i == 4 and k > 0)
-			//{
-			//	PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
-			//}
-			//if (i == 5 and k == 0 and PR == 2)
-			//{
-			//	PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
-			//}
-			//if (i == 5 and k > 0)
-			//{
-			//	PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
-			//}
-			//if (i == 6 and k == 0 and PR == 2)
-			//{
-			//	PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
-			//}
-			//if (i == 6 and k > 0)
-			//{
-			//	PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
-			//}
-			//if (i == 7 and k == 0 and PR == 2)
-			//{
-			//	PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
-			//}
-			//if (i == 7 and k > 0)
-			//{
-			//	PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
-			//}
+			if (i == 4 and k == 0 and PR == 2)
+			{
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			}
+			if (i == 4 and k > 0)
+			{
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+			}
+			if (i == 5 and k == 0 and PR == 2)
+			{
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			}
+			if (i == 5 and k > 0)
+			{
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+			}
+			if (i == 6 and k == 0 and PR == 2)
+			{
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			}
+			if (i == 6 and k > 0)
+			{
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+			}
+			if (i == 7 and k == 0 and PR == 2)
+			{
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			}
+			if (i == 7 and k > 0)
+			{
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+			}
 
 			if (k == 0 and PR == 2)
 			{
@@ -1234,14 +1189,6 @@ void raschet(int& k, int& n)
 				{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
 			SM[i] = UX[i] * conj(AIX[i]) / 2.;		
 		}
-
-		// UXM_array.append(UXM)
-		// AIXM_array.append(AIXM)
-
-
-
-		//cout << "No issues till this point. Go on. Good job!" << endl;
-
 	}
 }
 
@@ -1249,57 +1196,26 @@ void raschet(int& k, int& n)
 // Главная функция запуска программы!
 int main() {
 
-	// **************************** # Testing Polygon Start # ****************************
-
-
-	/*MatrixXcd TestA1
-	{
-		{std::complex<double>(0.001,-0.74), std::complex<double>(-4.,0.5), std::complex<double>(8.9852,-7.), std::complex<double>(-6.4,0.32),},
-		{std::complex<double>(-0.7,2.6), std::complex<double>(0.22,5.), std::complex<double>(0.45,-7.), std::complex<double>(1.6,100.),},
-		{std::complex<double>(.19,-0.74), std::complex<double>(-4.,5.), std::complex<double>(-8.23,-0.0077), std::complex<double>(6.54,0.111),},
-		{std::complex<double>(0.32,-7.), std::complex<double>(4.74,5.45), std::complex<double>(-0.78,-0.7), std::complex<double>(4.6,0.001),}
-	};*/
-	//
-	//MatrixXd TestA2
-	//{
-	//	{2., 4., 8., -64.},
-	//	{-7., 10., -20., 16.,},
-	//	{9., -4., -8., 6.},
-	//	{2., 4., -78., 46.}
-	//};
-
-	//MatrixXd TestA3
-	//{
-	//	{2., 4., 8., -64.},
-	//	{-7., 10., -20., 16.,},
-	//	{9., -4., -8., 6.},
-	//	{2., 4., -78., 46.}
-	//};
-
-	/*MatrixXcd TestA4 = TestA1.partialPivLu().matrixLU();
-
-	cout << "Mat " << endl;
-	cout << TestA1 << endl;
-
-	cout << "LU of Mat " << endl;
-	cout << TestA4 << endl;
-
-	cout << "Det of Mat " << endl;
-	cout << TestA4.determinant() << endl;
-	
-	return 0;*/
-
-
-	// **************************** # Testing Polygon End # ****************************
-
-
 	auto start = high_resolution_clock::now();
 
-	debug_file.open("debug.txt", std::ios_base::out); // ::app for appending 
-	aixm_file.open("aixm.txt", std::ios_base::out);
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
+
+	wofstream report_file(L"Отчет.txt");
+	report_file.imbue(utf8_locale);
+
 
 	XLDocument doc;
-	doc.open("./Promzona.xlsx"); // Открываем Excel файл
+	
+	for (const auto& file : directory_iterator(current_dir_path))
+	{
+		if (file.path().extension() == ".xlsx")
+		{
+			doc.open(file.path().generic_string()); // Открываем Excel файл
+		}
+	}
+
+	//doc.open("./Promzona.xlsx"); // Открываем Excel файл
 	auto workbook = doc.workbook();
 	auto check_worksheet = workbook.worksheet(workbook.worksheetNames()[0]);
 
@@ -1307,14 +1223,6 @@ int main() {
 	int f_columns_count = check_worksheet.columnCount();
 	int f_rows_count = check_worksheet.rowCount();
 
-	// Вывод основных данных о Excel файле
-	insert_start_separator();
-	debug_file << "Workbook's WorkSheets count: " << worksheets_count << endl;
-
-	insert_gap();
-	debug_file << "First Worksheet's Columns count: " << f_columns_count << endl;
-	debug_file << "First Worksheet's Rows count: " << f_rows_count << endl;
-	insert_gap();
 
 	// Определение начал и концов данных измерении для каждого присоединения в файле
 	titles_counter = 0;
@@ -1398,10 +1306,12 @@ int main() {
 
 	auto half_stop = high_resolution_clock::now();
 	auto half_duration = duration_cast<seconds>(half_stop - start);
-	debug_file << "Excel file has been read successfully!" << endl;
-	debug_file << "Took to read the file: " << half_duration.count() << " seconds." << std::endl;
+	wstring excel_read_title = L"Excel файл был успешно прочитан!";
+	wstring excel_read_time_title = L"Чтение файла заняло ";
+	wstring second_title = L" секунд.";
+	report_file << excel_read_title << endl;
+	report_file << excel_read_time_title << half_duration.count() << second_title << std::endl;
 
-	insert_gap();
 
 	// Листы EXCEL файла прочитаны. Предварительные матрицы составлены.
 	// Проведение расчетов!
@@ -1493,7 +1403,7 @@ int main() {
 			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
 			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
 			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
-			
+
 			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
 			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
@@ -1501,7 +1411,7 @@ int main() {
 			UK1(0) = UK11;
 			UK1(1) = UK11 * std::pow(AL, 2.);
 			UK1(2) = UK11 * AL;
-			
+
 
 			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
 			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
@@ -1520,19 +1430,11 @@ int main() {
 			// Вызов расчетной функции!
 			raschet(k, n);
 			
-			// !!! Temporary for debugging purposes !!!
-			//breaker_counter--;
-			//if (breaker_counter == 0) break;
-			// !!! Temporary for debugging purposes !!!
-
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
-		// !!! Temporary for debugging purposes !!!
-		//if (breaker_counter == 0) break;
-		// !!! Temporary for debugging purposes !!!
 	}
 
 
@@ -1609,23 +1511,34 @@ int main() {
 
 	// Вывод предварительных значении результатов расчета!
 	// Запись результатов в файл "Результаты расчета" (Пропущенно намеренно!)
+	
+	wstring title = L" ********************************************************  Потери на линии ********************************************************  ";
+	
+	wstring overall = L"|| Всего: ";
+	wstring main_harmonics = L" || Основная гармоника: ";
+	wstring methodics = L" || Методоика: ";
+	wstring higher_harmonics = L" || Высшие гармоники: ";
+	wstring other = L" || Прочие: ";
 
-	debug_file
-		<< " ******************************************* Losses on Line ******************************************* " << endl;
-	debug_file
-		<< "|| Overall: " << WD0
-		<< " || Main harmonics: " << WD[0][0]
-		<< " || Methodics: " << WD10
-		<< " || On higher harmonics: " << WD1
-		<< " || Other losses: " << WD4
+
+	report_file
+		<< title << endl;
+	report_file
+		<< overall << WD0
+		<< main_harmonics << WD[0][0]
+		<< methodics << WD10
+		<< higher_harmonics << WD1
+		<< other << WD4
 		<< endl;
 
 
-	insert_end_separator();
+	wstring finish_time_title = L"Итого заняло времени: ";
+	wstring calculation_time_title = L"Расчет занял времени: ";
 
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<seconds>(stop - start);
-	debug_file << "Took to execute: " << duration.count() << " seconds." << std::endl;
-	std::cout << "Execution has just finished!" << std::endl;
+	report_file << calculation_time_title << duration.count() - half_duration.count() << second_title << std::endl;
+	report_file << finish_time_title << duration.count() << second_title << std::endl;
+
 	return 0;
 }
