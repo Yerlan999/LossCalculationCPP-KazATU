@@ -15,7 +15,10 @@ When building a project... Each .cpp files (translation units) gets compiled int
 		converts them into a .exe
 		executable file
 
+<< - overloaded operator. In a core it is a function
+
 C++ is a files agnostic, meaning c++ does not care about files at all.
+
 
 
 int = 4 bytes [approx. -2bil to 2bil](depends on a compiler you use)
