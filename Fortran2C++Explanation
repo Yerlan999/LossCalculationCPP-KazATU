@@ -1417,4 +1417,27 @@ FORTRAN     PYTHON       C++
 ...         ...          ...
 so on       so on        so on
 
-Conclusion: Something really wrong happens in C++ code.
+0.0436805
+0.312798
+0.0633301
+0.128724
+0.0428737
+
+
+UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
+
+UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
+
+
+AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
+
+AIK12 = (AIK1(0) + AIK1(1) * std::pow(AL, 2.) + AIK1(2) * AL) / (3.);
+
+
+// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
+SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
+
+// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
+SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
+SKI0 = sqrt(std::pow(real(AIK10), 2.) + std::pow(imag(AIK10), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;

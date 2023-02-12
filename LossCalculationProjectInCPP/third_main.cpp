@@ -94,12 +94,12 @@ public:
 class ProsoedRowRange 
 {
 public:
-	tuple<int, int> get_range(int which, int titles_indexes[], int num_pris)
+	tuple<int, int> get_range(int which, VectorXi titles_indexes, int num_pris)
 	{
 		// which = [1-6] Если 6 присоединении в системе.
 		tuple <int, int> pris_range;
-		int r_start = titles_indexes[which - 1] + 1;
-		int r_end = titles_indexes[which] - 1;
+		int r_start = titles_indexes(which - 1) + 1;
+		int r_end = titles_indexes(which) - 1;
 		
 		if (which == num_pris) r_end++;
 		pris_range = make_tuple(r_start, r_end);
@@ -108,30 +108,23 @@ public:
 	}
 };
 
-// Объявление основных переменных системы
-const int num_pris = 6; // Общее количество присоединении в системе подстанции 
-const int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
-const int num_phases = 3;
-const int num_tross = 1;
-const int num_harms = 49;
-const int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
-int titles_indexes[(num_pris+1)];
 int sheets_counter = 1;
 int titles_counter = 0;
 int rows_counter = 0;
 int phase_number;
 
+int debug_breaker = 10;
 
 // Матрицы данных. Параметры режима
-double UM[3][50][700] = {0};  double AIM[3][50][700] = {0};
-double FUM[3][50][700] = {0}; double FIM[3][50][700] = {0};
+double UM[8][50][700] = {0};  double AIM[8][50][700] = {0};
+double FUM[8][50][700] = {0}; double FIM[8][50][700] = {0};
 
-double UM1[3][50][700] = {0}; double UM2[3][50][700] = {0};
-double AIM1[3][50][700] = {0}; double AIM2[3][50][700] = {0};
+double UM1[8][50][700] = {0}; double UM2[8][50][700] = {0};
+double AIM1[8][50][700] = {0}; double AIM2[8][50][700] = {0};
 
 double PPR1[700] = {0}; double PPR2[700] = {0};
 
-double PD[3][700] = {0}; double PPP[50][1000] = {0};
+double PD[8][700] = {0}; double PPP[50][1000] = {0};
 double PPP1[50][1000] = {0}; double PPP5[50][1000] = {0};
 double PPP2[50][1000] = {0}; double PPP6[50][1000] = {0};
 double PPP3[50][1000] = {0}; double PPP7[50][1000] = {0};
@@ -140,57 +133,46 @@ double PPP4[50][1000] = {0}; double PPP8[50][1000] = {0};
 double WD[2][50] = {0}; double II[10] = {0};
 
 enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e };
-double main_harm[8][3][700] = {0};
+double main_harm[8][8][700] = {0};
 
 // Данные о зазмемлении линии
 const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-typedef Matrix< std::complex<double>, num_phases+num_tross, 1 > MainVector;
-MainVector UK1, AIK1;
-
 std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
 std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
 std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
+
+std::complex<double> UK20(0, 0); std::complex<double> AIK20(0, 0);
+std::complex<double> UK21(0, 0); std::complex<double> AIK21(0, 0);
+std::complex<double> UK22(0, 0); std::complex<double> AIK22(0, 0);
+
 std::complex<double> AL(-0.5, 0.866025);
 
 double SKU0 = 0., SKU2 = 0., SKI0 = 0., SKI2 = 0.;
 
 const double PI = 3.14159265358979;
 
-double RZ = 35.3;
 double FF = 0., SS2 = 0., SS0 = 0., PP1 = 0., PP2 = 0., RPR = 0., PRP = 0., WD0 = 0., WD1 = 0., WD4 = 0., WD10 = 0.;
 
 std::complex<double> SS(0., 0.), SS1(0., 0.);
 
 // Общие переменной для расчетной функции! [MM, M, M1, MT, M10, M20, PR, K1, K2, K3, N1, N2, N3, MPR, MTR, MMT]
 // Данные о конфигурации опор
-int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, K2 = 0, K3 = 0, N1 = 0, N2 = 0, N3 = 0, MMT = 0;
+int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, MMT = 0;
 
-const int MM = 5;
-const int MPR = 3;
-const int MTR = 1;
-const double DT = 2.5;
-const int MT = 5;
-
-// Массивы параметров фаз и тросса линии 
-const double XA[num_phases+num_tross] = {0.0, 6.3, 4.2, 2.1};
-const double YA[num_phases + num_tross] = {19.0, 19.0, 25.0, 28.0};
-const double OMP[num_phases + num_tross] = {1.0, 1.0, 1.0, 4000.0};
-const double GM[num_phases + num_tross] = {35.336, 35.336, 35.336, 17.336};
-const double S[num_phases + num_tross] = {150.0, 150.0, 150.0, 50.0};
 
 const string current_dir_path = ".";
 
 // Расчетная функция программы!
-void raschet(int& k, int& n)
+void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, int& MM, int& MT)
 {
 	// UK1 AIK1 - Главные матрицы!
 	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]	
 
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
-	const int M = ::MPR + ::MTR;
-	const int MMT = ::MM / ::MT;
+	const int M = MPR + MTR;
+	const int MMT = MM / MT;
 	const int M10 = 2 * M;
 	const int M20 = 4 * M;
 
@@ -271,22 +253,26 @@ void raschet(int& k, int& n)
 	MatrixXcd AAI; AAI = MatrixXcd::Zero(M, M);
 
 
-
 	// Объявление основных (локальных) переменных внутри функции расчета.
-	double R0[M] = { 0 }, R[M] = { 0 }, UXM[M] = { 0 }, HI[M] = { 0 }, R11[M] = { 0 }, DET4[M] = { 0 },
-		AIXM[M] = { 0 };
-	std::complex<double> UX[M] = { 0 }, AIX[M] = { 0 }, SM[M] = { 0 }, DET3[M] = { 0 };
+	VectorXd R0; R0 = VectorXd::Zero(M); VectorXd HI; HI = VectorXd::Zero(M);
+	VectorXd R; R = VectorXd::Zero(M); VectorXd UXM; UXM = VectorXd::Zero(M);
+	VectorXd R11; R11 = VectorXd::Zero(M); VectorXd AIXM; AIXM = VectorXd::Zero(M);
+	
 
-	std::complex<double> B5[M20] = { 0 };
+	VectorXcd UX; UX = VectorXcd::Zero(M); VectorXcd SM; SM = VectorXcd::Zero(M);
+	VectorXcd AIX; AIX = VectorXcd::Zero(M); VectorXcd DET3; DET3 = VectorXcd::Zero(M);
 
-	double HC2[M][M] = { 0 }, HC4[M][M] = { 0 },
-		XL[M][M] = { 0 }, XL1[M][M] = { 0 }, G[M][M] = { 0 }, D[M][M] = { 0 }, HC[M][M] = { 0 };
+	VectorXcd B5; B5 = VectorXcd::Zero(M20);
 
-	std::complex<double> E[M][M] = { 0 }, F1[M][M] = { 0 };
+	MatrixXd HC2; HC2 = MatrixXd::Zero(M, M); MatrixXd G; G = MatrixXd::Zero(M, M);
+	MatrixXd HC4; HC4 = MatrixXd::Zero(M, M); MatrixXd D; D = MatrixXd::Zero(M, M);
+	MatrixXd XL; XL = MatrixXd::Zero(M, M); MatrixXd HC; HC = MatrixXd::Zero(M, M);
+	MatrixXd XL1; XL1 = MatrixXd::Zero(M, M);
 
-	double D1[M][M] = { 0 }, D2[M][M] = { 0 }, D3[M][M] = { 0 };
+	MatrixXcd E; E = MatrixXcd::Zero(M, M);
+	MatrixXcd F1; F1 = MatrixXcd::Zero(M, M);
 
-	double HH[M10][M10] = { 0 };
+	MatrixXd HH; HH = MatrixXd::Zero(M10, M10);
 
 
 	// Решение проблемы динамических размеров матрицы с помощью библиотеки Eigen 
@@ -314,33 +300,27 @@ void raschet(int& k, int& n)
 	// Цикл #845
 	for (int i = 0; i < M; i++)
 	{
-		R[i] = sqrt(S[i] / PI) / 1000.;
-		HI[i] = R[i] / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP[i] * GM[i] / 20.);
-		R0[i] = 1000. / (GM[i] * S[i]);
-		if (HI[i] < 1) R11[i] = R0[i] * (1. + pow(HI[i], 4.)/(3.));
-		if (HI[i] > 1) R11[i] = R0[i] * (HI[i] + 0.25 + 3./(64. * HI[i]));
+		R(i) = sqrt(S(i) / PI) / 1000.;
+		HI(i) = R(i) / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP(i) * GM(i) / 20.);
+		R0(i) = 1000. / (GM(i) * S(i));
+		if (HI(i) < 1) R11(i) = R0(i) * (1. + pow(HI(i), 4.)/(3.));
+		if (HI(i) > 1) R11(i) = R0(i) * (HI(i) + 0.25 + 3./(64. * HI(i)));
 		if (i == M) { ; } // pass statement equivalent?
 	}
 	
-	// Цикл #12. На самом деле лишний!
-	for (int i = 0; i < M10; i++)
-	{
-		for (int j = 0; j < M10; j++)
-		{
-			HH[i][j] = 0;
-		}
-	}
+	// Цикл #12
+	HH = MatrixXd::Zero(M10, M10);
 
 	// Цикл #161
 	for (int i = 0; i < M; i++)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			if (i == j) D[i][i] = R[i];
-			if (i != j) D[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] - YA[j]), 2));
-			HC[i][j] = sqrt(pow((XA[i] - XA[j]), 2) + pow((YA[i] + YA[j]), 2));
-			E[i][j] = std::complex<double>(0.0, 0.0);
-			E[i][i] = std::complex<double>(1.0, 0.0);
+			if (i == j) D(i, i) = R(i);
+			if (i != j) D(i, j) = sqrt(pow((XA(i) - XA(j)), 2) + pow((YA(i) - YA(j)), 2));
+			HC(i, j) = sqrt(pow((XA(i) - XA(j)), 2) + pow((YA(i) + YA(j)), 2));
+			E(i, j) = std::complex<double>(0.0, 0.0);
+			E(i, i) = std::complex<double>(1.0, 0.0);
 		}
 	}
 
@@ -349,7 +329,7 @@ void raschet(int& k, int& n)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			XL1[i][j] = (0.145 * log10(1000. / D[i][j])) / (100. * PI);
+			XL1(i, j) = (0.145 * log10(1000. / D(i, j))) / (100. * PI);
 		}
 	}
 
@@ -358,7 +338,7 @@ void raschet(int& k, int& n)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			HC1(i, j) = 41.4 * pow(10., 6.) * log10(HC[i][j] / D[i][j]);
+			HC1(i, j) = 41.4 * pow(10., 6.) * log10(HC(i, j) / D(i, j));
 		}
 	}
 
@@ -370,7 +350,7 @@ void raschet(int& k, int& n)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			HC2[i][j] = HC3(i, j) * 2. * PI * 50.;
+			HC2(i, j) = HC3(i, j) * 2. * PI * 50.;
 		}
 	}
 
@@ -379,75 +359,75 @@ void raschet(int& k, int& n)
 	{
 		for (int j = 0; j < M; j++)
 		{
-			XL[i][j] = XL1[i][j] * W * 2. * 50. * PI;
-			HC4[i][j] = HC2[i][j] * W;
+			XL(i, j) = XL1(i, j) * W * 2. * 50. * PI;
+			HC4(i, j) = HC2(i, j) * W;
 			double R10 = 0.0;
-			if (i == j) Z(i, j) = std::complex<double>(R11[i], XL[i][j]);
-			if (i != j) Z(i, j) = std::complex<double>(R10, XL[i][j]);
-			if (i == j) G[i][j] = 0.00000004 * YA[i] / YA[i];
-			if (i != j) G[i][j] = -0.00000004 * YA[0] / D[i][j];
-			G[i][j] = 0.;
-			Y(i, j) = std::complex<double>(G[i][j], HC4[i][j]);
+			if (i == j) Z(i, j) = std::complex<double>(R11(i), XL(i, j));
+			if (i != j) Z(i, j) = std::complex<double>(R10, XL(i, j));
+			if (i == j) G(i, j) = 0.00000004 * YA(i) / YA(i);
+			if (i != j) G(i, j) = -0.00000004 * YA(0) / D(i, j);
+			G(i, j) = 0.;
+			Y(i, j) = std::complex<double>(G(i, j), HC4(i, j));
 		}
 	}
 
 	// Цикл #1300. До конца данной расчетной функции!
-	for (int iii = 0; iii < ::MT; iii++)
+	for (int iii = 0; iii < MT; iii++)
 	{
 		if (M != 3) goto label_767;
 		// Цикл #761
 		for (int i = 0; i < 3; i++)
 		{
-			B5[i] = UK1(i);
-			B5[i + 3] = AIK1(i);
-			B5[i + 6] = std::complex<double>(0., 0.);
-			B5[i + 9] = std::complex<double>(0., 0.);
+			B5(i) = UK1(i);
+			B5(i + 3) = AIK1(i);
+			B5(i + 6) = std::complex<double>(0., 0.);
+			B5(i + 9) = std::complex<double>(0., 0.);
 		}
 	label_767:
 		if (M != 4) goto label_768;
 		// Цикл #762
 		for (int i = 0; i < 3; i++)
 		{
-			B5[i] = UK1(i);
-			B5[M - 1] = std::complex<double>(0., 0.);
-			B5[i + M] = AIK1(i);
-			B5[2 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 2 * M] = std::complex<double>(0., 0.);
-			B5[3 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 3 * M] = std::complex<double>(0., 0.);
-			B5[4 * M - 1] = std::complex<double>(0., 0.);
+			B5(i) = UK1(i);
+			B5(M - 1) = std::complex<double>(0., 0.);
+			B5(i + M) = AIK1(i);
+			B5(2 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 2 * M) = std::complex<double>(0., 0.);
+			B5(3 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 3 * M) = std::complex<double>(0., 0.);
+			B5(4 * M - 1) = std::complex<double>(0., 0.);
 		}
 	label_768:
 		if (M != 6) goto label_769;
 		// Цикл #764
 		for (int i = 0; i < 3; i++)
 		{
-			B5[i] = UK1(i);
-			B5[i + 3] = UK1(i);
-			B5[i + M] = AIK1(i);
-			B5[i + M + 3] = AIK1(i);
-			B5[i + 2 * M] = std::complex<double>(0., 0.);
-			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
-			B5[i + 3 * M] = std::complex<double>(0., 0.);
-			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
+			B5(i) = UK1(i);
+			B5(i + 3) = UK1(i);
+			B5(i + M) = AIK1(i);
+			B5(i + M + 3) = AIK1(i);
+			B5(i + 2 * M) = std::complex<double>(0., 0.);
+			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+			B5(i + 3 * M) = std::complex<double>(0., 0.);
+			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
 		}
 	label_769:
 		if (M != 7) goto label_770;
 		// Цикл #765
 		for (int i = 0; i < 3; i++)
 		{
-			B5[i] = UK1(i);
-			B5[i + 3] = UK1(i);
-			B5[M - 1] = std::complex<double>(0., 0.);
-			B5[i + M] = AIK1(i);
-			B5[i + M + 3] = AIK1(i);
-			B5[2 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 2 * M] = std::complex<double>(0., 0.);
-			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
-			B5[3 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 3 * M] = std::complex<double>(0., 0.);
-			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
-			B5[4 * M - 1] = std::complex<double>(0., 0.);
+			B5(i) = UK1(i);
+			B5(i + 3) = UK1(i);
+			B5(M - 1) = std::complex<double>(0., 0.);
+			B5(i + M) = AIK1(i);
+			B5(i + M + 3) = AIK1(i);
+			B5(2 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 2 * M) = std::complex<double>(0., 0.);
+			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+			B5(3 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 3 * M) = std::complex<double>(0., 0.);
+			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
+			B5(4 * M - 1) = std::complex<double>(0., 0.);
 		}
 
 	label_770:
@@ -455,22 +435,22 @@ void raschet(int& k, int& n)
 		// Цикл #766
 		for (int i = 0; i < 3; i++)
 		{
-			B5[i] = UK1(i);
-			B5[i + 3] = UK1(i);
-			B5[MPR + 1 - 1] = std::complex<double>(0., 0.);
-			B5[MPR + 2 - 1] = std::complex<double>(0., 0.);
-			B5[i + M] = AIK1(i);
-			B5[i + M + 3] = AIK1(i);
-			B5[2 * M - 1 - 1] = std::complex<double>(0., 0.);
-			B5[2 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 2 * M] = std::complex<double>(0., 0.);
-			B5[i + 2 * M + 3] = std::complex<double>(0., 0.);
-			B5[3 * M - 1 - 1] = std::complex<double>(0., 0.);
-			B5[3 * M - 1] = std::complex<double>(0., 0.);
-			B5[i + 3 * M] = std::complex<double>(0., 0.);
-			B5[i + 3 * M + 3] = std::complex<double>(0., 0.);
-			B5[4 * M - 1 - 1] = std::complex<double>(0., 0.);
-			B5[4 * M - 1] = std::complex<double>(0., 0.);
+			B5(i) = UK1(i);
+			B5(i + 3) = UK1(i);
+			B5(MPR + 1 - 1) = std::complex<double>(0., 0.);
+			B5(MPR + 2 - 1) = std::complex<double>(0., 0.);
+			B5(i + M) = AIK1(i);
+			B5(i + M + 3) = AIK1(i);
+			B5(2 * M - 1 - 1) = std::complex<double>(0., 0.);
+			B5(2 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 2 * M) = std::complex<double>(0., 0.);
+			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+			B5(3 * M - 1 - 1) = std::complex<double>(0., 0.);
+			B5(3 * M - 1) = std::complex<double>(0., 0.);
+			B5(i + 3 * M) = std::complex<double>(0., 0.);
+			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
+			B5(4 * M - 1 - 1) = std::complex<double>(0., 0.);
+			B5(4 * M - 1) = std::complex<double>(0., 0.);
 		}
 
 	label_771:
@@ -495,7 +475,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M; i++)
 			{
 				F(i, j) = pow(EVU(i), j);
-				F1[i][j] = F(i, j);
+				F1(i, j) = F(i, j);
 			}
 		}
 
@@ -520,7 +500,7 @@ void raschet(int& k, int& n)
 			{	// Цикл #211
 				for (int jj = 0; jj < M1; jj++)
 				{
-					F(ii, jj) = F1[ii][jj];
+					F(ii, jj) = F1(ii, jj);
 				}
 			}
 			// Цикл #22
@@ -555,7 +535,7 @@ void raschet(int& k, int& n)
 			{
 				for (int jj = 0; jj < M; jj++)
 				{
-					if (i == 0) AG[0](ii, jj) = E[ii][jj];
+					if (i == 0) AG[0](ii, jj) = E(ii, jj);
 					if (i == 1) AG[1](ii, jj) = AU(ii, jj);
 					if (i == 2) AG[2](ii, jj) = F2(ii, jj);
 					if (i == 3) AG[3](ii, jj) = F3(ii, jj);
@@ -568,22 +548,17 @@ void raschet(int& k, int& n)
 		}
 
 		// Цикл #442
-		for (int ii = 0; ii < M; ii++)
-		{
-			for (int jj = 0; jj < M; jj++)
-			{
-				LU(ii, jj) = 0.;
-			}
-		}
+		LU = MatrixXcd::Zero(M, M);
+
 		// Цикл #410
 		for (int i = 0; i < M1; i++)
 		{
-			DET3[i] = DET1(i) / DET10;
+			DET3(i) = DET1(i) / DET10;
 			for (int ii = 0; ii < M; ii++)
 			{
 				for (int jj = 0; jj < M; jj++)
 				{
-					LU(ii, jj) = LU(ii, jj) + AG[i](ii, jj) * DET3[i];
+					LU(ii, jj) = LU(ii, jj) + AG[i](ii, jj) * DET3(i);
 				}
 			}
 		}
@@ -603,7 +578,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M; i++)
 			{
 				F(i, j) = pow(EVI(i),j);
-				F1[i][j] = F(i, j);
+				F1(i, j) = F(i, j);
 			}
 		}
 
@@ -630,7 +605,7 @@ void raschet(int& k, int& n)
 			{
 				for (int jj = 0; jj < M1; jj++)
 				{
-					F(ii, jj) = F1[ii][jj];
+					F(ii, jj) = F1(ii, jj);
 				}
 			}
 			// Цикл #122
@@ -669,7 +644,7 @@ void raschet(int& k, int& n)
 			{
 				for (int jj = 0; jj < M; jj++)
 				{
-					if (i == 0) AG[0](ii, jj) = E[ii][jj];
+					if (i == 0) AG[0](ii, jj) = E(ii, jj);
 					if (i == 1) AG[1](ii, jj) = AAI(ii, jj);
 					if (i == 2) AG[2](ii, jj) = F2(ii, jj);
 					if (i == 3) AG[3](ii, jj) = F3(ii, jj);
@@ -681,13 +656,7 @@ void raschet(int& k, int& n)
 			}
 		}
 		// Цикл #1442
-		for (int ii = 0; ii < M; ii++)
-		{
-			for (int jj = 0; jj < M; jj++)
-			{
-				LI(ii, jj) = 0.;
-			}
-		}
+		LI = MatrixXcd::Zero(M, M);
 
 		// Цикл #1410
 		for (int i = 0; i < M1; i++)
@@ -732,7 +701,7 @@ void raschet(int& k, int& n)
 
 			for (int ii = 0; ii < M; ii++) {
 				for (int jj = 0; jj < M; jj++) {
-					F1[ii][jj] = F(ii, jj);
+					F1(ii, jj) = F(ii, jj);
 				}
 			}
 
@@ -751,7 +720,7 @@ void raschet(int& k, int& n)
 			for (int j = 0; j < M; j++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						F(ii, jj) = F1[ii][jj];
+						F(ii, jj) = F1(ii, jj);
 					}
 				}
 
@@ -781,7 +750,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						if (i == 0) AG[0](ii, jj) = E[ii][jj];
+						if (i == 0) AG[0](ii, jj) = E(ii, jj);
 						if (i == 1) AG[1](ii, jj) = LU1(ii, jj);
 						if (i == 2) AG[2](ii, jj) = F2(ii, jj);
 						if (i == 3) AG[3](ii, jj) = F3(ii, jj);
@@ -793,11 +762,7 @@ void raschet(int& k, int& n)
 				}
 			}
 
-			for (int ii = 0; ii < M; ii++) {
-				for (int jj = 0; jj < M; jj++) {
-					LU2(ii, jj) = 0.;
-				}
-			}
+			LU2 = MatrixXcd::Zero(M, M);
 
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
@@ -849,7 +814,7 @@ void raschet(int& k, int& n)
 
 			for (int ii = 0; ii < M; ii++) {
 				for (int jj = 0; jj < M; jj++) {
-					F1[ii][jj] = F(ii, jj);
+					F1(ii, jj) = F(ii, jj);
 				}
 			}
 
@@ -868,7 +833,7 @@ void raschet(int& k, int& n)
 			for (int j = 0; j < M; j++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						F(ii, jj) = F1[ii][jj];
+						F(ii, jj) = F1(ii, jj);
 					}
 				}
 
@@ -898,7 +863,7 @@ void raschet(int& k, int& n)
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
 					for (int jj = 0; jj < M; jj++) {
-						if (i == 0) AG[0](ii, jj) = E[ii][jj];
+						if (i == 0) AG[0](ii, jj) = E(ii, jj);
 						if (i == 1) AG[1](ii, jj) = LI1(ii, jj);
 						if (i == 2) AG[2](ii, jj) = F2(ii, jj);
 						if (i == 3) AG[3](ii, jj) = F3(ii, jj);
@@ -910,11 +875,7 @@ void raschet(int& k, int& n)
 				}
 			}
 
-			for (int ii = 0; ii < M; ii++) {
-				for (int jj = 0; jj < M; jj++) {
-					LI2(ii, jj) = 0.;
-				}
-			}
+			LI2 = MatrixXcd::Zero(M, M);
 
 			for (int i = 0; i < M1; i++) {
 				for (int ii = 0; ii < M; ii++) {
@@ -939,14 +900,10 @@ void raschet(int& k, int& n)
 
 
 		// Финальная стадия расчетов!!!
-		
-		for (int i = 0; i < M20; i++) {
-			for (int j = 0; j < M20; j++) {
-				GG(i, j) = 0.;
-				GG1(i, j) = 0.;
-				GG2(i, j) = 0.;
-			}
-		}
+
+		GG = MatrixXcd::Zero(M20, M20);
+		GG1 = MatrixXcd::Zero(M20, M20);
+		GG2 = MatrixXcd::Zero(M20, M20);
 
 		for (int i = 0; i < M; i++) {
 			GG(i, i) = 1.;
@@ -1013,11 +970,7 @@ void raschet(int& k, int& n)
 		F = LI2 * HH44;
 		HH44 = LI * F;
 
-		for (int i = 0; i < M10; i++) {
-			for (int j = 0; j < M20; j++) {
-				GG3(i, j) = 0.0;
-			}
-		}
+		GG3 = MatrixXcd::Zero(M10, M20);
 
 		for (int i = 0; i < M; i++) {
 			for (int j = 0; j < M; j++) {
@@ -1041,7 +994,7 @@ void raschet(int& k, int& n)
 
 			for (int i = 0; i < M10; i++) {
 				GG4(i, K1-1) = -1. * GG3(i, j);
-				B10(K1-1) = B5[j];
+				B10(K1-1) = B5(j);
 			}
 
 			goto label_307;
@@ -1064,14 +1017,14 @@ void raschet(int& k, int& n)
 		for (int j = 0; j < M20; j++) {
 			if (IH[j] == 0) K1 = K1 + 1;
 			if (IH[j] == 1) goto label_322;
-			B5[j] = B7(K1-1);
+			B5(j) = B7(K1-1);
 		label_322:
 			continue;
 		}
 
 		for (int i = 0; i < M; i++) {
-			UK1(i) = B5[i];
-			AIK1(i) = B5[i + M];
+			UK1(i) = B5(i);
+			AIK1(i) = B5(i + M);
 		}
 
 		AA = Z * AIK1;
@@ -1105,9 +1058,9 @@ void raschet(int& k, int& n)
 		BB = LU2 * B;
 
 		for (int i = 0; i < M; i++) {
-			UX[i] = AA(i) + BB(i);
-			if (LM == MMT) UK1(i) = UX[i];
-			UXM[i] = sqrt(pow(real(UX[i]), 2.) + pow(imag(UX[i]), 2.));
+			UX(i) = AA(i) + BB(i);
+			if (LM == MMT) UK1(i) = UX(i);
+			UXM(i) = sqrt(pow(real(UX(i)), 2.) + pow(imag(UX(i)), 2.));
 		}
 
 		for (int i = 0; i < M; i++) {
@@ -1128,89 +1081,89 @@ void raschet(int& k, int& n)
 
 		for (int i = 0; i < M; i++) {
 
-			AIX[i] = AA(i) + BB(i);
-			if (LM == MMT) AIK1(i) = AIX[i];
-			AIXM[i] = sqrt(pow(real(AIX[i]), 2.) + pow(imag(AIX[i]), 2.));
-
+			AIX(i) = AA(i) + BB(i);
+			if (LM == MMT) AIK1(i) = AIX(i);
+			AIXM(i) = sqrt(pow(real(AIX(i)), 2.) + pow(imag(AIX(i)), 2.));
+			wcout << AIXM(i) << endl;
 			if (i == 0 and k == 0 and PR == 2)
 			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+				PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
 			}
 			if (i == 0 and k > 0)
 			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM[0], 2.) / 2. * R11[0];
+				PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
 			}
 			if (i == 1 and k == 0 and PR == 2)
 			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+				PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
 			}
 			if (i == 1 and k > 0)
 			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM[1], 2.) / 2. * R11[1];
+				PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
 			}
 			if (i == 2 and k == 0 and PR == 2)
 			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+				PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
 			}
 			if (i == 2 and k > 0)
 			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM[2], 2.) / 2. * R11[2];
+				PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
 			}
 			if (i == 3 and k == 0 and PR == 2)
 			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+				PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
 			}
 			if (i == 3 and k > 0)
 			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM[3], 2.) / 2. * R11[3];
+				PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
 			}
 			if (i == 4 and k == 0 and PR == 2)
 			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
 			}
 			if (i == 4 and k > 0)
 			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM[4], 2.) / 2. * R11[4];
+				PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
 			}
 			if (i == 5 and k == 0 and PR == 2)
 			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
 			}
 			if (i == 5 and k > 0)
 			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM[5], 2.) / 2. * R11[5];
+				PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
 			}
 			if (i == 6 and k == 0 and PR == 2)
 			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
 			}
 			if (i == 6 and k > 0)
 			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM[6], 2.) / 2. * R11[6];
+				PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
 			}
 			if (i == 7 and k == 0 and PR == 2)
 			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
 			}
 			if (i == 7 and k > 0)
 			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM[7], 2.) / 2. * R11[7];
+				PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
 			}
 
 			if (k == 0 and PR == 2)
 			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
 			}
 			if (k > 0)
 			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM[i], 2.) / 2. * R11[i];
+				PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
 			}
 
 			if (k == 0 and PR == 1)
-				{PP1 = PP1 + pow(AIXM[i], 2.) / 2. * R11[i]; }
+				{PP1 = PP1 + pow(AIXM(i), 2.) / 2. * R11(i); }
 			if (k == 0 and PR == 2)
-				{PP2 = PP2 + pow(AIXM[i], 2.) / 2. * R11[i]; }
-			SM[i] = UX[i] * conj(AIX[i]) / 2.;		
+				{PP2 = PP2 + pow(AIXM(i), 2.) / 2. * R11(i); }
+			SM(i) = UX(i) * conj(AIX(i)) / 2.;		
 		}
 	}
 }
@@ -1221,6 +1174,39 @@ int main() {
 
 
 	auto start = high_resolution_clock::now();
+
+	// Объявление основных переменных системы
+	int num_pris = 6; // Общее количество присоединении в системе подстанции 
+	int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
+	int num_phases = 3;
+	int num_tross = 1;
+	int all_wires = num_phases + num_tross;
+
+	int num_harms = 49;
+	int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
+
+	int MM = 5;
+	int MPR = 3;
+	int MTR = 1;
+	double DT = 2.5;
+	int MT = 5;
+
+	VectorXi titles_indexes(num_pris + 1);
+
+	VectorXcd UK1, AIK1;
+	UK1 = VectorXcd::Zero(all_wires);
+	AIK1 = VectorXcd::Zero(all_wires);
+
+	// Массивы параметров фаз и тросса линии
+	VectorXd XA(all_wires), YA(all_wires), OMP(all_wires), GM(all_wires), S(all_wires);
+
+	XA << 0.0, 6.3, 4.2, 2.1;
+	YA << 19.0, 19.0, 25.0, 28.0;
+	OMP << 1.0, 1.0, 1.0, 4000.0;
+	GM << 35.336, 35.336, 35.336, 17.336;
+	S << 150.0, 150.0, 150.0, 50.0;
+
+	string excel_file_name;
 
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
@@ -1258,12 +1244,12 @@ int main() {
 		{
 			if (cell_value.value().typeAsString() == "string")
 			{
-				titles_indexes[titles_counter] = cell_value.cellReference().row();
+				titles_indexes(titles_counter) = cell_value.cellReference().row();
 				titles_counter++;
 			}
 		}
 	}
-	titles_indexes[num_pris] = f_rows_count;
+	titles_indexes(num_pris) = f_rows_count;
 
 	PhaseSheetsHandler phaser;
 	CustomRangePairs ranger;
@@ -1422,31 +1408,16 @@ int main() {
 			AIK1(2) = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
 			AIK1(3) = std::complex<double>(0.0, 0.0);
 			
-
 			if (k > 0) goto label_1111;
 			if (k == 0 && PR == 2) goto label_1111;
 
-
-			UK10 = (UK1(0) + UK1(1) + UK1(2)) / (3.);
 			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
-			UK12 = (UK1(0) + UK1(1) * std::pow(AL, 2.) + UK1(2) * AL) / (3.);
-
-			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
-			SKU2 = sqrt(std::pow(real(UK12), 2.) + std::pow(imag(UK12), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
-			SKU0 = sqrt(std::pow(real(UK10), 2.) + std::pow(imag(UK10), 2.)) / sqrt(std::pow(real(UK11), 2.) + std::pow(imag(UK11), 2.)) * 100.;
 
 			UK1(0) = UK11;
 			UK1(1) = UK11 * std::pow(AL, 2.);
 			UK1(2) = UK11 * AL;
 
-
-			AIK10 = (AIK1(0) + AIK1(1) + AIK1(2)) / (3.);
 			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
-			AIK12 = (AIK1(0) + AIK1(1) * std::pow(AL, 2.) + AIK1(2) * AL) / (3.);
-
-			// Следующие 2 строки не несут никакой практической пользы в программе, но есть в коде Фортрана! Можно удалить.
-			SKI2 = sqrt(std::pow(real(AIK12), 2.) + std::pow(imag(AIK12), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
-			SKI0 = sqrt(std::pow(real(AIK10), 2.) + std::pow(imag(AIK10), 2.)) / sqrt(std::pow(real(AIK11), 2.) + std::pow(imag(AIK11), 2.)) * 100.;
 
 			AIK1(0) = AIK11;
 			AIK1(1) = AIK11 * std::pow(AL, 2.);
@@ -1455,13 +1426,16 @@ int main() {
 		label_1111:			 
 
 			// Вызов расчетной функции!
-			raschet(k, n);
-			
+			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT);
+			if (debug_breaker == 0) break;
+			debug_breaker--;
+
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
+		if (debug_breaker == 0) break;
 	}
 
 
