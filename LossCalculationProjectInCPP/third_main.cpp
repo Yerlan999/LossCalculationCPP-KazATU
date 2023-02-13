@@ -138,14 +138,7 @@ double main_harm[8][8][700] = {0};
 // Данные о зазмемлении линии
 const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
 
-std::complex<double> UK10(0, 0); std::complex<double> AIK10(0, 0);
-std::complex<double> UK11(0, 0); std::complex<double> AIK11(0, 0);
-std::complex<double> UK12(0, 0); std::complex<double> AIK12(0, 0);
-
-std::complex<double> UK20(0, 0); std::complex<double> AIK20(0, 0);
-std::complex<double> UK21(0, 0); std::complex<double> AIK21(0, 0);
-std::complex<double> UK22(0, 0); std::complex<double> AIK22(0, 0);
-
+std::complex<double> UK(0, 0); std::complex<double> AIK(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
 double SKU0 = 0., SKU2 = 0., SKI0 = 0., SKI2 = 0.;
@@ -166,9 +159,6 @@ const string current_dir_path = ".";
 // Расчетная функция программы!
 void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, int& MM, int& MT)
 {
-	// UK1 AIK1 - Главные матрицы!
-	// !!! Внимание !!!        k(в С++) = LL(в Фортране) = [0-49]     and      n(в С++) = NN(в Фортране) = [0-559]	
-
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
 	const int M = MPR + MTR;
@@ -182,66 +172,41 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
 
-	MatrixXcd HH11; HH11 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH21; HH21 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH13; HH13 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH23; HH23 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH32; HH32 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH42; HH42 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH12; HH12 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH22; HH22 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH31; HH31 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH41; HH41 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH14; HH14 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH24; HH24 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH33; HH33 = MatrixXcd::Zero(M, M);
-	MatrixXcd HH43; HH43 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH11; HH11 = MatrixXcd::Zero(M, M); MatrixXcd HH12; HH12 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH21; HH21 = MatrixXcd::Zero(M, M); MatrixXcd HH22; HH22 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH13; HH13 = MatrixXcd::Zero(M, M); MatrixXcd HH31; HH31 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH23; HH23 = MatrixXcd::Zero(M, M); MatrixXcd HH41; HH41 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH32; HH32 = MatrixXcd::Zero(M, M); MatrixXcd HH14; HH14 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH42; HH42 = MatrixXcd::Zero(M, M); MatrixXcd HH24; HH24 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH34; HH34 = MatrixXcd::Zero(M, M); MatrixXcd HH33; HH33 = MatrixXcd::Zero(M, M);
+	MatrixXcd HH44; HH44 = MatrixXcd::Zero(M, M); MatrixXcd HH43; HH43 = MatrixXcd::Zero(M, M);
 
 	std::complex<double> DET10, SS1;
 	VectorXcd DET1; DET1 = VectorXcd::Zero(M);
 	
+	MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20); MatrixXcd GG3; GG3 = MatrixXcd::Zero(M10, M20);
+	MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20); MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
+	MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20); MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
 
-	MatrixXcd GG;  GG = MatrixXcd::Zero(M20, M20);
-	MatrixXcd GG1; GG1 = MatrixXcd::Zero(M20, M20);
-	MatrixXcd GG2; GG2 = MatrixXcd::Zero(M20, M20);
-	MatrixXcd GG3; GG3 = MatrixXcd::Zero(M10, M20);
-	MatrixXcd GG4; GG4 = MatrixXcd::Zero(M10, M10);
-	MatrixXcd GG5; GG5 = MatrixXcd::Zero(M10, M10);
+	MatrixXcd F; F = MatrixXcd::Zero(M, M); MatrixXcd F5; F5 = MatrixXcd::Zero(M, M);
+	MatrixXcd F2; F2 = MatrixXcd::Zero(M, M); MatrixXcd F6; F6 = MatrixXcd::Zero(M, M);
+	MatrixXcd F3; F3 = MatrixXcd::Zero(M, M); MatrixXcd F7; F7 = MatrixXcd::Zero(M, M);
+	MatrixXcd F4; F4 = MatrixXcd::Zero(M, M); MatrixXd F10; F10 = MatrixXd::Zero(M, M);
 
-	MatrixXcd F; F = MatrixXcd::Zero(M, M);
-	MatrixXcd F2; F2 = MatrixXcd::Zero(M, M);
-	MatrixXcd F3; F3 = MatrixXcd::Zero(M, M);
-	MatrixXcd F4; F4 = MatrixXcd::Zero(M, M);
-	MatrixXcd F5; F5 = MatrixXcd::Zero(M, M);
-	MatrixXcd F6; F6 = MatrixXcd::Zero(M, M);
-	MatrixXcd F7; F7 = MatrixXcd::Zero(M, M);
-	MatrixXd F10; F10 = MatrixXd::Zero(M, M);
+	VectorXcd B; B = VectorXcd::Zero(M); VectorXcd B6; B6 = VectorXcd::Zero(M10);
+	VectorXcd B1; B1 = VectorXcd::Zero(M20); VectorXcd B7; B7 = VectorXcd::Zero(M10);
+	VectorXcd B4; B4 = VectorXcd::Zero(M20); VectorXcd B10; B10 = VectorXcd::Zero(M10);
 
-	VectorXcd B; B = VectorXcd::Zero(M);
-	VectorXcd B1; B1 = VectorXcd::Zero(M20);
-	VectorXcd B4; B4 = VectorXcd::Zero(M20);
-	VectorXcd B6; B6 = VectorXcd::Zero(M10);
-	VectorXcd B7; B7 = VectorXcd::Zero(M10);
-	VectorXcd B10; B10 = VectorXcd::Zero(M10);
 
-	MatrixXcd LU;  LU = MatrixXcd::Zero(M, M);
-	MatrixXcd LU1; LU1 = MatrixXcd::Zero(M, M);
-	MatrixXcd LU2; LU2 = MatrixXcd::Zero(M, M);
-	MatrixXcd LU3; LU3 = MatrixXcd::Zero(M, M);
-	MatrixXcd LI;  LI = MatrixXcd::Zero(M, M);
-	MatrixXcd LI1; LI1 = MatrixXcd::Zero(M, M);
-	MatrixXcd LI2; LI2 = MatrixXcd::Zero(M, M);
-	MatrixXcd LI3; LI3 = MatrixXcd::Zero(M, M);
+	MatrixXcd LU;  LU = MatrixXcd::Zero(M, M); MatrixXcd LI;  LI = MatrixXcd::Zero(M, M);
+	MatrixXcd LU1; LU1 = MatrixXcd::Zero(M, M); MatrixXcd LI1; LI1 = MatrixXcd::Zero(M, M);
+	MatrixXcd LU2; LU2 = MatrixXcd::Zero(M, M); MatrixXcd LI2; LI2 = MatrixXcd::Zero(M, M);
+	MatrixXcd LU3; LU3 = MatrixXcd::Zero(M, M); MatrixXcd LI3; LI3 = MatrixXcd::Zero(M, M);
 
-	MatrixXcd Z; Z = MatrixXcd::Zero(M, M);
-	MatrixXcd Y; Y = MatrixXcd::Zero(M, M);
-
-	VectorXcd AA; AA = VectorXcd::Zero(M);
-	VectorXcd BB; BB = VectorXcd::Zero(M);
-	MatrixXcd CC; CC = MatrixXcd::Zero(M, M);
-	MatrixXcd DD; DD = MatrixXcd::Zero(M, M);
+	MatrixXcd Z; Z = MatrixXcd::Zero(M, M); MatrixXcd Y; Y = MatrixXcd::Zero(M, M);
+	
+	VectorXcd AA; AA = VectorXcd::Zero(M); 	MatrixXcd CC; CC = MatrixXcd::Zero(M, M);
+	VectorXcd BB; BB = VectorXcd::Zero(M);	MatrixXcd DD; DD = MatrixXcd::Zero(M, M);
 
 	MatrixXd HC1; HC1 = MatrixXd::Zero(M, M);
 	MatrixXd HC3; HC3 = MatrixXd::Zero(M, M);
@@ -252,12 +217,9 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	MatrixXcd AU; AU = MatrixXcd::Zero(M, M);
 	MatrixXcd AAI; AAI = MatrixXcd::Zero(M, M);
 
-
-	// Объявление основных (локальных) переменных внутри функции расчета.
 	VectorXd R0; R0 = VectorXd::Zero(M); VectorXd HI; HI = VectorXd::Zero(M);
 	VectorXd R; R = VectorXd::Zero(M); VectorXd UXM; UXM = VectorXd::Zero(M);
 	VectorXd R11; R11 = VectorXd::Zero(M); VectorXd AIXM; AIXM = VectorXd::Zero(M);
-	
 
 	VectorXcd UX; UX = VectorXcd::Zero(M); VectorXcd SM; SM = VectorXcd::Zero(M);
 	VectorXcd AIX; AIX = VectorXcd::Zero(M); VectorXcd DET3; DET3 = VectorXcd::Zero(M);
@@ -376,7 +338,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	{
 		if (M != 3) goto label_767;
 		// Цикл #761
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < MPR; i++)
 		{
 			B5(i) = UK1(i);
 			B5(i + 3) = AIK1(i);
@@ -386,7 +348,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	label_767:
 		if (M != 4) goto label_768;
 		// Цикл #762
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < MPR; i++)
 		{
 			B5(i) = UK1(i);
 			B5(M - 1) = std::complex<double>(0., 0.);
@@ -400,7 +362,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	label_768:
 		if (M != 6) goto label_769;
 		// Цикл #764
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < MPR; i++)
 		{
 			B5(i) = UK1(i);
 			B5(i + 3) = UK1(i);
@@ -414,7 +376,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	label_769:
 		if (M != 7) goto label_770;
 		// Цикл #765
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < MPR; i++)
 		{
 			B5(i) = UK1(i);
 			B5(i + 3) = UK1(i);
@@ -433,7 +395,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	label_770:
 		if (M != 8) goto label_771;
 		// Цикл #766
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < MPR; i++)
 		{
 			B5(i) = UK1(i);
 			B5(i + 3) = UK1(i);
@@ -1084,80 +1046,26 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			AIX(i) = AA(i) + BB(i);
 			if (LM == MMT) AIK1(i) = AIX(i);
 			AIXM(i) = sqrt(pow(real(AIX(i)), 2.) + pow(imag(AIX(i)), 2.));
+			
 			wcout << AIXM(i) << endl;
-			if (i == 0 and k == 0 and PR == 2)
-			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
-			}
-			if (i == 0 and k > 0)
-			{
-				PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
-			}
-			if (i == 1 and k == 0 and PR == 2)
-			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
-			}
-			if (i == 1 and k > 0)
-			{
-				PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
-			}
-			if (i == 2 and k == 0 and PR == 2)
-			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
-			}
-			if (i == 2 and k > 0)
-			{
-				PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
-			}
-			if (i == 3 and k == 0 and PR == 2)
-			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
-			}
-			if (i == 3 and k > 0)
-			{
-				PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
-			}
-			if (i == 4 and k == 0 and PR == 2)
-			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
-			}
-			if (i == 4 and k > 0)
-			{
-				PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
-			}
-			if (i == 5 and k == 0 and PR == 2)
-			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
-			}
-			if (i == 5 and k > 0)
-			{
-				PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
-			}
-			if (i == 6 and k == 0 and PR == 2)
-			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
-			}
-			if (i == 6 and k > 0)
-			{
-				PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
-			}
-			if (i == 7 and k == 0 and PR == 2)
-			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
-			}
-			if (i == 7 and k > 0)
-			{
-				PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
-			}
 
-			if (k == 0 and PR == 2)
-			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
-			}
-			if (k > 0)
-			{
-				PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
-			}
+			if ((i == 0 and k == 0 and PR == 2) || (i == 0 and k > 0)) PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
+
+			if ((i == 1 and k == 0 and PR == 2) || (i == 1 and k > 0)) PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
+
+			if ((i == 2 and k == 0 and PR == 2) || (i == 2 and k > 0)) PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
+
+			if ((i == 3 and k == 0 and PR == 2) || (i == 3 and k > 0)) PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
+
+			if ((i == 4 and k == 0 and PR == 2) || (i == 4 and k > 0)) PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
+
+			if ((i == 5 and k == 0 and PR == 2) || (i == 5 and k > 0)) PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
+
+			if ((i == 6 and k == 0 and PR == 2) || (i == 6 and k > 0)) PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
+
+			if ((i == 7 and k == 0 and PR == 2) || (i == 7 and k > 0)) PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
+
+			if ((k == 0 and PR == 2) || (k > 0)) PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
 
 			if (k == 0 and PR == 1)
 				{PP1 = PP1 + pow(AIXM(i), 2.) / 2. * R11(i); }
@@ -1181,13 +1089,14 @@ int main() {
 	int num_phases = 3;
 	int num_tross = 1;
 	int all_wires = num_phases + num_tross;
+	int num_lines = 1;
 
 	int num_harms = 49;
 	int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
 
 	int MM = 5;
-	int MPR = 3;
-	int MTR = 1;
+	int MPR = num_phases;
+	int MTR = num_tross;
 	double DT = 2.5;
 	int MT = 5;
 
@@ -1208,7 +1117,7 @@ int main() {
 
 	string excel_file_name;
 
-	_setmode(_fileno(stdout), _O_U16TEXT);
+	auto garbage = _setmode(_fileno(stdout), _O_U16TEXT);
 	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
 
 	wofstream report_file(L"Отчет.txt");
@@ -1398,30 +1307,35 @@ int main() {
 		label_1700:
 			PR = PR + 1;
 
-			UK1(0) = std::complex<double>(UM1[0][k][n], UM2[0][k][n]);
-			UK1(1) = std::complex<double>(UM1[1][k][n], UM2[1][k][n]);
-			UK1(2) = std::complex<double>(UM1[2][k][n], UM2[2][k][n]);
-			UK1(3) = std::complex<double>(0.0, 0.0);
+			for (int t = 0; t < num_phases; t++)
+			{
+				UK1(t) = std::complex<double>(UM1[t][k][n], UM2[t][k][n]);
+				AIK1(t) = std::complex<double>(AIM1[t][k][n], AIM2[t][k][n]);
+			}
 
-			AIK1(0) = std::complex<double>(AIM1[0][k][n], AIM2[0][k][n]);
-			AIK1(1) = std::complex<double>(AIM1[1][k][n], AIM2[1][k][n]);
-			AIK1(2) = std::complex<double>(AIM1[2][k][n], AIM2[2][k][n]);
-			AIK1(3) = std::complex<double>(0.0, 0.0);
-			
+			for (int t = 0; t < num_tross; t++)
+			{
+				UK1(num_phases + t) = std::complex<double>(0.0, 0.0);
+				AIK1(num_phases + t) = std::complex<double>(0.0, 0.0);
+			}
+
 			if (k > 0) goto label_1111;
 			if (k == 0 && PR == 2) goto label_1111;
 
-			UK11 = (UK1(0) + UK1(1) * AL + UK1(2) * std::pow(AL, 2.)) / (3.);
+			for (int l = 0; l < num_lines; l++)
+			{
+				UK = (UK1(l + l * (2)) + UK1(l + 1 + l * (2)) * AL + UK1(l + 2 + l * (2)) * std::pow(AL, 2.)) / (3.);
 
-			UK1(0) = UK11;
-			UK1(1) = UK11 * std::pow(AL, 2.);
-			UK1(2) = UK11 * AL;
+				UK1(l) = UK;
+				UK1(l + 1 + l * (2)) = UK * std::pow(AL, 2.);
+				UK1(l + 2 + l * (2)) = UK * AL;
 
-			AIK11 = (AIK1(0) + AIK1(1) * AL + AIK1(2) * std::pow(AL, 2.)) / (3.);
+				AIK = (AIK1(l + l * (2)) + AIK1(l + 1 + l * (2)) * AL + AIK1(l + 2 + l * (2)) * std::pow(AL, 2.)) / (3.);
 
-			AIK1(0) = AIK11;
-			AIK1(1) = AIK11 * std::pow(AL, 2.);
-			AIK1(2) = AIK11 * AL;
+				AIK1(l + l * (2)) = AIK;
+				AIK1(l + 1 + l * (2)) = AIK * std::pow(AL, 2.);
+				AIK1(l + 2 + l * (2)) = AIK * AL;
+			}
 
 		label_1111:			 
 
