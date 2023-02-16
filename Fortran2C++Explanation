@@ -1026,6 +1026,7 @@ C++:
 !!! R11 is calculated INCORRECTLY in Fortran and Python.
 !!! power of (4) / 3 - applied, istead of power of (4/3) which is intended
 
+
 Python:
 [ 0.18910095  0.18910095  0.18910095 8.80967696]
 [ 0.18910095  0.18910095  0.18910095 8.80967696]
@@ -1487,4 +1488,26 @@ for (int l = 0; l < num_lines; l++)
     AIK1(l + l*(2)) = AIK;
     AIK1(l+1 + l*(2)) = AIK * std::pow(AL, 2.);
     AIK1(l+2 + l*(2)) = AIK * AL;
+}
+
+
+IH = 1 1 1 1 1 1 1 0 0 0 0 1 0 0 0 0 ... 1 1 1 1 1 1 0 0 0 0 0 0
+
+
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+int main() {
+
+    string myText;
+
+    ifstream MyReadFile("data.txt");
+
+    while (getline(MyReadFile, myText)) {
+        std::cout << myText << std::endl;
+    }
+
+    MyReadFile.close();
 }
