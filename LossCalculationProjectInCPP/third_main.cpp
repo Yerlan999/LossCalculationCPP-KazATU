@@ -17,6 +17,7 @@
 #include <OpenXLSX.hpp>
 
 using std::filesystem::directory_iterator;
+using json = nlohmann::json;
 
 using namespace std;
 using namespace std::chrono;
@@ -1102,6 +1103,19 @@ int main() {
 
 
 	auto start = high_resolution_clock::now();
+
+
+	std::ifstream f("temp_data.json");
+	json data = json::parse(f);
+	cout << data["excel_filepath"] << endl;
+	cout << data["line_length"] << endl;
+	cout << data["record_frequency"] << endl;
+	cout << data["number_of_prisoeds"] << endl;
+	cout << data["which_prisoed"] << endl;
+	cout << data["line_type"] << endl;
+	cout << data["mat_prop_list"] << endl;
+	cout << data["spatial_config"] << endl;
+
 
 	// ќбъ€вление основных переменных системы
 	int num_pris = 6; // ќбщее количество присоединении в системе подстанции 
