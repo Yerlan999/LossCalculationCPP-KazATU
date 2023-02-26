@@ -11,6 +11,7 @@
 #include <fcntl.h>   
 #include <iomanip>
 #include <complex>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include <Eigen/Dense>
 #include <Eigen/LU>
@@ -1105,15 +1106,17 @@ int main() {
 	std::ifstream f("temp_data.json");
 	json data = json::parse(f);
 	
-	//for (double item : data["mat_prop_list"]) 
-	//{
-	//	cout << item << endl;
-	//}
+	std::vector<double> tempX;
+	std::vector<double> tempY;
+	
+	double tempPhaseChar[3] = {data["mat_prop_list"][0], data["mat_prop_list"][1], data["mat_prop_list"][2]};
+	double tempTrossChar[3] = {data["mat_prop_list"][3], data["mat_prop_list"][4], data["mat_prop_list"][5]};
 
-	//for (double item : data["spatial_config"])
-	//{
-	//	cout << item << endl;
-	//}
+	for (int pass = 0; pass < data["spatial_config"].size()/2; pass++)
+	{
+		tempX.push_back(data["spatial_config"][pass*2]);
+		tempY.push_back(data["spatial_config"][(pass * 2)+1]);
+	}
 
 	// Объявление основных переменных системы
 	int num_phases;
@@ -1125,7 +1128,7 @@ int main() {
 	int num_pris = (int)data["number_of_prisoeds"]; // Общее количество присоединении в системе подстанции 
 	int pris_num = (int)data["which_prisoed"]; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
 
-	if (num_lines == 1){ num_phases = 3; num_tross = 1; }
+	if (num_lines == 1) { num_phases = 3; num_tross = 1; }
 	else { num_phases = 6; num_tross = 1; }
 
 	int all_wires = num_phases + num_tross;
@@ -1144,12 +1147,22 @@ int main() {
 
 	// Массивы параметров фаз и тросса линии
 	VectorXd XA(all_wires), YA(all_wires), OMP(all_wires), GM(all_wires), S(all_wires);
+	
+	for (int phase = 0; phase < num_phases; phase++) 
+	{
+		OMP(phase) = tempPhaseChar[0];
+		GM(phase) = tempPhaseChar[1];
+		S(phase) = tempPhaseChar[2];
 
-	XA << 0.0, 6.3, 4.2, 2.1;
-	YA << 19.0, 19.0, 25.0, 28.0;
-	OMP << 1.0, 1.0, 1.0, 4000.0;
-	GM << 35.336, 35.336, 35.336, 17.336;
-	S << 150.0, 150.0, 150.0, 50.0;
+		XA(phase) = tempX.at(phase);
+		YA(phase) = tempY.at(phase);
+	}
+	OMP(num_phases) = tempTrossChar[0];
+	GM(num_phases) = tempTrossChar[1];
+	S(num_phases) = tempTrossChar[2];
+	XA(num_phases) = tempX.at(num_phases);
+	YA(num_phases) = tempY.at(num_phases);
+
 
 	// Данные о зазмемлении линии 
 	VectorXi IH(28); // первые 16 для одноцепной и последние 12 для двухцепной линии
