@@ -11,6 +11,7 @@
 #include <fcntl.h>   
 #include <iomanip>
 #include <complex>
+#include <nlohmann/json.hpp>
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <OpenXLSX.hpp>
@@ -1103,20 +1104,20 @@ int main() {
 	auto start = high_resolution_clock::now();
 
 	// Объявление основных переменных системы
-	int num_pris; // Общее количество присоединении в системе подстанции 
-	int pris_num; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
-	int num_phases;
-	int num_tross;
+	int num_pris = 6; // Общее количество присоединении в системе подстанции 
+	int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
+	int num_phases = 3;
+	int num_tross = 1;
 	int all_wires = num_phases + num_tross;
-	int num_lines;
+	int num_lines = 1;
 
-	int num_harms;
-	int num_recs; // ~ Количество измерении в документе для каждого присоединения
+	int num_harms = 49;
+	int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
 
-	int MM;
+	int MM = 5;
 	int MPR = num_phases;
 	int MTR = num_tross;
-	double DT;
+	double DT = 2.5;
 	int MT = 5;
 
 	VectorXi titles_indexes(num_pris + 1);
@@ -1127,42 +1128,6 @@ int main() {
 
 	// Массивы параметров фаз и тросса линии
 	VectorXd XA(all_wires), YA(all_wires), OMP(all_wires), GM(all_wires), S(all_wires);
-
-
-	int counter = 0;
-	string file_input;
-	ifstream MyReadFile("temp_data.txt");
-
-	string excel_file_name;
-	
-	while (getline(MyReadFile, file_input)) 
-	{
-		switch (counter) {
-		case 0:
-			excel_file_name = "./" + file_input;
-			break;
-		case 1:
-			MM = stringToInt(file_input);
-			break;
-		case 2:
-			DT = stringToFloat(file_input);
-			break;
-		case 3:
-			num_pris = stringToInt(file_input);
-			break;
-		case 4:
-			pris_num = stringToInt(file_input);
-			break;
-		case 5:
-			num_lines = stringToInt(file_input);
-			if (num_lines == 1) { num_phases = 3, num_tross = 1; }
-			else { num_phases = 6, num_tross = 1; };
-			break;
-		
-		
-		counter++;
-	}
-
 
 	XA << 0.0, 6.3, 4.2, 2.1;
 	YA << 19.0, 19.0, 25.0, 28.0;
