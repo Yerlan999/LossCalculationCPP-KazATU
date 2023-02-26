@@ -1511,3 +1511,21 @@ int main() {
 
     MyReadFile.close();
 }
+
+
+  //for (const auto& file : directory_iterator(current_dir_path))
+  //{
+  //  if (file.path().extension() == ".xlsx")
+  //  {
+  //    doc.open(file.path().generic_string()); // Открываем Excel файл
+  //    wstring excel_name_title = L"Название excel файла: \n";
+  //  }
+  //}
+
+
+  cout << (string)data["excel_filepath"] << endl;
+  cout << (double)data["line_length"] << endl;
+  cout << (double)data["record_frequency"] << endl;
+  cout << (int)data["number_of_prisoeds"] << endl;
+  cout << (int)data["which_prisoed"] << endl;
+  cout << (int)data["line_type"] << endl;

@@ -156,9 +156,6 @@ double WD[2][50] = {0}; double II[10] = {0};
 enum main_harm_enum { knsu_e = 0, knsi_e, rmsu_e, rmsi_e, funu_e, funi_e, fu_e, fi_e };
 double main_harm[8][8][700] = {0};
 
-// Данные о зазмемлении линии
-const int IH[16] = { 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 };
-
 std::complex<double> UK(0, 0); std::complex<double> AIK(0, 0);
 std::complex<double> AL(-0.5, 0.866025);
 
@@ -178,7 +175,7 @@ int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, MMT = 0;
 const string current_dir_path = ".";
 
 // Расчетная функция программы!
-void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, int& MM, int& MT)
+void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, double& MM, int& MT, VectorXi& IH)
 {
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
@@ -972,8 +969,8 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		
 		for (int j = 0; j < M20; j++) {
 			
-			if (IH[j] == 1) K1 = K1 + 1;
-			if (IH[j] == 0) goto label_309;
+			if (IH(j) == 1) K1 = K1 + 1;
+			if (IH(j) == 0) goto label_309;
 
 			for (int i = 0; i < M10; i++) {
 				GG4(i, K1-1) = -1. * GG3(i, j);
@@ -983,8 +980,8 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			goto label_307;
 
 		label_309:
-			if (IH[j] == 0) K0 = K0 + 1;
-				if (IH[j] == 1) goto label_307;
+			if (IH(j) == 0) K0 = K0 + 1;
+				if (IH(j) == 1) goto label_307;
 					for (int i = 0; i < M10; i++) {
 						GG5(i, K0-1) = GG3(i, j);
 					}
@@ -998,8 +995,8 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		K1 = 0;
 
 		for (int j = 0; j < M20; j++) {
-			if (IH[j] == 0) K1 = K1 + 1;
-			if (IH[j] == 1) goto label_322;
+			if (IH(j) == 0) K1 = K1 + 1;
+			if (IH(j) == 1) goto label_322;
 			B5(j) = B7(K1-1);
 		label_322:
 			continue;
@@ -1107,32 +1104,37 @@ int main() {
 
 	std::ifstream f("temp_data.json");
 	json data = json::parse(f);
-	cout << data["excel_filepath"] << endl;
-	cout << data["line_length"] << endl;
-	cout << data["record_frequency"] << endl;
-	cout << data["number_of_prisoeds"] << endl;
-	cout << data["which_prisoed"] << endl;
-	cout << data["line_type"] << endl;
-	cout << data["mat_prop_list"] << endl;
-	cout << data["spatial_config"] << endl;
+	
+	//for (double item : data["mat_prop_list"]) 
+	//{
+	//	cout << item << endl;
+	//}
 
+	//for (double item : data["spatial_config"])
+	//{
+	//	cout << item << endl;
+	//}
 
 	// Объявление основных переменных системы
-	int num_pris = 6; // Общее количество присоединении в системе подстанции 
-	int pris_num = 1; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
-	int num_phases = 3;
-	int num_tross = 1;
+	int num_phases;
+	int num_tross;
+	int num_harms;
+	int num_recs; // ~ Количество измерении в документе для каждого присоединения
+
+	int num_lines = (int)data["line_type"];
+	int num_pris = (int)data["number_of_prisoeds"]; // Общее количество присоединении в системе подстанции 
+	int pris_num = (int)data["which_prisoed"]; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
+
+	if (num_lines == 1){ num_phases = 3; num_tross = 1; }
+	else { num_phases = 6; num_tross = 1; }
+
 	int all_wires = num_phases + num_tross;
-	int num_lines = 1;
 
-	int num_harms = 49;
-	int num_recs = 560; // ~ Количество измерении в документе для каждого присоединения
-
-	int MM = 5;
+	double MM = (double)data["line_length"];
 	int MPR = num_phases;
 	int MTR = num_tross;
-	double DT = 2.5;
-	int MT = 5;
+	double DT = (double)data["record_frequency"];
+	int MT = (int)data["groud_count"];
 
 	VectorXi titles_indexes(num_pris + 1);
 
@@ -1149,6 +1151,10 @@ int main() {
 	GM << 35.336, 35.336, 35.336, 17.336;
 	S << 150.0, 150.0, 150.0, 50.0;
 
+	// Данные о зазмемлении линии 
+	VectorXi IH(28); // первые 16 для одноцепной и последние 12 для двухцепной линии
+	//                   основные (для одноцепной линии) | лишние (для двухцепной линии)
+	IH << 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0;
 
 	auto garbage = _setmode(_fileno(stdout), _O_U16TEXT);
 	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
@@ -1159,17 +1165,8 @@ int main() {
 	insert_start_separator(report_file);
 
 	XLDocument doc;
-	
-	for (const auto& file : directory_iterator(current_dir_path))
-	{
-		if (file.path().extension() == ".xlsx")
-		{
-			doc.open(file.path().generic_string()); // Открываем Excel файл
-			wstring excel_name_title = L"Название excel файла: \n";
-		}
-	}
 
-	//doc.open("./Promzona.xlsx"); // Открываем Excel файл
+	doc.open("./" + (string)data["excel_filepath"]); // Открываем Excel файл
 	auto workbook = doc.workbook();
 	auto check_worksheet = workbook.worksheet(workbook.worksheetNames()[0]);
 
@@ -1377,7 +1374,7 @@ int main() {
 		label_1111:			 
 
 			// Вызов расчетной функции!
-			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT);
+			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH);
 			if (debug_breaker == 0) break;
 			debug_breaker--;
 
