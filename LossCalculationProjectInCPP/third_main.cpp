@@ -284,9 +284,9 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		R(i) = sqrt(S(i) / PI) / 1000.;
 		HI(i) = R(i) / (2.) * sqrt(2. * PI * W * 50. * 4. * PI * OMP(i) * GM(i) / 20.);
 		R0(i) = 1000. / (GM(i) * S(i));
-		if (HI(i) < 1) R11(i) = R0(i) * (1. + pow(HI(i), 4.)/(3.));
+		if (HI(i) < 1) R11(i) = R0(i) * (1. + pow(HI(i), (4./3.))); // Замечание!
 		if (HI(i) > 1) R11(i) = R0(i) * (HI(i) + 0.25 + 3./(64. * HI(i)));
-		if (i == M) { ; } // pass statement equivalent?
+		if (i == M) { ; }
 	}
 	
 	// Цикл #12
@@ -1165,17 +1165,34 @@ int main() {
 
 
 	// Данные о зазмемлении линии 
-	VectorXi IH(28); // первые 16 для одноцепной и последние 12 для двухцепной линии
-	//                   основные (для одноцепной линии) | лишние (для двухцепной линии)
-	IH << 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0;
+	VectorXi IH(all_wires*4);
+	for (int i = 0; i < all_wires * 4; i++) { IH(i) = (int)data["tross_config"][i];}
+	
 
 	auto garbage = _setmode(_fileno(stdout), _O_U16TEXT);
 	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
 
-	wofstream report_file(L"Отчет.txt");
+
+	wstring teeest;
+	string prisoed_report_name = data["prisoed_name"];
+
+	for (auto t : prisoed_report_name) 
+	{	
+		teeest += t;
+	}
+
+	wcout << teeest + L".txt" << endl;
+
+	wofstream report_file(teeest + L".txt");
 	report_file.imbue(utf8_locale);
 
 	insert_start_separator(report_file);
+	
+	
+	
+	return 0;
+
+
 
 	XLDocument doc;
 
