@@ -16,12 +16,16 @@
 #include <Eigen/Dense>
 #include <Eigen/LU>
 #include <OpenXLSX.hpp>
+#include <cwchar>
+#include <locale>
+#include <Windows.h>
 
 using std::filesystem::directory_iterator;
 using json = nlohmann::json;
 
 using namespace std;
 using namespace std::chrono;
+namespace fs = std::filesystem;
 
 using namespace OpenXLSX;
 using namespace Eigen;
@@ -36,7 +40,7 @@ void insert_gap(wofstream& report_file)
 void insert_start_separator(wofstream& report_file)
 {
 	report_file << L" \n";
-	wstring start_title = L" =========================================================== * Начало * =========================================================== \n";
+	wstring start_title = L"=========================================================== * Начало * =========================================================== \n";
 	report_file << start_title;
 	report_file << L" \n";
 }
@@ -44,9 +48,31 @@ void insert_start_separator(wofstream& report_file)
 void insert_end_separator(wofstream& report_file)
 {
 	report_file << L" \n";
-	wstring end_title = L" =========================================================== * Конец * =========================================================== \n";
+	wstring end_title = L"=========================================================== * Конец * =========================================================== \n";
 	report_file << end_title;
 	report_file << L" \n";
+}
+
+
+int create_report_foler(wstring& dirname)
+{
+	LPCWSTR report_folder = dirname.c_str();
+	
+	if (fs::is_directory(report_folder)) fs::remove_all(report_folder);
+
+	if (fs::create_directory(report_folder)) return 1;
+	else return 0;
+	
+}
+
+inline std::wstring convert(const std::string& as)
+{
+	if (as.empty())    return std::wstring();
+	size_t reqLength = ::MultiByteToWideChar(CP_UTF8, 0, as.c_str(), (int)as.length(), 0, 0);
+	std::wstring ret(reqLength, L'\0');
+	::MultiByteToWideChar(CP_UTF8, 0, as.c_str(), (int)as.length(), &ret[0], (int)ret.length());
+
+	return ret;
 }
 
 
@@ -176,12 +202,12 @@ int M = 0, M1 = 0,  M10 = 0, M20 = 0, PR = 0, K1 = 0, MMT = 0;
 const string current_dir_path = ".";
 
 // Расчетная функция программы!
-void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, double& MM, int& MT, VectorXi& IH)
+void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, VectorXd& YA, VectorXd& OMP, VectorXd& GM, VectorXd& S, int& MPR, int& MTR, double& MM, int& MT, VectorXi& IH, wofstream& current_records, wofstream& voltage_records, wofstream& r11)
 {
 	// Некоторые кусочки кода для удобства выведены в другое место. На функционал программы не влияет.
 	// Локальные переменные необходимые для инициализации основных (локальных) переменных внутри функции расчета.
 	const int M = MPR + MTR;
-	const int MMT = MM / MT;
+	const double MMT = MM / MT;
 	const int M10 = 2 * M;
 	const int M20 = 4 * M;
 
@@ -286,7 +312,13 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		R0(i) = 1000. / (GM(i) * S(i));
 		if (HI(i) < 1) R11(i) = R0(i) * (1. + pow(HI(i), (4./3.))); // Замечание!
 		if (HI(i) > 1) R11(i) = R0(i) * (HI(i) + 0.25 + 3./(64. * HI(i)));
-		if (i == M) { ; }
+		if (i == M)
+		{
+			for (auto record : R11)
+			{
+				r11 << record << L",";
+			}; r11 << endl;
+		}
 	}
 	
 	// Цикл #12
@@ -652,7 +684,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		}
 
 		F3 = LI * LI;
-		int LM = MMT;
+		double LM = MMT;
 
 		// Формирование LU LU1 LU2 LU3 
 
@@ -1065,25 +1097,16 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			AIX(i) = AA(i) + BB(i);
 			if (LM == MMT) AIK1(i) = AIX(i);
 			AIXM(i) = sqrt(pow(real(AIX(i)), 2.) + pow(imag(AIX(i)), 2.));
-			
-			wcout << AIXM(i) << endl;
 
 			if ((i == 0 and k == 0 and PR == 2) || (i == 0 and k > 0)) PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
-
 			if ((i == 1 and k == 0 and PR == 2) || (i == 1 and k > 0)) PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
-
 			if ((i == 2 and k == 0 and PR == 2) || (i == 2 and k > 0)) PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
-
 			if ((i == 3 and k == 0 and PR == 2) || (i == 3 and k > 0)) PPP4[k][n] = PPP4[k][n] + pow(AIXM(3), 2.) / 2. * R11(3);
-
 			if ((i == 4 and k == 0 and PR == 2) || (i == 4 and k > 0)) PPP5[k][n] = PPP5[k][n] + pow(AIXM(4), 2.) / 2. * R11(4);
-
 			if ((i == 5 and k == 0 and PR == 2) || (i == 5 and k > 0)) PPP6[k][n] = PPP6[k][n] + pow(AIXM(5), 2.) / 2. * R11(5);
-
 			if ((i == 6 and k == 0 and PR == 2) || (i == 6 and k > 0)) PPP7[k][n] = PPP7[k][n] + pow(AIXM(6), 2.) / 2. * R11(6);
-
 			if ((i == 7 and k == 0 and PR == 2) || (i == 7 and k > 0)) PPP8[k][n] = PPP8[k][n] + pow(AIXM(7), 2.) / 2. * R11(7);
-
+			
 			if ((k == 0 and PR == 2) || (k > 0)) PPP[k][n] = PPP[k][n] + pow(AIXM(i), 2.) / 2. * R11(i);
 
 			if (k == 0 and PR == 1)
@@ -1092,6 +1115,14 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 				{PP2 = PP2 + pow(AIXM(i), 2.) / 2. * R11(i); }
 			SM(i) = UX(i) * conj(AIX(i)) / 2.;		
 		}
+		for (auto record : AIXM)
+		{
+			current_records << record << L",";
+		}; current_records << endl;
+		for (auto record : UXM)
+		{
+			voltage_records << record << L",";
+		}; voltage_records << endl;
 	}
 }
 
@@ -1099,11 +1130,9 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 // Главная функция запуска программы!
 int main() {
 
-
 	auto start = high_resolution_clock::now();
 
-
-	std::ifstream f("temp_data.json");
+	std::ifstream f(L"Введенные данные.json");
 	json data = json::parse(f);
 	
 	std::vector<double> tempX;
@@ -1124,7 +1153,7 @@ int main() {
 	int num_harms;
 	int num_recs; // ~ Количество измерении в документе для каждого присоединения
 
-	int num_lines = (int)data["line_type"];
+	int num_lines = (int)data["line_type"]; // 1 - одноцепная, 2 - двухцепная линия
 	int num_pris = (int)data["number_of_prisoeds"]; // Общее количество присоединении в системе подстанции 
 	int pris_num = (int)data["which_prisoed"]; // 1 - для первой, 2 - для второй, 3 - третьей, .. (совершить расчет)
 
@@ -1172,31 +1201,59 @@ int main() {
 	auto garbage = _setmode(_fileno(stdout), _O_U16TEXT);
 	const locale utf8_locale = locale(locale(), new codecvt_utf8<wchar_t>());
 
-
-	wstring teeest;
 	string prisoed_report_name = data["prisoed_name"];
+	wstring c_prisoed_report_name = convert(prisoed_report_name);
 
-	for (auto t : prisoed_report_name) 
-	{	
-		teeest += t;
+	string excel_file_name = data["excel_filepath"];
+	wstring c_excel_file_name = convert(excel_file_name);
+
+	int is_successful = create_report_foler(c_prisoed_report_name);
+	if (!is_successful) return 0;
+
+	wstring working_directory = L".\\" + c_prisoed_report_name;
+
+	wofstream report_file(working_directory + L"\\Отчет " + c_prisoed_report_name + L".txt"); report_file.imbue(utf8_locale);
+
+	wofstream current_records(working_directory + L"\\Эпюра токов.csv"); current_records.imbue(utf8_locale);
+	wofstream voltage_records(working_directory + L"\\Эпюра напряжении.csv"); voltage_records.imbue(utf8_locale);
+	wofstream r11(working_directory + L"\\R11.csv"); r11.imbue(utf8_locale);
+
+	wofstream ppp; wofstream ppp4;
+	wofstream ppp1; wofstream ppp5;
+	wofstream ppp2; wofstream ppp6;
+	wofstream ppp3; wofstream ppp7;
+
+	if (num_lines == 1) 
+	{
+		current_records << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
+		voltage_records << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
+		r11 << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
+
+		wofstream ppp(working_directory + L"\\PPP.csv"); ppp.imbue(utf8_locale);
+		wofstream ppp1(working_directory + L"\\PPP1.csv"); ppp1.imbue(utf8_locale);
+		wofstream ppp2(working_directory + L"\\PPP2.csv"); ppp2.imbue(utf8_locale);
+		wofstream ppp3(working_directory + L"\\PPP3.csv"); ppp3.imbue(utf8_locale);
+		wofstream ppp4(working_directory + L"\\PPP4.csv"); ppp4.imbue(utf8_locale);
+	}
+	else 
+	{
+		current_records << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
+		voltage_records << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
+		r11 << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
+		
+		wofstream ppp(working_directory + L"\\PPP.csv"); ppp.imbue(utf8_locale); wofstream ppp4(working_directory + L"\\PPP4.csv"); ppp4.imbue(utf8_locale);
+		wofstream ppp1(working_directory + L"\\PPP1.csv"); ppp1.imbue(utf8_locale); wofstream ppp5(working_directory + L"\\PPP5.csv"); ppp5.imbue(utf8_locale);
+		wofstream ppp2(working_directory + L"\\PPP2.csv"); ppp2.imbue(utf8_locale); wofstream ppp6(working_directory + L"\\PPP6.csv"); ppp6.imbue(utf8_locale);
+		wofstream ppp3(working_directory + L"\\PPP3.csv"); ppp3.imbue(utf8_locale); wofstream ppp7(working_directory + L"\\PPP7.csv"); ppp7.imbue(utf8_locale);
 	}
 
-	wcout << teeest + L".txt" << endl;
-
-	wofstream report_file(teeest + L".txt");
-	report_file.imbue(utf8_locale);
 
 	insert_start_separator(report_file);
 	
-	
-	
-	return 0;
-
-
 
 	XLDocument doc;
 
-	doc.open("./" + (string)data["excel_filepath"]); // Открываем Excel файл
+	doc.open(".\\" + (string)data["excel_filepath"]); // Открываем Excel файл
 	auto workbook = doc.workbook();
 	auto check_worksheet = workbook.worksheet(workbook.worksheetNames()[0]);
 
@@ -1404,16 +1461,16 @@ int main() {
 		label_1111:			 
 
 			// Вызов расчетной функции!
-			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH);
-			if (debug_breaker == 0) break;
-			debug_breaker--;
+			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH, current_records, voltage_records, r11);
+			/*if (debug_breaker == 0) break;
+			debug_breaker--;*/
 
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
-		if (debug_breaker == 0) break;
+		//if (debug_breaker == 0) break;
 	}
 
 
@@ -1438,6 +1495,29 @@ int main() {
 
 		// Запись данных из переменных PPP, PPP1, PPP2 .... PPP8
 		// в соответствующие файлы. (Пропущенно намеренно!)
+		for (int h = 0; h < num_harms + 1; h++) 
+		{
+			if (num_lines == 1) 
+			{
+				ppp1 << PPP1[h][r] << L",";
+				ppp2 << PPP2[h][r] << L",";
+				ppp3 << PPP3[h][r] << L",";
+				ppp4 << PPP4[h][r] << L",";
+			}
+			else 
+			{
+				ppp1 << PPP1[h][r] << L",";
+				ppp2 << PPP2[h][r] << L",";
+				ppp3 << PPP3[h][r] << L",";
+				ppp4 << PPP4[h][r] << L",";
+				ppp5 << PPP5[h][r] << L",";
+				ppp6 << PPP6[h][r] << L",";
+				ppp7 << PPP7[h][r] << L",";
+			}
+			ppp << PPP[h][r] << L",";
+		} ppp << PRP << L"," << PPR1[r] << L"," << SS0 << L"," << RPR << L"," << SS1 << L"," << SS2 << endl;
+
+
 	}
 
 
@@ -1491,8 +1571,8 @@ int main() {
 	// Вывод предварительных значении результатов расчета!
 	// Запись результатов в файл "Результаты расчета" (Пропущенно намеренно!)
 	
-	wstring title = L" ********************************************************  Потери на линии ********************************************************  ";
-	
+	wstring title = L"************************ Структура потерь энергии и мощности в воздушных линиях, примыкающих к подстанции '" + c_excel_file_name.substr(0, c_excel_file_name.find_last_of(L".")) + L"' ************************";
+	wstring subtitle = L"Расчет для присоединения №" + to_wstring(pris_num) + L": '" + c_prisoed_report_name + L"'";
 	wstring overall = L"|| Всего: ";
 	wstring main_harmonics = L" || Основная гармоника: ";
 	wstring methodics = L" || Методоика: ";
@@ -1501,7 +1581,8 @@ int main() {
 
 
 	report_file
-		<< title << endl;
+		<< title << endl << endl <<
+		subtitle << endl;
 	
 	insert_gap(report_file);
 
@@ -1510,8 +1591,14 @@ int main() {
 		<< main_harmonics << WD[0][0]
 		<< methodics << WD10
 		<< higher_harmonics << WD1
-		<< other << WD4
-		<< endl;
+		<< other << WD4;
+	for (int i = 0; i < 13; i++)
+	{
+		wstring detail = L" || W" + to_wstring(i+1);
+		report_file << detail << L"%: " << WD[1][i];
+	}
+		
+	report_file << endl;
 
 	insert_gap(report_file);
 
