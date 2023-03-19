@@ -312,7 +312,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		R0(i) = 1000. / (GM(i) * S(i));
 		if (HI(i) < 1) R11(i) = R0(i) * (1. + pow(HI(i), (4./3.))); // Замечание!
 		if (HI(i) > 1) R11(i) = R0(i) * (HI(i) + 0.25 + 3./(64. * HI(i)));
-		if (i == M)
+		if (i == M-1)
 		{
 			for (auto record : R11)
 			{
@@ -1218,33 +1218,22 @@ int main() {
 	wofstream voltage_records(working_directory + L"\\Эпюра напряжении.csv"); voltage_records.imbue(utf8_locale);
 	wofstream r11(working_directory + L"\\R11.csv"); r11.imbue(utf8_locale);
 
-	wofstream ppp; wofstream ppp4;
-	wofstream ppp1; wofstream ppp5;
-	wofstream ppp2; wofstream ppp6;
-	wofstream ppp3; wofstream ppp7;
+	wofstream ppp(working_directory + L"\\PPP.csv"); ppp.imbue(utf8_locale); wofstream ppp4(working_directory + L"\\PPP4.csv"); ppp4.imbue(utf8_locale);
+	wofstream ppp1(working_directory + L"\\PPP1.csv"); ppp1.imbue(utf8_locale); wofstream ppp5(working_directory + L"\\PPP5.csv"); ppp5.imbue(utf8_locale);
+	wofstream ppp2(working_directory + L"\\PPP2.csv"); ppp2.imbue(utf8_locale); wofstream ppp6(working_directory + L"\\PPP6.csv"); ppp6.imbue(utf8_locale);
+	wofstream ppp3(working_directory + L"\\PPP3.csv"); ppp3.imbue(utf8_locale); wofstream ppp7(working_directory + L"\\PPP7.csv"); ppp7.imbue(utf8_locale);
 
 	if (num_lines == 1) 
 	{
 		current_records << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
 		voltage_records << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
 		r11 << L"Фаза А," << L"Фаза В," << L"Фаза С," << L"Трос," << endl;
-
-		wofstream ppp(working_directory + L"\\PPP.csv"); ppp.imbue(utf8_locale);
-		wofstream ppp1(working_directory + L"\\PPP1.csv"); ppp1.imbue(utf8_locale);
-		wofstream ppp2(working_directory + L"\\PPP2.csv"); ppp2.imbue(utf8_locale);
-		wofstream ppp3(working_directory + L"\\PPP3.csv"); ppp3.imbue(utf8_locale);
-		wofstream ppp4(working_directory + L"\\PPP4.csv"); ppp4.imbue(utf8_locale);
 	}
 	else 
 	{
 		current_records << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
 		voltage_records << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
 		r11 << L"Фаза А1," << L"Фаза В1," << L"Фаза С1," << L"Фаза А2," << L"Фаза В2," << L"Фаза С2," << L"Трос," << endl;
-		
-		wofstream ppp(working_directory + L"\\PPP.csv"); ppp.imbue(utf8_locale); wofstream ppp4(working_directory + L"\\PPP4.csv"); ppp4.imbue(utf8_locale);
-		wofstream ppp1(working_directory + L"\\PPP1.csv"); ppp1.imbue(utf8_locale); wofstream ppp5(working_directory + L"\\PPP5.csv"); ppp5.imbue(utf8_locale);
-		wofstream ppp2(working_directory + L"\\PPP2.csv"); ppp2.imbue(utf8_locale); wofstream ppp6(working_directory + L"\\PPP6.csv"); ppp6.imbue(utf8_locale);
-		wofstream ppp3(working_directory + L"\\PPP3.csv"); ppp3.imbue(utf8_locale); wofstream ppp7(working_directory + L"\\PPP7.csv"); ppp7.imbue(utf8_locale);
 	}
 
 
@@ -1515,7 +1504,27 @@ int main() {
 				ppp7 << PPP7[h][r] << L",";
 			}
 			ppp << PPP[h][r] << L",";
-		} ppp << PRP << L"," << PPR1[r] << L"," << SS0 << L"," << RPR << L"," << SS1 << L"," << SS2 << endl;
+		} 
+		
+		ppp << PRP << L"," << PPR1[r] << L"," << SS0 << L"," << RPR << L"," << SS1 << L"," << SS2 << endl;
+
+		if (num_lines == 1) 
+		{
+			ppp1 << endl;
+			ppp2 << endl;
+			ppp3 << endl;
+			ppp4 << endl;
+		}
+		else
+		{
+			ppp1 << endl;
+			ppp2 << endl;
+			ppp3 << endl;
+			ppp4 << endl;
+			ppp5 << endl;
+			ppp6 << endl;
+			ppp7 << endl;
+		}
 
 
 	}
