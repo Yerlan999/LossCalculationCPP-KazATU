@@ -1129,7 +1129,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 // Главная функция запуска программы!
 int main() {
-
+	FreeConsole();
 	auto start = high_resolution_clock::now();
 
 	std::ifstream f(L"Введенные данные.json");
