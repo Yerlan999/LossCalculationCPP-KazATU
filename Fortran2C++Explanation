@@ -1531,11 +1531,104 @@ CreateDirectory(report_folder, NULL)
 wcout << L"Error occured!: " << strerror(errno);
 
 
+try
+{
+
+}
+catch (exception& e)
+{
+  cout << e.what() << '\n';
+}
 
 
 
 
 
 
+    // Öèêë #1300. Äî êîíöà äàííîé ðàñ÷åòíîé ôóíêöèè!
+    for (int iii = 0; iii < MT; iii++)
+    {
+        if (M != 3) goto label_767;
+        // Öèêë #761
+        for (int i = 0; i < MPR; i++)
+        {
+            B5(i) = UK1(i);
+            B5(i + 3) = AIK1(i);
+            B5(i + 6) = std::complex<double>(0., 0.);
+            B5(i + 9) = std::complex<double>(0., 0.);
+        }
+    label_767:
+        if (M != 4) goto label_768;
+        // Öèêë #762
+        for (int i = 0; i < MPR; i++)
+        {
+            B5(i) = UK1(i);
+            B5(M - 1) = std::complex<double>(0., 0.);
+            B5(i + M) = AIK1(i);
+            B5(2 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 2 * M) = std::complex<double>(0., 0.);
+            B5(3 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 3 * M) = std::complex<double>(0., 0.);
+            B5(4 * M - 1) = std::complex<double>(0., 0.);
+        }
+    label_768:
+        if (M != 6) goto label_769;
+        // Öèêë #764
+        for (int i = 0; i < MPR; i++)
+        {
+            B5(i) = UK1(i);
+            B5(i + 3) = UK1(i);
+            B5(i + M) = AIK1(i);
+            B5(i + M + 3) = AIK1(i);
+            B5(i + 2 * M) = std::complex<double>(0., 0.);
+            B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+            B5(i + 3 * M) = std::complex<double>(0., 0.);
+            B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
+        }
+    label_769:
+        if (M != 7) goto label_770;
+        // Öèêë #765
+        for (int i = 0; i < MPR; i++)
+        {
+            B5(i) = UK1(i);
+            B5(i + 3) = UK1(i);
+            B5(M - 1) = std::complex<double>(0., 0.);
+            B5(i + M) = AIK1(i);
+            B5(i + M + 3) = AIK1(i);
+            B5(2 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 2 * M) = std::complex<double>(0., 0.);
+            B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+            B5(3 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 3 * M) = std::complex<double>(0., 0.);
+            B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
+            B5(4 * M - 1) = std::complex<double>(0., 0.);
+        }
 
+    label_770:
+        if (M != 8) goto label_771;
+        // Öèêë #766
+        for (int i = 0; i < MPR; i++)
+        {
+            B5(i) = UK1(i);
+            B5(i + 3) = UK1(i);
+            B5(MPR + 1 - 1) = std::complex<double>(0., 0.);
+            B5(MPR + 2 - 1) = std::complex<double>(0., 0.);
+            B5(i + M) = AIK1(i);
+            B5(i + M + 3) = AIK1(i);
+            B5(2 * M - 1 - 1) = std::complex<double>(0., 0.);
+            B5(2 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 2 * M) = std::complex<double>(0., 0.);
+            B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
+            B5(3 * M - 1 - 1) = std::complex<double>(0., 0.);
+            B5(3 * M - 1) = std::complex<double>(0., 0.);
+            B5(i + 3 * M) = std::complex<double>(0., 0.);
+            B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
+            B5(4 * M - 1 - 1) = std::complex<double>(0., 0.);
+            B5(4 * M - 1) = std::complex<double>(0., 0.);
+        }
 
+    label_771:
+
+        // ÂÛ×ÈÑËÅÍÈÅ ÌÀÒÐÈÖÛ LU
+        // ÏÅÐÅÌÍÎÆÅÍÈÅ ÌÀÒÐÈÖ ÏÀÐÀÌÅÒÐÎÂ
+        // Âàæíî! AU âûøå îòêîììåíòèòü !!!

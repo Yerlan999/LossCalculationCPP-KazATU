@@ -336,7 +336,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			E(i, i) = std::complex<double>(1.0, 0.0);
 		}
 	}
-
+	
 	// Цикл #740
 	for (int i = 0; i < M; i++)
 	{
@@ -383,91 +383,33 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			Y(i, j) = std::complex<double>(G(i, j), HC4(i, j));
 		}
 	}
-
+	
 	// Цикл #1300. До конца данной расчетной функции!
 	for (int iii = 0; iii < MT; iii++)
 	{
-		if (M != 3) goto label_767;
-		// Цикл #761
-		for (int i = 0; i < MPR; i++)
+		if (M == 4)
 		{
-			B5(i) = UK1(i);
-			B5(i + 3) = AIK1(i);
-			B5(i + 6) = std::complex<double>(0., 0.);
-			B5(i + 9) = std::complex<double>(0., 0.);
-		}
-	label_767:
-		if (M != 4) goto label_768;
-		// Цикл #762
-		for (int i = 0; i < MPR; i++)
-		{
-			B5(i) = UK1(i);
-			B5(M - 1) = std::complex<double>(0., 0.);
-			B5(i + M) = AIK1(i);
-			B5(2 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 2 * M) = std::complex<double>(0., 0.);
-			B5(3 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 3 * M) = std::complex<double>(0., 0.);
-			B5(4 * M - 1) = std::complex<double>(0., 0.);
-		}
-	label_768:
-		if (M != 6) goto label_769;
-		// Цикл #764
-		for (int i = 0; i < MPR; i++)
-		{
-			B5(i) = UK1(i);
-			B5(i + 3) = UK1(i);
-			B5(i + M) = AIK1(i);
-			B5(i + M + 3) = AIK1(i);
-			B5(i + 2 * M) = std::complex<double>(0., 0.);
-			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
-			B5(i + 3 * M) = std::complex<double>(0., 0.);
-			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
-		}
-	label_769:
-		if (M != 7) goto label_770;
-		// Цикл #765
-		for (int i = 0; i < MPR; i++)
-		{
-			B5(i) = UK1(i);
-			B5(i + 3) = UK1(i);
-			B5(M - 1) = std::complex<double>(0., 0.);
-			B5(i + M) = AIK1(i);
-			B5(i + M + 3) = AIK1(i);
-			B5(2 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 2 * M) = std::complex<double>(0., 0.);
-			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
-			B5(3 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 3 * M) = std::complex<double>(0., 0.);
-			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
-			B5(4 * M - 1) = std::complex<double>(0., 0.);
+			// Цикл #762
+			B5 = VectorXcd::Zero(M20);
+			for (int i = 0; i < MPR; i++)
+			{
+				B5(i) = UK1(i);
+				B5(i + M) = AIK1(i);
+			}
 		}
 
-	label_770:
-		if (M != 8) goto label_771;
-		// Цикл #766
-		for (int i = 0; i < MPR; i++)
+		if (M == 7)
 		{
-			B5(i) = UK1(i);
-			B5(i + 3) = UK1(i);
-			B5(MPR + 1 - 1) = std::complex<double>(0., 0.);
-			B5(MPR + 2 - 1) = std::complex<double>(0., 0.);
-			B5(i + M) = AIK1(i);
-			B5(i + M + 3) = AIK1(i);
-			B5(2 * M - 1 - 1) = std::complex<double>(0., 0.);
-			B5(2 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 2 * M) = std::complex<double>(0., 0.);
-			B5(i + 2 * M + 3) = std::complex<double>(0., 0.);
-			B5(3 * M - 1 - 1) = std::complex<double>(0., 0.);
-			B5(3 * M - 1) = std::complex<double>(0., 0.);
-			B5(i + 3 * M) = std::complex<double>(0., 0.);
-			B5(i + 3 * M + 3) = std::complex<double>(0., 0.);
-			B5(4 * M - 1 - 1) = std::complex<double>(0., 0.);
-			B5(4 * M - 1) = std::complex<double>(0., 0.);
+			// Цикл #765
+			B5 = VectorXcd::Zero(M20);
+			for (int i = 0; i < MPR; i++)
+			{
+				B5(i) = UK1(i);
+				B5(i + 3) = UK1(i);
+				B5(i + M) = AIK1(i);
+				B5(i + M + 3) = AIK1(i);
+			}
 		}
-
-	label_771:
-		
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
 		// Важно! AU выше откомментить !!!
@@ -575,7 +517,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 				}
 			}
 		}
-
+		
 		F3 = LU * LU;
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LI
 		// ПЕРЕМНОЖЕНИЕ МАТРИЦ ПАРАМЕТРОВ
@@ -911,7 +853,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 		}
 
-
+		
 		// Финальная стадия расчетов!!!
 
 		GG = MatrixXcd::Zero(M20, M20);
@@ -928,7 +870,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			GG1(i + M, i + 2 * M) = 1.;
 			GG1(i + M, i + 3 * M) = 1.;
 		}
-
+		
 		for (int i = 0; i < M; i++) {
 			for (int j = 0; j < M; j++) {
 				GG(i + 2 * M, j) = -LU(i, j);
@@ -942,7 +884,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 				GG1(i + 3 * M, j + 3 * M) = LI2(i, j);
 			}
 		}
-
+		
 		GG2 = GG1.inverse();
 
 		for (int i = 0; i < M; i++) {
@@ -995,7 +937,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 				GG3(i + M, j + 3 * M) = -1. * HH34(i, j) + HH44(i, j);
 			}
 		}
-
+		
 		int K1 = 0;
 		int K0 = 0;
 
@@ -1021,7 +963,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		label_307:
 			continue;
 		}
-
+		
 		B6 = GG4 * B10;
 		B7 = GG5.inverse() * B6;
 
@@ -1091,13 +1033,13 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 		}
 
 		BB = LI2 * B;
-
+		
 		for (int i = 0; i < M; i++) {
 
 			AIX(i) = AA(i) + BB(i);
 			if (LM == MMT) AIK1(i) = AIX(i);
 			AIXM(i) = sqrt(pow(real(AIX(i)), 2.) + pow(imag(AIX(i)), 2.));
-
+			
 			if ((i == 0 and k == 0 and PR == 2) || (i == 0 and k > 0)) PPP1[k][n] = PPP1[k][n] + pow(AIXM(0), 2.) / 2. * R11(0);
 			if ((i == 1 and k == 0 and PR == 2) || (i == 1 and k > 0)) PPP2[k][n] = PPP2[k][n] + pow(AIXM(1), 2.) / 2. * R11(1);
 			if ((i == 2 and k == 0 and PR == 2) || (i == 2 and k > 0)) PPP3[k][n] = PPP3[k][n] + pow(AIXM(2), 2.) / 2. * R11(2);
@@ -1281,8 +1223,8 @@ int main() {
 	{
 		// Для каждго листа в документе ... ["Sheet1", "Sheet2", "Sheet3", "Sheet4", "Sheet5", "Sheet6"]
 		auto worksheet = workbook.worksheet(worksheet_name);
-		int w_columns_count = worksheet.columnCount();
-		int w_rows_count = worksheet.rowCount();
+		int w_columns_count; // worksheet.columnCount()
+		int w_rows_count = num_recs; // worksheet.rowCount()
 
 		if (!(sheets_counter % 2 == 0)) { phase_number = phaser.get_phase_number(sheets_counter); }
 		else { phase_number = (sheets_counter - 2) / 2; };
@@ -1290,7 +1232,7 @@ int main() {
 		// В зависимости от рассчитываемого присоединения...
 		for (auto& row : worksheet.rows(first, second)) // для каждой строки данного присоединения
 		{
-
+			w_columns_count = row.cellCount();
 			std::deque<XLCellValue> cell(row.values()); // выбор всех ячеек в данной строке
 
 			if (sheets_counter % 2 == 0)                        // Четные листы [Sheet2, Sheet4, Sheet6]
@@ -1451,8 +1393,8 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH, current_records, voltage_records, r11);
-			/*if (debug_breaker == 0) break;
-			debug_breaker--;*/
+			// if (debug_breaker == 0) break;
+			// debug_breaker--;
 
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
@@ -1621,5 +1563,6 @@ int main() {
 
 	insert_end_separator(report_file);
 
+	// system("pause");
 	return 0;
 }
