@@ -213,7 +213,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 	int M1;
 	if (M <= 6) M1 = M;
-	if (M > 6) M1 = 6;
+	if (M > 6) M1 = M; // Было 6 вместо М
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
 
@@ -405,9 +405,9 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			for (int i = 0; i < MPR; i++)
 			{
 				B5(i) = UK1(i);
-				B5(i + 3) = UK1(i);
+				// B5(i + 3) = UK1(i);
 				B5(i + M) = AIK1(i);
-				B5(i + M + 3) = AIK1(i);
+				// B5(i + M + 3) = AIK1(i);
 			}
 		}
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
@@ -1378,7 +1378,7 @@ int main() {
 			{
 				UK = (UK1(l + l * (2)) + UK1(l + 1 + l * (2)) * AL + UK1(l + 2 + l * (2)) * std::pow(AL, 2.)) / (3.);
 
-				UK1(l) = UK;
+				UK1(l + l * (2)) = UK;
 				UK1(l + 1 + l * (2)) = UK * std::pow(AL, 2.);
 				UK1(l + 2 + l * (2)) = UK * AL;
 
