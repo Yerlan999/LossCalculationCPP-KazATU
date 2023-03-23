@@ -99,23 +99,16 @@ int stringToInt(string s)
 class CustomRangePairs
 {
 public:
-	int difference = -1;
 
 	tuple<int, int> get_range_pairs(int harm)
 	{
 		tuple <int, int> two_pairs;
 
-		int phase = harm + difference;
-		int amplitude = phase++;
-
+		int amplitude = (harm - 1) * 2;
+		int phase = (harm - 1) * 2 + 1;
+		
 		two_pairs = make_tuple(amplitude, phase);
-		difference++;
 		return two_pairs;
-	}
-
-	void reset()
-	{
-		difference = -1;
 	}
 };
 
@@ -1071,7 +1064,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 // Главная функция запуска программы!
 int main() {
-	FreeConsole();
+	// FreeConsole();
 	auto start = high_resolution_clock::now();
 
 	std::ifstream f(L"Введенные данные.json");
@@ -1254,7 +1247,6 @@ int main() {
 					catch (XLValueTypeError) { main_harm[i][phase_number][rows_counter] = (double)cell.at(num_harms * 2 + i).get<int>(); }
 				}
 
-				ranger.reset();
 			}
 			else                                                // Нечетные листы [Sheet1, Sheet3, Sheet5]
 			{
@@ -1267,7 +1259,6 @@ int main() {
 					try { FUM[phase_number][h][rows_counter] = cell.at(pha).get<double>(); }
 					catch (XLValueTypeError) { FUM[phase_number][h][rows_counter] = (double)cell.at(pha).get<int>(); }
 				}
-				ranger.reset();
 			}
 			rows_counter++;
 		}
@@ -1393,15 +1384,15 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH, current_records, voltage_records, r11);
-			// if (debug_breaker == 0) break;
-			// debug_breaker--;
+			if (debug_breaker == 0) break;
+			debug_breaker--;
 
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
-		//if (debug_breaker == 0) break;
+		if (debug_breaker == 0) break;
 	}
 
 
