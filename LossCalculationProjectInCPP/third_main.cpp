@@ -1529,13 +1529,13 @@ int main() {
 		<< main_harmonics << WD[0][0]
 		<< methodics << WD10
 		<< higher_harmonics << WD1
-		<< other << WD4;
+		<< other << WD4 << endl;
 	
 	insert_gap(report_file);
 
 	for (int i = 0; i < 13; i++)
 	{
-		wstring detail = L" || W" + to_wstring(i+1);
+		wstring detail = L"|| W" + to_wstring(i+1);
 		report_file << detail << L"%: " << WD[1][i] << endl;
 	}
 
