@@ -204,9 +204,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 	const int M10 = 2 * M;
 	const int M20 = 4 * M;
 
-	int M1;
-	if (M <= 6) M1 = M;
-	if (M > 6) M1 = M; // Было 6 вместо М
+	int M1 = M;
 
 	//  Над данными (ниже) переменными (матрицами) будут проведены матричные операции
 
@@ -376,7 +374,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			Y(i, j) = std::complex<double>(G(i, j), HC4(i, j));
 		}
 	}
-	
+
 	// Цикл #1300. До конца данной расчетной функции!
 	for (int iii = 0; iii < MT; iii++)
 	{
@@ -398,9 +396,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 			for (int i = 0; i < MPR; i++)
 			{
 				B5(i) = UK1(i);
-				// B5(i + 3) = UK1(i);
 				B5(i + M) = AIK1(i);
-				// B5(i + M + 3) = AIK1(i);
 			}
 		}
 		// ВЫЧИСЛЕНИЕ МАТРИЦЫ LU
@@ -409,13 +405,13 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 		AU = Z * Y;
 		SS1 = sqrt(AU(0, 0));
-		
+
 		// ВЫЧИСЛЕНИЕ СОБСТВЕННЫХ ЗНАЧЕНИЙ МАТРИЦЫ АU
 		// Важно! EVU выше откомментить !!!
 		EVU = AU.eigenvalues();
 		EVU.reverseInPlace();
 
-		
+
 		// ФОРМИРОВАНИЕ МАТРИЦЫ ВАНДЕРМОНДА
 		// Цикл #20
 		for (int j = 0; j < M; j++)
@@ -1064,7 +1060,7 @@ void raschet(int& k, int& n, VectorXcd& UK1, VectorXcd& AIK1, VectorXd& XA, Vect
 
 // Главная функция запуска программы!
 int main() {
-	// FreeConsole();
+	FreeConsole();
 	auto start = high_resolution_clock::now();
 
 	std::ifstream f(L"Введенные данные.json");
@@ -1384,15 +1380,15 @@ int main() {
 
 			// Вызов расчетной функции!
 			raschet(k, n, UK1, AIK1, XA, YA, OMP, GM, S, MPR, MTR, MM, MT, IH, current_records, voltage_records, r11);
-			if (debug_breaker == 0) break;
-			debug_breaker--;
+			//if (debug_breaker == 0) break;
+			//debug_breaker--;
 
 			if (k == 0 && PR == 1) PPR1[n] = PP1;
 			if (k == 0 && PR == 2) PPR2[n] = PP2;
 			if (k == 0 && PR == 1) goto label_1700;
 			if (PR == 2) continue; //goto label_1500;
 		}
-		if (debug_breaker == 0) break;
+		//if (debug_breaker == 0) break;
 	}
 
 
@@ -1534,13 +1530,14 @@ int main() {
 		<< methodics << WD10
 		<< higher_harmonics << WD1
 		<< other << WD4;
+	
+	insert_gap(report_file);
+
 	for (int i = 0; i < 13; i++)
 	{
 		wstring detail = L" || W" + to_wstring(i+1);
-		report_file << detail << L"%: " << WD[1][i];
+		report_file << detail << L"%: " << WD[1][i] << endl;
 	}
-		
-	report_file << endl;
 
 	insert_gap(report_file);
 
